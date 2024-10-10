@@ -12,17 +12,5 @@
     "name": "haw2fregel",
     "email": "haw2fregel@gmail.com",
     "url": "https://github.com/haw2fregel"
-  },
-  "samples": [
-    {
-      "displayName": "Buildin RP Sample",
-      "description": "",
-      "path": "Samples~/BuildInSample"
-    },
-    {
-      "displayName": "URP Sample",
-      "description": "",
-      "path": "Samples~/URPSample"
-    }
-  ]
+  }
 }
