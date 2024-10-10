@@ -17,12 +17,12 @@
     {
       "displayName": "Buildin RP Sample",
       "description": "",
-      "path": "Samples~/BuildInSample"
+      "path": "Sample~/BuildInSample"
     },
     {
       "displayName": "URP Sample",
       "description": "",
-      "path": "Samples~/URPSample"
+      "path": "Sample~/URPSample"
     }
   ]
 }
