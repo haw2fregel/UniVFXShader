@@ -46,5 +46,9 @@ https://github.com/haw2fregel/UniVFXShader/releases/download/v1.0.0_release/URPS
 Builtin用サンプル\
 https://github.com/haw2fregel/UniVFXShader/releases/download/v1.0.0_release/BuildInSample.unitypackage
 
+PackageManagerのSamplesからもダウンロード可能です。
+
+![image](https://github.com/user-attachments/assets/82ea419c-67bd-4502-b2bb-d7e1be1a62d9)
+
 冒頭動画のエフェクトが入っています。\
 ご自由にお使いください。
