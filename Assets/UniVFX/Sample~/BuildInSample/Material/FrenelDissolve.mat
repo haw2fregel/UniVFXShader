@@ -1,0 +1,147 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-2201840340935522002
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 639247ca83abc874e893eb93af2b5e44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 0
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: FrenelDissolve
+  m_Shader: {fileID: -6465566751694194690, guid: aa6cc5b0161a2264aa5cc5cfa47c1b0c, type: 3}
+  m_Parent: {fileID: -876546973899608171, guid: aa6cc5b0161a2264aa5cc5cfa47c1b0c, type: 3}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords:
+  - _BUILTIN_SURFACE_TYPE_TRANSPARENT
+  - _DISSOLVE
+  - _SURFACEFADE
+  m_InvalidKeywords:
+  - _SURFACE_TYPE_TRANSPARENT
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses:
+  - DepthOnly
+  - SHADOWCASTER
+  - MOTIONVECTORS
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BlendTex:
+        m_Texture: {fileID: 2800000, guid: 3f144e04c4c0a774aba2d27219af2b3e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DissolveTex:
+        m_Texture: {fileID: 2800000, guid: c47936134e397d94184a548711597744, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DistortionTex:
+        m_Texture: {fileID: 2800000, guid: c47936134e397d94184a548711597744, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FakeLightMap:
+        m_Texture: {fileID: 2800000, guid: 3f144e04c4c0a774aba2d27219af2b3e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MaskTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TimeMap:
+        m_Texture: {fileID: 2800000, guid: 4a80ebdd3a292b848bec1f288d9914d1, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _VertexAnimTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _BLENDTEXTURE: 0
+    - _BUILTIN_DstBlend: 10
+    - _BUILTIN_SrcBlend: 5
+    - _BackFaceMultiply: 0
+    - _BlendIntensity_Data: 21
+    - _BlendTexBlendMode: 1
+    - _BlendUVTransform_Sampler: 1
+    - _DISTORTIONENABLE: 1
+    - _DissolveMask: 1
+    - _DissolveSurfaceFade: 1
+    - _DissolveUVDistortion: 1
+    - _DissolveUVTransform_Index: 5
+    - _DissolveUVTransform_Sampler: 1
+    - _DistortionIntensity: -0.26
+    - _DistortionUVTransform_Index: 5
+    - _DistortionUVTransform_Sampler: 1
+    - _DstBlend: 10
+    - _FakeLightIntensity: 5
+    - _FakeLightType: 1
+    - _FinalAlphaSurfaceFade: 0
+    - _Frenel: 1
+    - _FrenelPow: 1.5
+    - _FrenelReverce: 0
+    - _MASKTEXTURE: 0
+    - _MainColor_Data: 0
+    - _MainUVDistortion: 0
+    - _MainUVTransform_Sampler: 1
+    - _MaskOffset: 0.5
+    - _MaskOffset_Data: 0
+    - _MaskRepeat: 0
+    - _MaskUVTransform_Index: 8
+    - _QueueControl: 0
+    - _SrcBlend: 5
+    - _SurfaceFadeType: 3
+    - _TimeSpeed: 0.18
+    - _UVPolar: 1
+    - _VERTEXANIMATION: 0
+    m_Colors:
+    - _BlendTexColor: {r: 1, g: 1, b: 1, a: 1}
+    - _BlendUVTransform: {r: 3.54, g: 1, b: 0, a: 0}
+    - _BlendUVTransform_Data: {r: 0, g: 0, b: 18, a: 0}
+    - _DissolveParam: {r: 1, g: 0.342, b: 0, a: 0.11}
+    - _DissolveParam_Data: {r: 0, g: 0, b: 0, a: 0}
+    - _DissolveUVTransform: {r: 2, g: 1, b: 0, a: -1.36}
+    - _DissolveUVTransform_Data: {r: 0, g: 0, b: 0, a: 18}
+    - _DistortionUVTransform: {r: 1, g: 1, b: 0, a: 0}
+    - _DistortionUVTransform_Data: {r: 0, g: 0, b: 0, a: 0}
+    - _FakeLightColor: {r: 4, g: 1.0795444, b: 0.13207555, a: 1}
+    - _FakeLightParam: {r: 0, g: -2, b: 0, a: 10}
+    - _FakeShadowColor: {r: 0.089044146, g: 0.10664583, b: 0.2735849, a: 1}
+    - _MainColor: {r: 0.5377358, g: 0.5377358, b: 0.5377358, a: 1}
+    - _MainUVTransform: {r: 0.8, g: 0.8, b: 0, a: 0}
+    - _MaskUVTransform: {r: 1, g: 1, b: -0.19, a: 0}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!114 &3361437629325705023
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 9

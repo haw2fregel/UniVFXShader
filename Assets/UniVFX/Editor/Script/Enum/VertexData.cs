@@ -1,0 +1,31 @@
+﻿namespace UniVFX.Editor
+{
+    public enum VertexData
+    {
+        Input,
+        TEXCOORD1X, 
+        TEXCOORD1Y,
+        TEXCOORD1Z,
+        TEXCOORD1W,
+        TEXCOORD2X,
+        TEXCOORD2Y,
+        TEXCOORD2Z,
+        TEXCOORD2W,
+        VertexColorR,
+        VertexColorG,
+        VertexColorB,
+        VertexColorA,
+        TimeX,
+        TimeY,
+        TimeZ,
+        TimeW,
+        MinusTimeX,
+        MinusTimeY,
+        MinusTimeZ,
+        MinusTimeW,
+        TimeMapX,
+        TimeMapY,
+        TimeMapZ,
+        TimeMapW
+    }
+}

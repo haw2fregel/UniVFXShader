@@ -1,0 +1,123 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: DistortionAura
+  m_Shader: {fileID: -6465566751694194690, guid: c5f568c1b6b1eec4aa363b1ad9f54f6a, type: 3}
+  m_Parent: {fileID: -876546973899608171, guid: c5f568c1b6b1eec4aa363b1ad9f54f6a, type: 3}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords:
+  - _SURFACE_TYPE_TRANSPARENT
+  - _UVBEND
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap:
+    RenderType: Transparent
+  disabledShaderPasses:
+  - DepthOnly
+  - SHADOWCASTER
+  - MOTIONVECTORS
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BlendTex:
+        m_Texture: {fileID: 10300, guid: 0000000000000000f000000000000000, type: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DissolveTex:
+        m_Texture: {fileID: 2800000, guid: 04aa4ddf5b56006439b91fb315edaa84, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DistortionTex:
+        m_Texture: {fileID: 2800000, guid: 3fc27a0d6b8fc884eaa7703dd5adccc4, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FakeLightMap:
+        m_Texture: {fileID: 2800000, guid: 2516744736c0b0a428c461794721b6b1, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 04aa4ddf5b56006439b91fb315edaa84, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MaskTex:
+        m_Texture: {fileID: 10300, guid: 0000000000000000f000000000000000, type: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _VertexAnimTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _BLENDTEXTURE: 1
+    - _BackFaceMultiply: 0
+    - _BlendIntensity: 1
+    - _BlendTexBlendMode: 3
+    - _BlendTexMask: 0
+    - _BlendUVDistortion: 0
+    - _DISTORTIONENABLE: 1
+    - _DistortionIntensity: 0.15
+    - _DistortionUVTransform_Index: 8
+    - _DistortionUVTransform_Sampler: 1
+    - _DstBlend: 10
+    - _FakeLightIntensity: 5
+    - _FakeLightType: 1
+    - _FinalAlphaSurfaceFade: 1
+    - _Frenel: 0
+    - _GradationMask: 0
+    - _HSVShiftMask: 0
+    - _MASKTEXTURE: 1
+    - _MainColorMultiple: 1
+    - _MainColor_Data: 0
+    - _MainTexMask: 1
+    - _MainUVDistortion: 1
+    - _MainUVTransform_Index: 8
+    - _MainUVTransform_Sampler: 1
+    - _MaskOffset: 0
+    - _MaskRepeat: 0
+    - _QueueControl: 0
+    - _SrcBlend: 5
+    - _SurfaceFadeMask: 0
+    - _SurfaceFadeType: 3
+    - _UVPolar: 1
+    - _VERTEXANIMATION: 0
+    m_Colors:
+    - _BlendTexColor: {r: 1.8031219, g: 2.711077, b: 2.5282705, a: 1}
+    - _BlendUVTransform: {r: 1.4, g: 1.4, b: 0, a: 0}
+    - _DissolveParam: {r: 0.871, g: 0.15, b: 0, a: 0}
+    - _DistortionUVTransform: {r: 1, g: 3, b: 2.42, a: 0}
+    - _DistortionUVTransform_Data: {r: 0, g: 0, b: 13, a: 17}
+    - _FakeLightColor: {r: 4, g: 1.0795444, b: 0.13207555, a: 1}
+    - _FakeLightParam: {r: 0, g: -2, b: 0, a: 10}
+    - _FakeShadowColor: {r: 0.089044146, g: 0.10664583, b: 0.2735849, a: 1}
+    - _HSVShiftParametors: {r: 0, g: 0, b: 0, a: 0}
+    - _MainColor: {r: 2.3880985, g: 0, b: 3.4415908, a: 1}
+    - _MainUVTransform: {r: 0.5, g: 1, b: -0.06, a: 0}
+    - _MainUVTransform_Data: {r: 0, g: 0, b: 13, a: 0}
+    - _MaskUVTransform: {r: 0.75, g: 0.75, b: 0, a: 0}
+    - _UVBendParam: {r: 0, g: 0, b: 0, a: 0.93}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!114 &3361437629325705023
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 9

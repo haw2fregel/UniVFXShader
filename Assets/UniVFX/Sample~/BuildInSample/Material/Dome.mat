@@ -1,0 +1,152 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Dome
+  m_Shader: {fileID: -6465566751694194690, guid: aa6cc5b0161a2264aa5cc5cfa47c1b0c, type: 3}
+  m_Parent: {fileID: -876546973899608171, guid: aa6cc5b0161a2264aa5cc5cfa47c1b0c, type: 3}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords:
+  - _BUILTIN_SURFACE_TYPE_TRANSPARENT
+  - _DISSOLVE
+  - _HSVSHIFT
+  - _SURFACEFADE
+  m_InvalidKeywords:
+  - _SURFACE_TYPE_TRANSPARENT
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses:
+  - DepthOnly
+  - SHADOWCASTER
+  - MOTIONVECTORS
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BlendTex:
+        m_Texture: {fileID: 2800000, guid: a7d4814af290c5a47beec0d5e91eefd4, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DissolveTex:
+        m_Texture: {fileID: 2800000, guid: a7d4814af290c5a47beec0d5e91eefd4, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DistortionTex:
+        m_Texture: {fileID: 2800000, guid: a7d4814af290c5a47beec0d5e91eefd4, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: a7d4814af290c5a47beec0d5e91eefd4, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MaskTex:
+        m_Texture: {fileID: 2800000, guid: f9c6fa82f5a579b4e99c6666db00cd7e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TimeMap:
+        m_Texture: {fileID: 2800000, guid: 3f144e04c4c0a774aba2d27219af2b3e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _VertexAnimTex:
+        m_Texture: {fileID: 2800000, guid: a7d4814af290c5a47beec0d5e91eefd4, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _BLENDTEXTURE: 1
+    - _BUILTIN_CullMode: 2
+    - _BUILTIN_DstBlend: 10
+    - _BUILTIN_SrcBlend: 5
+    - _BackFaceMultiply: 0
+    - _BlendIntensity: 1
+    - _BlendTexBlendMode: 1
+    - _BlendUVDistortion: 1
+    - _BlendUVTransform_Sampler: 1
+    - _ColorMultiplAlpha: 0
+    - _DISTORTIONENABLE: 1
+    - _DissolveMask: 0
+    - _DissolveSurfaceFade: 1
+    - _DissolveUVDistortion: 1
+    - _DissolveUVTransform_Sampler: 1
+    - _DistortionIntensity: 0.08
+    - _DistortionUVTransform_Index: 0
+    - _DistortionUVTransform_Sampler: 1
+    - _DstBlend: 10
+    - _Frenel: 1
+    - _FrenelPow: 0.123
+    - _FrenelReverce: 0
+    - _HSVShiftMask: 1
+    - _MASKTEXTURE: 1
+    - _MainAlphaMultiple: 1
+    - _MainColorMultiple: 1
+    - _MainColor_Data: 0
+    - _MainUVTransform_Index: 5
+    - _MainUVTransform_Sampler: 1
+    - _MaskOffset: -0.43
+    - _MaskOffset_Data: 14
+    - _MaskRepeat: 1
+    - _MaskUVTransform_Index: 5
+    - _MaskUVTransform_Sampler: 2
+    - _QueueControl: 0
+    - _SrcBlend: 5
+    - _SurfaceFadeIn: 0.6
+    - _SurfaceFadeOut: -1.1
+    - _SurfaceFadeReverce: 0
+    - _SurfaceFadeType: 2
+    - _TimeSpeed: -1
+    - _VERTEXANIMATION: 0
+    - _VertexAnimUVTransform_Sampler: 2
+    m_Colors:
+    - _BlendTexColor: {r: 0.22984724, g: 0.013355464, b: 0.8502994, a: 1}
+    - _BlendUVTransform: {r: 1, g: 1, b: 0, a: 0}
+    - _BlendUVTransform_Data: {r: 0, g: 0, b: 0, a: 13}
+    - _DissolveColor: {r: 0, g: 4.462654, b: 31.999998, a: 1}
+    - _DissolveParam: {r: 1, g: 0.07, b: 0, a: 0.25}
+    - _DissolveParam_Data: {r: 0, g: 0, b: 0, a: 0}
+    - _DissolveUVTransform_Data: {r: 0, g: 0, b: 0, a: 13}
+    - _DistortionUVTransform: {r: 2, g: 2, b: -0.08, a: 0}
+    - _DistortionUVTransform_Data: {r: 0, g: 0, b: 13, a: 0}
+    - _HSVShiftParametors: {r: 0.01, g: -0.1, b: 0, a: 0}
+    - _MainColor: {r: 0.043599084, g: 0.0062299776, b: 0.18867922, a: 1}
+    - _MainUVTransform: {r: 0.5, g: 0.5, b: 0, a: 0}
+    - _MainUVTransform_Data: {r: 0, g: 0, b: 0, a: 13}
+    - _MaskUVTransform: {r: 1, g: 1, b: 0, a: 0}
+    - _VertexAnimParametors: {r: 0, g: 0, b: 0.14, a: 1}
+    - _VertexAnimUVTransform: {r: 0.5, g: 0.5, b: 0, a: 0}
+    - _VertexAnimUVTransform_Data: {r: 0, g: 0, b: 0, a: 13}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!114 &559961088383850883
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 9
+--- !u!114 &2909274090901988268
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 639247ca83abc874e893eb93af2b5e44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 0
