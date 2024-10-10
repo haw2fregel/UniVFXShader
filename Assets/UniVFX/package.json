@@ -3,9 +3,9 @@
   "displayName": "UniVFXShader",
   "version": "1.0.0",
   "unity": "2022.3",
-  "documentationUrl": "https://github.com/haw2fregel/UniVFX/blob/v1.0.0/README.md",
-  "changelogUrl": "https://github.com/haw2fregel/UniVFX/blob/v1.0.0/CHANGELOG.md",
-  "licensesUrl": "https://github.com/haw2fregel/UniVFX/blob/v1.0.0/LICENSE",
+  "documentationUrl": "https://github.com/haw2fregel/UniVFXShader/blob/v1.0.0/README.md",
+  "changelogUrl": "https://github.com/haw2fregel/UniVFXShader/blob/v1.0.0/CHANGELOG.md",
+  "licensesUrl": "https://github.com/haw2fregel/UniVFXShader/blob/v1.0.0/LICENSE",
   "description": "VFX Uver Shader ",
   "dependencies": {},
   "author": {
@@ -17,12 +17,12 @@
     {
       "displayName": "Buildin RP Sample",
       "description": "",
-      "path": "Sample~/BuildInSample"
+      "path": "Samples~/BuildInSample"
     },
     {
       "displayName": "URP Sample",
       "description": "",
-      "path": "Sample~/URPSample"
+      "path": "Samples~/URPSample"
     }
   ]
 }
