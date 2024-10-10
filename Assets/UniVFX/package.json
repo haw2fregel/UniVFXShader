@@ -2,7 +2,7 @@
   "name": "jp.haw2fregel.uni-vfx-shader",
   "displayName": "UniVFXShader",
   "version": "1.0.0",
-  "unity": "6000.0.16f",
+  "unity": "2022.3",
   "documentationUrl": "https://github.com/haw2fregel/UniVFX/blob/v1.0.0/README.md",
   "changelogUrl": "https://github.com/haw2fregel/UniVFX/blob/v1.0.0/CHANGELOG.md",
   "licensesUrl": "https://github.com/haw2fregel/UniVFX/blob/v1.0.0/LICENSE",
@@ -12,5 +12,17 @@
     "name": "haw2fregel",
     "email": "haw2fregel@gmail.com",
     "url": "https://github.com/haw2fregel"
-  }
+  },
+  "samples": [
+    {
+      "displayName": "Buildin RP Sample",
+      "description": "",
+      "path": "Samples~/BuildInSample"
+    },
+    {
+      "displayName": "URP Sample",
+      "description": "",
+      "path": "Samples~/URPSample"
+    }
+  ]
 }
