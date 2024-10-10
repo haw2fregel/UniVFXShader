@@ -1,5 +1,10 @@
 # Inspector
 
+![image](https://github.com/user-attachments/assets/1155362e-4d52-4310-b4d3-9278e5f2cdfd)
+
+
+
+
 ## Main Texture
 <details>
 <summary>--- メインテクスチャ</summary>
@@ -322,3 +327,18 @@
 | ------------- | ------------- | 
 
 </details>
+
+## Heat Gage
+<details>
+<summary>--- ヒートゲージ</summary>
+
+<br>
+
+|![image](https://github.com/user-attachments/assets/ec183ded-dd4d-4f46-9466-02d9b6c314bc)![image](https://github.com/user-attachments/assets/5bd8eb74-9161-46e7-a74a-5b967e6aa4e7)| Activeにしている数が多いほど描画負荷が高くなります。<br>ゲージが赤いほど負荷が高いです。 |
+| ------------- | ------------- | 
+
+</details>
+
+<br><br>
+
+https://github.com/user-attachments/assets/2e154bc4-968c-4121-96cd-8a3b8e414963
