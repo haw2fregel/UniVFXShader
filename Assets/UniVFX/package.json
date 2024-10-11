@@ -7,7 +7,9 @@
   "changelogUrl": "https://github.com/haw2fregel/UniVFXShader/blob/v1.0.0/CHANGELOG.md",
   "licensesUrl": "https://github.com/haw2fregel/UniVFXShader/blob/v1.0.0/LICENSE",
   "description": "VFX Uver Shader ",
-  "dependencies": {},
+  "dependencies": {
+    "com.unity.shadergraph": "14.0.10"
+  },
   "author": {
     "name": "haw2fregel",
     "email": "haw2fregel@gmail.com",
