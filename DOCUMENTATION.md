@@ -186,7 +186,7 @@
 | Frenel  | フレネル効果のOnOff |
 | Power  | フレネルのグラデ調整 |
 | Reverce  | フレネルの反転 |
-| Position Fade Type  | 座標を利用したフェード機能<br><br>![image](https://github.com/user-attachments/assets/d0d446dc-ec87-4ba5-9f56-9ec79f230c1b)|
+| Position Fade Type  | 座標を利用したフェード機能<br>SoftParticleを使用する場合はカメラのDepthTextureが必要になります。<br><br>![image](https://github.com/user-attachments/assets/d0d446dc-ec87-4ba5-9f56-9ec79f230c1b)|
 | Fade In  | フェードイン閾値 |
 | Fade Out  | フェードアウト閾値 |
 | Target |チェックを付けた機能に適用します。<br><br>![image](https://github.com/user-attachments/assets/01bf3664-91d2-40de-aa51-485775f8134f)|
