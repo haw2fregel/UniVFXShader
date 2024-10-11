@@ -1,8 +1,8 @@
-# UniVFXShader
+# UniVFXShader　<sub>エフェクト用多機能シェーダー</sub>
 
 https://github.com/user-attachments/assets/78ba643c-8d5c-49b0-8ac3-349de799cc5d
 
-VFX用多機能シェーダー
+
 
 ## インストール
 
@@ -17,7 +17,7 @@ UnityのPackageManagerを開き「Add package from git URL...」で以下のURL�
 https://github.com/haw2fregel/UniVFXShader/releases/download/v1.0.0_release/UniVFX.unitypackage
 
 ## シェーダー
-URPTarget
+URP用
 - UniVFXTransparent
 - UniVFXOpaque
 - UniVFXCutout
@@ -29,7 +29,7 @@ UI
 VFXGraph
 - UniVFXGraph
 
-BuildinTarget
+ビルトインパイプライン用
 - UniVFXBRPOpaque
 - UniVFXBRPCutout
 - UniVFXBRPTransparent
