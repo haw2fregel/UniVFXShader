@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7a5c3cb454df0540a33c2f2023be86c, type: 3}
   m_Name: CylinderDeform
   m_EditorClassIdentifier: 
-  _targetTexture: {fileID: 2800000, guid: 6235b6f859f755746806084ba96aa0a1, type: 3}
+  _targetTexture: {fileID: 2800000, guid: c48e159f89c8af24a9ea1b31d3392402, type: 3}
   _layerList:
   - _shaderPass: 8
     _animated: 0

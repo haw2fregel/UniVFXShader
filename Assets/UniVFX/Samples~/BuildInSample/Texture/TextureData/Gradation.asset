@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7a5c3cb454df0540a33c2f2023be86c, type: 3}
   m_Name: Gradation
   m_EditorClassIdentifier: 
-  _targetTexture: {fileID: 2800000, guid: 2516744736c0b0a428c461794721b6b1, type: 3}
+  _targetTexture: {fileID: 2800000, guid: 3f144e04c4c0a774aba2d27219af2b3e, type: 3}
   _layerList:
   - _shaderPass: 8
     _animated: 0
