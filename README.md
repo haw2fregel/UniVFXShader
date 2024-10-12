@@ -24,8 +24,9 @@ URP用
 - UniVFXCutout
 
 UI
-- UniVFXUIAdd
-- UniVFXUIAlpha
+- ~~UniVFXUIAdd~~
+- ~~UniVFXUIAlpha~~
+アプデで修正予定
 
 VFXGraph
 - UniVFXGraph
