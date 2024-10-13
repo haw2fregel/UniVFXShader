@@ -7,20 +7,20 @@ namespace UniVFX.Editor
 {
     public class MaskTexture : UniVFXOption
     {
-        const string _IsActive = "_MASKTEXTURE";
-        const string _Tex = "_MaskTex";
-        const string _UV = "_MaskUV";
-        const string _Offset = "_MaskOffset";
-        const string _Repeat = "_MaskRepeat";
-        const string _TargetMainTex = "_MainTexMask";
-        const string _TargetBlendTex = "_BlendTexMask";
-        const string _TargetGradation = "_GradationMask";
-        const string _TargetDistortionTex = "_DistortionMask";
-        const string _TargetDissolveTex = "_DissolveMask";
-        const string _TargetSurfaceFade = "_SurfaceFadeMask";
-        const string _TargetHSVShift = "_HSVShiftMask";
-        const string _TargetFakeLight = "_FakeLightMask";
-        const string _TargetParallax = "_ParallaxMask";
+        protected const string _IsActive = "_MASKTEXTURE";
+        protected const string _Tex = "_MaskTex";
+        protected const string _UV = "_MaskUV";
+        protected const string _Offset = "_MaskOffset";
+        protected const string _Repeat = "_MaskRepeat";
+        protected const string _TargetMainTex = "_MainTexMask";
+        protected const string _TargetBlendTex = "_BlendTexMask";
+        protected const string _TargetGradation = "_GradationMask";
+        protected const string _TargetDistortionTex = "_DistortionMask";
+        protected const string _TargetDissolveTex = "_DissolveMask";
+        protected const string _TargetSurfaceFade = "_SurfaceFadeMask";
+        protected const string _TargetHSVShift = "_HSVShiftMask";
+        protected const string _TargetFakeLight = "_FakeLightMask";
+        protected const string _TargetParallax = "_ParallaxMask";
 
         public override bool IsActive()
         {
@@ -50,7 +50,7 @@ namespace UniVFX.Editor
         public override void GetHeatValue(ref int value, ref int max)
         {
             max += HeatValue();
-            if(IsActive())
+            if (IsActive())
                 value += HeatValue();
         }
 

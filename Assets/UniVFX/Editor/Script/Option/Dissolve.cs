@@ -7,11 +7,11 @@ namespace UniVFX.Editor
 {
     public class Dissolve : UniVFXOption
     {
-        const string _IsActive = "_DISSOLVE";
-        const string _Tex = "_DissolveTex";
-        const string _UV = "_DissolveUV";
-        const string _Color = "_DissolveColor";
-        const string _Param = "_DissolveParam";
+        protected const string _IsActive = "_DISSOLVE";
+        protected const string _Tex = "_DissolveTex";
+        protected const string _UV = "_DissolveUV";
+        protected const string _Color = "_DissolveColor";
+        protected const string _Param = "_DissolveParam";
 
         public override bool IsActive()
         {

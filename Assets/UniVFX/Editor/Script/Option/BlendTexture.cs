@@ -7,13 +7,13 @@ namespace UniVFX.Editor
 {
     public class BlendTexture : UniVFXOption
     {
-        const string _IsActive = "_BLENDTEXTURE";
-        const string _Tex = "_BlendTex";
-        const string _Color = "_BlendTexColor";
-        const string _Intensity = "_BlendIntensity";
-        const string _UV = "_BlendUV";
-        const string _BlendMode = "_BlendTexBlendMode";
-        readonly static string[] _BlendModeOption = { "Overwrite", "Add", "Multiply", "Subtract", "Overlay" };
+        protected const string _IsActive = "_BLENDTEXTURE";
+        protected const string _Tex = "_BlendTex";
+        protected const string _Color = "_BlendTexColor";
+        protected const string _Intensity = "_BlendIntensity";
+        protected const string _UV = "_BlendUV";
+        protected const string _BlendMode = "_BlendTexBlendMode";
+        protected readonly static string[] _BlendModeOption = { "Overwrite", "Add", "Multiply", "Subtract", "Overlay" };
 
         public override bool IsActive()
         {

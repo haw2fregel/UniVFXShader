@@ -7,14 +7,14 @@ namespace UniVFX.Editor
 {
     public class GradationColor : UniVFXOption
     {
-        const string _IsActive = "_GRADATIONCOLOR";
-        const string _Color00 = "_GradationColor00";
-        const string _Color01 = "_GradationColor01";
-        const string _Color10 = "_GradationColor10";
-        const string _Color11 = "_GradationColor11";
-        const string _UV = "_GradationUV";
-        const string _BlendMode = "_GradationBlendMode";
-        readonly static string[] _BlendModeOption = { "Overwrite", "Add", "Multiply", "Subtract", "Overlay" };
+        protected const string _IsActive = "_GRADATIONCOLOR";
+        protected const string _Color00 = "_GradationColor00";
+        protected const string _Color01 = "_GradationColor01";
+        protected const string _Color10 = "_GradationColor10";
+        protected const string _Color11 = "_GradationColor11";
+        protected const string _UV = "_GradationUV";
+        protected const string _BlendMode = "_GradationBlendMode";
+        protected readonly static string[] _BlendModeOption = { "Overwrite", "Add", "Multiply", "Subtract", "Overlay" };
 
         public override bool IsActive()
         {

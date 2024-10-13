@@ -1,50 +1,11 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
 using UnityEditor;
 
 
 namespace UniVFX.Editor
 {
-    public class UVFripBook : UniVFXOption
+    public class CanvasUVFripBook : UVFripBook
     {
-        protected const string _IsActive = "_FRIPBOOK";
-        protected const string _Row = "_FripBookRow";
-        protected const string _Column = "_FripBookColumn";
-        protected const string _Index = "_FripBookIndex";
-
-
-        public override bool IsActive()
-        {
-            return _mat.GetInt(_IsActive) == 1;
-        }
-
-        public static bool IsActive(Material mat)
-        {
-            return mat.GetInt(_IsActive) == 1;
-        }
-
-        public override void SetActive(bool active)
-        {
-            _mat.SetInt(_IsActive, active ? 1 : 0);
-        }
-
-        public static void SetActive(Material mat, bool active)
-        {
-            mat.SetInt(_IsActive, active ? 1 : 0);
-        }
-
-        public override int HeatValue()
-        {
-            return 0;
-        }
-
-        public override void GetHeatValue(ref int value, ref int max)
-        {
-            max += HeatValue();
-            if(IsActive())
-                value += HeatValue();
-        }
-
         public override void OptionGUI()
         {
             GUI.color = new Color(3f, 3f, 3f, 1.0f);
@@ -69,7 +30,7 @@ namespace UniVFX.Editor
                                     GUI.color = new Color(1f, 1f, 1f, 1f);
                                     var row = UniVFXGUILayout.IntSlider(ref _mat, _Row, "Row", 1, 8);
                                     var column = UniVFXGUILayout.IntSlider(ref _mat, _Column, "Column", 1, 8);
-                                    UniVFXGUILayout.OptionIntSlider(ref _mat, _Index, "Index", 0, row * column - 1);
+                                    UniVFXGUILayout.CanvasOptionIntSlider(ref _mat, _Index, "Index", 0, row * column - 1);
                                 }
                             }
                         }
@@ -78,18 +39,5 @@ namespace UniVFX.Editor
             }
             GUI.color = new Color(1f, 1f, 1f, 1f);
         }
-        
-        public override void CollectCustomData(ref List<List<string>> useCustomDataList)
-        {
-            useCustomDataList[(int)_mat.GetInt(_Index + "_Data")].Add("FripBook Row");
-        }
-
-        public override void CollectCustomColorData(ref List<List<string>> useCustomDataList)
-        {
-
-        }
-
-
     }
-
 }

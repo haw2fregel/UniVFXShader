@@ -7,11 +7,11 @@ namespace UniVFX.Editor
 {
     public class MainTexture : UniVFXOption
     {
-        const string _Tex = "_MainTex";
-        const string _UV = "_MainUV";
-        const string _Color = "_MainColor";
-        const string _ColorMultiple = "_MainColorMultiple";
-        const string _AlphaMultiple = "_MainAlphaMultiple";
+        protected const string _Tex = "_MainTex";
+        protected const string _UV = "_MainUV";
+        protected const string _Color = "_MainColor";
+        protected const string _ColorMultiple = "_MainColorMultiple";
+        protected const string _AlphaMultiple = "_MainAlphaMultiple";
 
         public override bool IsActive()
         {

@@ -7,8 +7,8 @@ namespace UniVFX.Editor
 {
     public class HSVShift : UniVFXOption
     {
-        const string _IsActive = "_HSVSHIFT";
-        const string _Param = "_HSVShiftParametors";
+        protected const string _IsActive = "_HSVSHIFT";
+        protected const string _Param = "_HSVShiftParametors";
 
         public override bool IsActive()
         {
