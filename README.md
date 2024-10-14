@@ -14,7 +14,7 @@ UnityのPackageManagerを開き「Add package from git URL...」で以下のURL�
 
 - .unitypackageでインストールする場合\
 こちらからダウンロードします。\
-https://github.com/haw2fregel/UniVFXShader/releases/download/v1.0.1_release/UniVFX.unitypackage \
+https://github.com/haw2fregel/UniVFXShader/releases/download/v1.0.1_release/UniVFX_v1_0_1.unitypackage \
 ※別途ShaderGraphのインストールが必要です。
 
 ## シェーダー
