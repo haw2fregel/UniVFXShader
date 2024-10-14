@@ -1059,7 +1059,7 @@ Shader "Shader Graphs/UniVFXBRPCanvas"
             #endif
             
             // Graph Includes
-            #include "Packages/UniVFXShader/Runtime/Shader/HLSL/UniVFXCanvas.hlsl"
+            #include "Packages/jp.haw2fregel.uni-vfx-shader/Runtime/Shader/HLSL/UniVFXCanvas.hlsl"
             
             // Graph Functions
             
