@@ -904,7 +904,7 @@ Shader "Shader Graphs/UniVFXCanvas"
             SAMPLER(SamplerState_Linear_Clamp);
             
             // Graph Includes
-            #include "Assets/UniVFX/Runtime/Shader/HLSL/UniVFXCanvas.hlsl"
+            #include "Packages/UniVFXShader/Runtime/Shader/HLSL/UniVFXCanvas.hlsl"
             
             // -- Property used by ScenePickingPass
             #ifdef SCENEPICKINGPASS
