@@ -1,11 +1,11 @@
 {
   "name": "jp.haw2fregel.uni-vfx-shader",
   "displayName": "UniVFXShader",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "unity": "2022.3",
-  "documentationUrl": "https://github.com/haw2fregel/UniVFXShader/blob/v1.0.0/DOCUMENTATION.md",
-  "changelogUrl": "https://github.com/haw2fregel/UniVFXShader/blob/v1.0.0/CHANGELOG.md",
-  "licensesUrl": "https://github.com/haw2fregel/UniVFXShader/blob/v1.0.0/LICENSE",
+  "documentationUrl": "https://github.com/haw2fregel/UniVFXShader/blob/v1.0.1/DOCUMENTATION.md",
+  "changelogUrl": "https://github.com/haw2fregel/UniVFXShader/blob/v1.0.1/CHANGELOG.md",
+  "licensesUrl": "https://github.com/haw2fregel/UniVFXShader/blob/v1.0.1/LICENSE",
   "description": "VFX Uver Shader ",
   "dependencies": {
     "com.unity.shadergraph": "14.0.10"
