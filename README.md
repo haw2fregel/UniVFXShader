@@ -22,10 +22,9 @@ URP用
 - UniVFXTransparent
 - UniVFXOpaque
 - UniVFXCutout
-
 UI
-- UniVFXUIAdd
-- UniVFXUIAlpha
+- UniVFXCanvas
+
 
 VFXGraph
 - UniVFXGraph
@@ -34,6 +33,8 @@ VFXGraph
 - UniVFXBRPOpaque
 - UniVFXBRPCutout
 - UniVFXBRPTransparent
+UI
+- UniVFXBRPCanvas
 
 
 ## [ドキュメント](https://github.com/haw2fregel/UniVFXShader/blob/v1.0.0/DOCUMENTATION.md)
