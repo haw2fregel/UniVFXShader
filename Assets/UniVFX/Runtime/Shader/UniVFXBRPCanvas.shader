@@ -154,7 +154,7 @@ Shader "Shader Graphs/UniVFXBRPCanvas"
     }
     SubShader
     {
-        Tags { // RenderPipeline: <None> "RenderType" = "Transparent" "Queue" = "Transparent"
+        Tags { "RenderType" = "Transparent" "Queue" = "Transparent"
             // DisableBatching: <None>
             "ShaderGraphShader" = "true"
             "ShaderGraphTargetId" = "BuiltInCanvasSubTarget" "IgnoreProjector" = "True" "PreviewType" = "Plane" "CanUseSpriteAtlas" = "True" }
