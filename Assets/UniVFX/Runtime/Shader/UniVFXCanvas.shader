@@ -549,7 +549,6 @@ Shader "Shader Graphs/UniVFXCanvas"
             #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/TextureStack.hlsl"
             #include_with_pragmas "Packages/com.unity.render-pipelines.core/ShaderLibrary/FoveatedRenderingKeywords.hlsl"
             #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/FoveatedRendering.hlsl"
-            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/DebugMipmapStreamingMacros.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/ShaderGraphFunctions.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DBuffer.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/ShaderPass.hlsl"
@@ -875,7 +874,6 @@ Shader "Shader Graphs/UniVFXCanvas"
                 float _UIMaskSoftnessX;
                 float _UIMaskSoftnessY;
                 float _AlphaClip;
-                UNITY_TEXTURE_STREAMING_DEBUG_VARS;
             CBUFFER_END
             
             
