@@ -1,23 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEditor;
-using System.Linq;
 
 
 namespace UniVFX.Editor
 {
     public class UVFripBook : UniVFXOption
     {
-        const string _IsActive = "_FRIPBOOK";
-        const string _Row = "_FripBookRow";
-        const string _Column = "_FripBookColumn";
-        const string _Index = "_FripBookIndex";
-        const string _TargetMainTex = "_MainUVFripbook";
-        const string _TargetBlendTex = "_BlendUVFripbook";
-        const string _TargetDissolveTex = "_DissolveUVFripbook";
-        const string _TargetDistortionTex = "_DistortionUVFripbook";
-        const string _TargetVertexAnim = "_VertexAnimUVFripbook";
-        const string _TargetMask = "_MaskUVFripbook";
+        protected const string _IsActive = "_FRIPBOOK";
+        protected const string _Row = "_FripBookRow";
+        protected const string _Column = "_FripBookColumn";
+        protected const string _Index = "_FripBookIndex";
+
 
         public override bool IsActive()
         {
@@ -84,7 +78,7 @@ namespace UniVFX.Editor
             }
             GUI.color = new Color(1f, 1f, 1f, 1f);
         }
-
+        
         public override void CollectCustomData(ref List<List<string>> useCustomDataList)
         {
             useCustomDataList[(int)_mat.GetInt(_Index + "_Data")].Add("FripBook Row");
@@ -93,6 +87,12 @@ namespace UniVFX.Editor
         public override void CollectCustomColorData(ref List<List<string>> useCustomDataList)
         {
 
+        }
+
+
+        public override void VaridateCustomData()
+        {
+            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _Index);
         }
 
 

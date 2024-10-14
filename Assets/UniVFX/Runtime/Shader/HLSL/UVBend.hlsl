@@ -8,7 +8,7 @@
         {\
             float2 polarDelta = uv - float2(0.5, 0.5);\
             float polarRadius = length(polarDelta) * 2;\
-            float polarAngle = atan2(polarDelta.x, polarDelta.y) / 6.28 + 0.5;\
+            float polarAngle = (atan2(polarDelta.y, polarDelta.x) + 3.14) / 6.28;\
             float2 polarUV = float2(polarRadius, polarAngle);\
             uvBend = polarUV;\
         }\

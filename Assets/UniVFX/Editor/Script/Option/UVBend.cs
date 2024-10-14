@@ -7,9 +7,9 @@ namespace UniVFX.Editor
 {
     public class UVBend : UniVFXOption
     {
-        const string _IsActive = "_UVBEND";
-        const string _Polar = "_UVPolar";
-        const string _Param = "_UVBendParam";
+        protected const string _IsActive = "_UVBEND";
+        protected const string _Polar = "_UVPolar";
+        protected const string _Param = "_UVBendParam";
 
         public override bool IsActive()
         {
@@ -93,6 +93,42 @@ namespace UniVFX.Editor
             GUI.color = new Color(1f, 1f, 1f, 1f);
         }
 
+        public void CanvasOptionGUI()
+        {
+            GUI.color = new Color(3f, 3f, 3f, 1.0f);
+            if (IsActive())
+                GUI.color = new Color(5f, 5f, 5f, 1.0f);
+            using (new EditorGUILayout.VerticalScope("Box"))
+            {
+                using (new EditorGUI.IndentLevelScope())
+                {
+                    GUI.color = new Color(1f, 1f, 1f, 1.0f);
+                    _viewGUI = EditorGUILayout.Foldout(_viewGUI, "UV Bend");
+                    if (_viewGUI)
+                    {
+                        var active = UniVFXGUILayout.OptionKeywordField(ref _mat, _IsActive, "Active");
+                        if (active)
+                        {
+                            GUI.color = new Color(0f, 0f, 0f, 0.6f);
+                            using (new EditorGUILayout.VerticalScope("Box"))
+                            {
+                                using (new EditorGUI.IndentLevelScope())
+                                {
+                                    GUI.color = new Color(1f, 1f, 1f, 1f);
+                                    UniVFXGUILayout.OptionBoolField(ref _mat, _Polar, "Polar");
+                                    UniVFXGUILayout.CanvasOptionSlider(ref _mat, _Param, "Center X", 0, -1, 1);
+                                    UniVFXGUILayout.CanvasOptionSlider(ref _mat, _Param, "Center Y", 1, -1, 1);
+                                    UniVFXGUILayout.CanvasOptionSlider(ref _mat, _Param, "Bend X", 2, -1, 1);
+                                    UniVFXGUILayout.CanvasOptionSlider(ref _mat, _Param, "Bend Y", 3, -1, 1);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            GUI.color = new Color(1f, 1f, 1f, 1f);
+        }
+
         public override void CollectCustomData(ref List<List<string>> useCustomDataList)
         {
             useCustomDataList[(int)_mat.GetVector(_Param + "_Data").x].Add("Bend Center X");
@@ -104,6 +140,11 @@ namespace UniVFX.Editor
         public override void CollectCustomColorData(ref List<List<string>> useCustomDataList)
         {
 
+        }
+
+        public override void VaridateCustomData()
+        {
+            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _Param);
         }
 
 

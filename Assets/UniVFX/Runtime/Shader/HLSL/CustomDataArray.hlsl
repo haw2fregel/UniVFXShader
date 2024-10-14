@@ -40,12 +40,48 @@
         timeMaps.x, timeMaps.y, timeMaps.z, timeMaps.w\
     };
 
+#define CanvasVertexDataArrayInitVert(texcoord2, texcoord3, vertexColor)\
+    float4 times = _Time * _TimeSpeed;\
+    float4 timeMaps = SAMPLE_TEXTURE2D_LOD(_TimeMap, sampler_TimeMap, frac(times.yy), 0);\
+    float vertexData[21] = \
+    {\
+        0.0, \
+        texcoord2.x, texcoord2.y, texcoord3.x, texcoord3.y,\
+        vertexColor.r, vertexColor.g, vertexColor.b, vertexColor.a, \
+        times.x, times.y, times.z, times.w, \
+        -times.x, -times.y, -times.z, -times.w, \
+        timeMaps.x, timeMaps.y, timeMaps.z, timeMaps.w\
+    };
+
+#define CanvasVertexDataArrayInitFrag(texcoord2, texcoord3, vertexColor)\
+    float4 times = _Time * _TimeSpeed;\
+    float4 timeMaps = SAMPLE_TEXTURE2D(_TimeMap, sampler_TimeMap, frac(times.yy));\
+    float vertexData[21] = \
+    {\
+        0.0, \
+        texcoord2.x, texcoord2.y, texcoord3.x, texcoord3.y,\
+        vertexColor.r, vertexColor.g, vertexColor.b, vertexColor.a, \
+        times.x, times.y, times.z, times.w, \
+        -times.x, -times.y, -times.z, -times.w, \
+        timeMaps.x, timeMaps.y, timeMaps.z, timeMaps.w\
+    };
+
 #define VertexColorDataArrayInit(texcoord1, texcoord2, vertexColor)\
     half4 vertexColorData[4] = \
     {\
         half4(0.0,0.0,0.0,0.0),\
         texcoord1,\
         texcoord2,\
+        vertexColor\
+    };
+
+
+#define CanvasVertexColorDataArrayInit(texcoord2, texcoord3, vertexColor)\
+    half4 vertexColorData[4] = \
+    {\
+        half4(0.0,0.0,0.0,0.0),\
+        texcoord2.xyxy,\
+        texcoord3.xyxy,\
         vertexColor\
     };
 
@@ -63,6 +99,17 @@
         GetBendUV\
     };
 
+#define CanvasUVArrayInitFrag(uv, uv2, screenPosition, rotateUV, fripBookUV) \
+    float2 uvData[6] = \
+    {\
+        uv,\
+        uv2,\
+        screenPosition.xy,\
+        rotateUV,\
+        fripBookUV,\
+        GetBendUV\
+    };
+
 #define UVArrayInitVert(uv, position, viewNormal, screenPosition) \
     float2 uvData[9] = \
     {\
@@ -72,6 +119,17 @@
         position.yz,\
         screenPosition.xy,\
         viewNormal.xy + 0.5,\
+        GetRotateUV,\
+        GetFripBookUV,\
+        uv\
+    };
+
+#define CanvasUVArrayInitVert(uv, uv2, screenPosition) \
+    float2 uvData[6] = \
+    {\
+        uv,\
+        uv2,\
+        screenPosition.xy,\
         GetRotateUV,\
         GetFripBookUV,\
         uv\

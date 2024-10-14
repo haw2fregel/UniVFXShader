@@ -8,8 +8,8 @@ namespace UniVFX.Editor
 
     public class UVRotate : UniVFXOption
     {
-        const string _IsActive = "_ROTATEUVENABLE";
-        const string _Rotate = "_UVRotate";
+        protected const string _IsActive = "_ROTATEUVENABLE";
+        protected const string _Rotate = "_UVRotate";
         public override bool IsActive()
         {
             return _mat.GetInt(_IsActive) == 1;
@@ -73,7 +73,6 @@ namespace UniVFX.Editor
             }
             GUI.color = new Color(1f, 1f, 1f, 1f);
         }
-
         public override void CollectCustomData(ref List<List<string>> useCustomDataList)
         {
             useCustomDataList[(int)_mat.GetFloat(_Rotate + "_Data")].Add("Rotate");
@@ -82,6 +81,11 @@ namespace UniVFX.Editor
         public override void CollectCustomColorData(ref List<List<string>> useCustomDataList)
         {
 
+        }
+
+        public override void VaridateCustomData()
+        {
+            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _Rotate);
         }
 
 

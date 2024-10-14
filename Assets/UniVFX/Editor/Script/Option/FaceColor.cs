@@ -87,6 +87,12 @@ namespace UniVFX.Editor
             useCustomDataList[_mat.GetInt(_BackColor + "_Data")].Add("BackFace Color");
         }
 
+        public override void VaridateCustomData()
+        {
+            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _FrontColor);
+            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _BackColor);
+        }
+
     }
 
 }

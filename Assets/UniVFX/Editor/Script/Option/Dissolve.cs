@@ -7,11 +7,11 @@ namespace UniVFX.Editor
 {
     public class Dissolve : UniVFXOption
     {
-        const string _IsActive = "_DISSOLVE";
-        const string _Tex = "_DissolveTex";
-        const string _UV = "_DissolveUV";
-        const string _Color = "_DissolveColor";
-        const string _Param = "_DissolveParam";
+        protected const string _IsActive = "_DISSOLVE";
+        protected const string _Tex = "_DissolveTex";
+        protected const string _UV = "_DissolveUV";
+        protected const string _Color = "_DissolveColor";
+        protected const string _Param = "_DissolveParam";
 
         public override bool IsActive()
         {
@@ -112,6 +112,14 @@ namespace UniVFX.Editor
         public override void CollectCustomColorData(ref List<List<string>> useCustomDataList)
         {
             useCustomDataList[_mat.GetInt(_Color + "_Data")].Add("Dissolve Color");
+        }
+
+        public override void VaridateCustomData()
+        {
+            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _UV + "Transform");
+            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _Param);
+            UniVFXGUILayout.VaridateArrayIndex(ref _mat, _UV + "Transform_Index", UniVFXGUILayout._UVChannelOption);
+            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _Color);
         }
 
 

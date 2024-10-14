@@ -7,14 +7,14 @@ namespace UniVFX.Editor
 {
     public class GradationColor : UniVFXOption
     {
-        const string _IsActive = "_GRADATIONCOLOR";
-        const string _Color00 = "_GradationColor00";
-        const string _Color01 = "_GradationColor01";
-        const string _Color10 = "_GradationColor10";
-        const string _Color11 = "_GradationColor11";
-        const string _UV = "_GradationUV";
-        const string _BlendMode = "_GradationBlendMode";
-        readonly static string[] _BlendModeOption = { "Overwrite", "Add", "Multiply", "Subtract", "Overlay" };
+        protected const string _IsActive = "_GRADATIONCOLOR";
+        protected const string _Color00 = "_GradationColor00";
+        protected const string _Color01 = "_GradationColor01";
+        protected const string _Color10 = "_GradationColor10";
+        protected const string _Color11 = "_GradationColor11";
+        protected const string _UV = "_GradationUV";
+        protected const string _BlendMode = "_GradationBlendMode";
+        protected readonly static string[] _BlendModeOption = { "Overwrite", "Add", "Multiply", "Subtract", "Overlay" };
 
         public override bool IsActive()
         {
@@ -113,6 +113,16 @@ namespace UniVFX.Editor
             useCustomDataList[_mat.GetInt(_Color01 + "_Data")].Add("Gradation Color01");
             useCustomDataList[_mat.GetInt(_Color10 + "_Data")].Add("Gradation Color10");
             useCustomDataList[_mat.GetInt(_Color11 + "_Data")].Add("Gradation Color11");
+        }
+
+        public override void VaridateCustomData()
+        {
+            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _UV + "Transform");
+            UniVFXGUILayout.VaridateArrayIndex(ref _mat, _UV + "Transform_Index", UniVFXGUILayout._UVChannelOption);
+            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _Color00);
+            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _Color01);
+            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _Color10);
+            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _Color11);
         }
 
     }

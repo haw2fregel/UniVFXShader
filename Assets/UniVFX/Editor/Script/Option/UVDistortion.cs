@@ -7,14 +7,14 @@ namespace UniVFX.Editor
 {
     public class UVDistortion : UniVFXOption
     {
-        const string _IsActive = "_DISTORTIONENABLE";
-        const string _Tex = "_DistortionTex";
-        const string _UV = "_DistortionUV";
-        const string _Intensity = "_DistortionIntensity";
-        const string _TargetMainTex = "_MainUVDistortion";
-        const string _TargetBlendTex = "_BlendUVDistortion";
-        const string _TargetDissolveTex = "_DissolveUVDistortion";
-        const string _TargetGradation = "_GradationUVDistortion";
+        protected const string _IsActive = "_DISTORTIONENABLE";
+        protected const string _Tex = "_DistortionTex";
+        protected const string _UV = "_DistortionUV";
+        protected const string _Intensity = "_DistortionIntensity";
+        protected const string _TargetMainTex = "_MainUVDistortion";
+        protected const string _TargetBlendTex = "_BlendUVDistortion";
+        protected const string _TargetDissolveTex = "_DissolveUVDistortion";
+        protected const string _TargetGradation = "_GradationUVDistortion";
 
         public override bool IsActive()
         {
@@ -45,7 +45,7 @@ namespace UniVFX.Editor
         public override void GetHeatValue(ref int value, ref int max)
         {
             max += HeatValue();
-            if(IsActive())
+            if (IsActive())
                 value += HeatValue();
         }
 
@@ -144,6 +144,13 @@ namespace UniVFX.Editor
         public override void CollectCustomColorData(ref List<List<string>> useCustomDataList)
         {
 
+        }
+
+        public override void VaridateCustomData()
+        {
+            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _Intensity);
+            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _UV + "Transform");
+            UniVFXGUILayout.VaridateArrayIndex(ref _mat, _UV + "Transform_Index", UniVFXGUILayout._UVChannelOption);
         }
 
 

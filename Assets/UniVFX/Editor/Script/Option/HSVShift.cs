@@ -7,8 +7,8 @@ namespace UniVFX.Editor
 {
     public class HSVShift : UniVFXOption
     {
-        const string _IsActive = "_HSVSHIFT";
-        const string _Param = "_HSVShiftParametors";
+        protected const string _IsActive = "_HSVSHIFT";
+        protected const string _Param = "_HSVShiftParametors";
 
         public override bool IsActive()
         {
@@ -99,7 +99,11 @@ namespace UniVFX.Editor
 
         public override void CollectCustomColorData(ref List<List<string>> useCustomDataList)
         {
+        }
 
+        public override void VaridateCustomData()
+        {
+            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _Param);
         }
 
     }

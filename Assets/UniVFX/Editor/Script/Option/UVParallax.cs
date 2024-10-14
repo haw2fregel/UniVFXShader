@@ -115,6 +115,11 @@ namespace UniVFX.Editor
 
         }
 
+        public override void VaridateCustomData()
+        {
+            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _Intensity);
+        }
+
 
     }
 }
