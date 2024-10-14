@@ -201,6 +201,7 @@ Shader "Shader Graphs/UniVFXBRPCanvas"
             // Keywords
             #pragma multi_compile_local _ UNITY_UI_ALPHACLIP
             #pragma multi_compile_local _ UNITY_UI_CLIP_RECT
+            #pragma multi_compile_local _ _ALPHATEST_ON
             #pragma shader_feature_local_fragment _ _HSVSHIFT
             #pragma shader_feature_local_fragment _ _FAKELIGHT
             #pragma shader_feature_local _ _SURFACEFADE
@@ -882,6 +883,7 @@ Shader "Shader Graphs/UniVFXBRPCanvas"
                 float4 _ClipRect;
                 float _UIMaskSoftnessX;
                 float _UIMaskSoftnessY;
+                float _AlphaClip;
                 UNITY_TEXTURE_STREAMING_DEBUG_VARS;
             CBUFFER_END
             
@@ -1062,7 +1064,7 @@ Shader "Shader Graphs/UniVFXBRPCanvas"
                 #endif
                 surface.BaseColor = (_UniVFXFragCustomFunction_c3eb5f7c3e7a44cb941d8caa6cd4f0b7_outColor_19_Vector4.xyz);
                 surface.Alpha = _Swizzle_50212fb81b1e4591b475530713ed3743_Out_1_Float;
-                surface.AlphaClipThreshold = float(1);
+                surface.AlphaClipThreshold = _AlphaClip;
                 return surface;
             }
             

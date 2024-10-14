@@ -9,6 +9,8 @@ namespace UniVFX.Editor
     {
         const string _SrcBlend = "_SrcBlend";
         const string _DstBlend = "_DstBlend";
+        const string _AlphaClipActive = "_ALPHATEST_ON";
+        const string _AlphaClip = "_AlphaClip";
 
 
         readonly static string[] _BlendMode = { "Zero", "One", "DstColor", "SrcColor", "OneMinusDstColor", "SrcAlpha", "OneMinusSrcColor", "DstAlpha", "OneMinusDstAlpha", "SrcAlphaSaturate", "OneMinusSrcAlpha" };
@@ -53,6 +55,8 @@ namespace UniVFX.Editor
                                 GUI.color = new Color(1f, 1f, 1f, 1f);
                                 UniVFXGUILayout.OptionPopupField(ref _mat, _SrcBlend, "Src Blend", _BlendMode);
                                 UniVFXGUILayout.OptionPopupField(ref _mat, _DstBlend, "Dst Blend", _BlendMode);
+                                UniVFXGUILayout.OptionKeywordField(ref _mat, _AlphaClipActive, "Alpha Clip");
+                                UniVFXGUILayout.Slider(ref _mat, _AlphaClip, "Alpha Clip", 0.001f, 1);
                             }
                         }
                     }
