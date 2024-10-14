@@ -63,5 +63,9 @@ namespace UniVFX.Editor
         public override void CollectCustomColorData(ref List<List<string>> useCustomDataList)
         {
         }
+
+        public override void VaridateCustomData()
+        {
+        }
     }
 }

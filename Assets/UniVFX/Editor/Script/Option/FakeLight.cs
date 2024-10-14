@@ -128,6 +128,14 @@ namespace UniVFX.Editor
             useCustomDataList[_mat.GetInt(_ShadowColor + "_Data")].Add("FakeShadow Color");
         }
 
+        public override void VaridateCustomData()
+        {
+            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _Intensity);
+            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _Param);
+            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _LightColor);
+            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _ShadowColor);
+        }
+
     }
 
 }

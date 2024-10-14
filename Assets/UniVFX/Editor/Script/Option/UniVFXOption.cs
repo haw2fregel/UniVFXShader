@@ -61,5 +61,7 @@ namespace UniVFX.Editor
         /// <param name="useCustomDataList"></param>
         public abstract void CollectCustomColorData(ref List<List<string>> useCustomDataList);
 
+        public abstract void VaridateCustomData();
+
     }
 }

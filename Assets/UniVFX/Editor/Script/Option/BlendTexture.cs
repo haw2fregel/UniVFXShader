@@ -89,11 +89,20 @@ namespace UniVFX.Editor
             useCustomDataList[(int)_mat.GetVector(_UV + "Transform_Data").y].Add("BlendUV Offset Y");
             useCustomDataList[(int)_mat.GetVector(_UV + "Transform_Data").z].Add("BlendUV Tile X");
             useCustomDataList[(int)_mat.GetVector(_UV + "Transform_Data").w].Add("BlendUV Tile Y");
+            useCustomDataList[_mat.GetInt(_Intensity)].Add("BlendTexture Intensity");
         }
 
         public override void CollectCustomColorData(ref List<List<string>> useCustomDataList)
         {
             useCustomDataList[_mat.GetInt(_Color + "_Data")].Add("BlendTex Color");
+        }
+
+        public override void VaridateCustomData()
+        {
+            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _Intensity);
+            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _UV + "Transform");
+            UniVFXGUILayout.VaridateArrayIndex(ref _mat, _UV + "Transform_Index", UniVFXGUILayout._UVChannelOption);
+            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _Color);
         }
 
     }

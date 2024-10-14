@@ -43,6 +43,16 @@ namespace UniVFX.Editor
             GUI.color = new Color(1f, 1f, 1f, 1f);
         }
 
+        public override void VaridateCustomData()
+        {
+            UniVFXGUILayout.VaridateCanvasCustomDataVector(ref _mat, _UV + "Transform");
+            UniVFXGUILayout.VaridateArrayIndex(ref _mat, _UV + "Transform_Index", UniVFXGUILayout._CanvasUVChannelOption);
+            UniVFXGUILayout.VaridateCanvasCustomColorDataInt(ref _mat, _Color00);
+            UniVFXGUILayout.VaridateCanvasCustomColorDataInt(ref _mat, _Color01);
+            UniVFXGUILayout.VaridateCanvasCustomColorDataInt(ref _mat, _Color10);
+            UniVFXGUILayout.VaridateCanvasCustomColorDataInt(ref _mat, _Color11);
+        }
+
     }
 
 }

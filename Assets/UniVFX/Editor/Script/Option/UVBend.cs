@@ -142,6 +142,11 @@ namespace UniVFX.Editor
 
         }
 
+        public override void VaridateCustomData()
+        {
+            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _Param);
+        }
+
 
     }
 }

@@ -6,11 +6,11 @@ namespace UniVFX.Editor
 {
     public static class UniVFXGUILayout
     {
-        readonly static string[] _CanvasUVChannelOption = { "TEXCOORD", "TEXCOORD1", "ScreenPosition", "RotateUV", "FripBookUV", "BendUV" };
-        readonly static string[] _CanvasUVChannelOptionVert = { "TEXCOORD", "TEXCOORD1", "ScreenPosition", "RotateUV", "FripBookUV" };
-        readonly static string[] _UVChannelOption = { "TEXCOORD", "PositionZFace", "PositionYFace", "PositionXFace", "ScreenPosition", "ViewNormal", "RotateUV", "FripBookUV", "BendUV" };
-        readonly static string[] _UVChannelOptionVert = { "TEXCOORD", "PositionZFace", "PositionYFace", "PositionXFace", "ScreenPosition", "ViewNormal", "RotateUV", "FripBookUV" };
-        readonly static string[] _WrapMode = { "Clamp", "Repeat", "Mirror", "MirrorOnce" };
+        public readonly static string[] _CanvasUVChannelOption = { "TEXCOORD", "TEXCOORD1", "ScreenPosition", "RotateUV", "FripBookUV", "BendUV" };
+        public readonly static string[] _CanvasUVChannelOptionVert = { "TEXCOORD", "TEXCOORD1", "ScreenPosition", "RotateUV", "FripBookUV" };
+        public readonly static string[] _UVChannelOption = { "TEXCOORD", "PositionZFace", "PositionYFace", "PositionXFace", "ScreenPosition", "ViewNormal", "RotateUV", "FripBookUV", "BendUV" };
+        public readonly static string[] _UVChannelOptionVert = { "TEXCOORD", "PositionZFace", "PositionYFace", "PositionXFace", "ScreenPosition", "ViewNormal", "RotateUV", "FripBookUV" };
+        public readonly static string[] _WrapMode = { "Clamp", "Repeat", "Mirror", "MirrorOnce" };
 
         /// MARK: UVGUILayout
         /// <summary>
@@ -1108,17 +1108,195 @@ namespace UniVFX.Editor
         {
             using (new EditorGUILayout.HorizontalScope())
             {
-                var blendMode = mat.GetInt(property);
+                var value = mat.GetInt(property);
 
                 EditorGUI.BeginChangeCheck();
 
-                blendMode = EditorGUILayout.Popup(label, blendMode, option);
+                value = EditorGUILayout.Popup(label, value, option);
 
                 if (EditorGUI.EndChangeCheck())
-                    mat.SetInt(property, blendMode);
+                    mat.SetInt(property, value);
 
-                return blendMode;
+                return value;
             }
+        }
+
+        /// MARK: VaridateVertexDataVector
+        /// <summary>
+        /// プロパティがEnumの範囲内かチェック
+        /// 範囲外の場合は０に変更
+        /// </summary>
+        /// <param name="mat"></param>
+        /// <param name="property"></param>
+        /// <returns></returns>
+        public static Vector4 VaridateCustomDataVector(ref Material mat, string property)
+        {
+            var value = mat.GetVector(property + "_Data");
+            var length = Enum.GetValues(typeof(VertexData)).Length;
+            if (value.x >= length)
+            {
+                value.x = 0;
+                Debug.Log("「" + property + ".x」CustomData Reset");
+            }
+            if (value.y >= length)
+            {
+                value.y = 0;
+                Debug.Log("「" + property + ".y」CustomData Reset");
+            }
+            if (value.z >= length)
+            {
+                value.z = 0;
+                Debug.Log("「" + property + ".z」CustomData Reset");
+            }
+            if (value.w >= length)
+            {
+                value.w = 0;
+                Debug.Log("「" + property + ".w」CustomData Reset");
+            }
+            mat.SetVector(property + "_Data", value);
+            return value;
+        }
+
+        /// MARK: VaridateVertexDataInt
+        /// <summary>
+        /// プロパティがEnumの範囲内かチェック
+        /// 範囲外の場合は０に変更
+        /// </summary>
+        /// <param name="mat"></param>
+        /// <param name="property"></param>
+        /// <returns></returns>
+        public static int VaridateCustomDataInt(ref Material mat, string property)
+        {
+            var value = mat.GetInt(property + "_Data");
+            var length = Enum.GetValues(typeof(VertexData)).Length;
+            if (value >= length)
+            {
+                value = 0;
+                Debug.Log("「" + property + "」CustomData Reset");
+            }
+            mat.SetInt(property + "_Data", value);
+            return value;
+        }
+
+        /// MARK: VaridateVertexColorDataInt
+        /// <summary>
+        /// プロパティがEnumの範囲内かチェック
+        /// 範囲外の場合は０に変更
+        /// </summary>
+        /// <param name="mat"></param>
+        /// <param name="property"></param>
+        /// <returns></returns>
+        public static int VaridateCustomColorDataInt(ref Material mat, string property)
+        {
+            var value = mat.GetInt(property + "_Data");
+            var length = Enum.GetValues(typeof(VertexColorData)).Length;
+            if (value >= length)
+            {
+                value = 0;
+                Debug.Log("「" + property + "」CustomData Reset");
+            }
+            mat.SetInt(property + "_Data", value);
+            return value;
+        }
+
+        /// MARK: VaridateCanvasVertexDataVector
+        /// <summary>
+        /// プロパティがEnumの範囲内かチェック
+        /// 範囲外の場合は０に変更
+        /// </summary>
+        /// <param name="mat"></param>
+        /// <param name="property"></param>
+        /// <returns></returns>
+        public static Vector4 VaridateCanvasCustomDataVector(ref Material mat, string property)
+        {
+            var value = mat.GetVector(property + "_Data");
+            var length = Enum.GetValues(typeof(CanvasVertexData)).Length;
+            if (value.x >= length)
+            {
+                value.x = 0;
+                Debug.Log("「" + property + ".x」CustomData Reset");
+            }
+            if (value.y >= length)
+            {
+                value.y = 0;
+                Debug.Log("「" + property + ".y」CustomData Reset");
+            }
+            if (value.z >= length)
+            {
+                value.z = 0;
+                Debug.Log("「" + property + ".z」CustomData Reset");
+            }
+            if (value.w >= length)
+            {
+                value.w = 0;
+                Debug.Log("「" + property + ".w」CustomData Reset");
+            }
+            mat.SetVector(property + "_Data", value);
+            return value;
+        }
+
+
+        /// MARK: VaridateCanvasVertexDataInt
+        /// <summary>
+        /// プロパティがEnumの範囲内かチェック
+        /// 範囲外の場合は０に変更
+        /// </summary>
+        /// <param name="mat"></param>
+        /// <param name="property"></param>
+        /// <returns></returns>
+        public static int VaridateCanvasCustomDataInt(ref Material mat, string property)
+        {
+            var value = mat.GetInt(property + "_Data");
+            var length = Enum.GetValues(typeof(CanvasVertexData)).Length;
+            if (value >= length)
+            {
+                value = 0;
+                Debug.Log("「" + property + "」CustomData Reset");
+            }
+            mat.SetInt(property + "_Data", value);
+            return value;
+        }
+
+        /// MARK: VaridateCanvasVertexColorDataInt
+        /// <summary>
+        /// プロパティがEnumの範囲内かチェック
+        /// 範囲外の場合は０に変更
+        /// </summary>
+        /// <param name="mat"></param>
+        /// <param name="property"></param>
+        /// <returns></returns>
+        public static int VaridateCanvasCustomColorDataInt(ref Material mat, string property)
+        {
+            var value = mat.GetInt(property + "_Data");
+            var length = Enum.GetValues(typeof(CanvasVertexColorData)).Length;
+            if (value >= length)
+            {
+                value = 0;
+                Debug.Log("「" + property + "」CustomData Reset");
+            }
+            mat.SetInt(property + "_Data", value);
+            return value;
+        }
+
+        /// MARK: VaridateCanvasVertexColorDataInt
+        /// <summary>
+        /// プロパティがoption配列の範囲内かチェック
+        /// 範囲外の場合は０に変更
+        /// </summary>
+        /// <param name="mat"></param>
+        /// <param name="property"></param>
+        /// <returns></returns>
+        public static int VaridateArrayIndex(ref Material mat, string property, string[] option)
+        {
+            var value = mat.GetInt(property);
+            var length = option.Length;
+            if (value >= length)
+            {
+                value = 0;
+                Debug.Log("「" + property + "」ArrayIndex Reset");
+            }
+            mat.SetInt(property, value);
+            return value;
         }
 
     }

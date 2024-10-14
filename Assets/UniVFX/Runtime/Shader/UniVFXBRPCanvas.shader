@@ -1,4 +1,4 @@
-Shader "Shader Graphs/UniVFXCanvas"
+Shader "Shader Graphs/UniVFXBRPCanvas"
 {
     Properties
     {
@@ -154,7 +154,16 @@ Shader "Shader Graphs/UniVFXCanvas"
     }
     SubShader
     {
-        Tags { "RenderPipeline" = "UniversalPipeline" "RenderType" = "Transparent" "Queue" = "Transparent" }
+        Tags
+        {
+            // RenderPipeline: <None>
+            "RenderType"="Transparent"
+            "Queue"="Transparent"
+            // DisableBatching: <None>
+            "IgnoreProjector"="True"
+            "PreviewType"="Plane"
+            "CanUseSpriteAtlas"="True"
+        }
         Pass
         {
             Name "Default"
@@ -1273,6 +1282,6 @@ Shader "Shader Graphs/UniVFXCanvas"
             ENDHLSL
         }
     }
-    CustomEditorForRenderPipeline "UniVFX.Editor.UniVFXCanvasInspector" "UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset"
+    CustomEditor "UniVFX.Editor.UniVFXCanvasInspector"
     FallBack "Hidden/Shader Graph/FallbackError"
 }

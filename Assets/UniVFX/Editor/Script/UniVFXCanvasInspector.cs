@@ -45,15 +45,6 @@ namespace UniVFX.Editor
             material.shader = newShader;
             if(!material.IsKeywordEnabled("_SURFACE_TYPE_TRANSPARENT"))
                 material.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
-            Debug.Log(material.FindPass("DepthOnly"));
-            material.SetShaderPassEnabled("DepthOnly", false);
-            material.SetShaderPassEnabled("MotionVectors", false);
-            material.SetShaderPassEnabled("DepthNormalsOnly", false);
-            material.SetShaderPassEnabled("ShadowCaster", false);
-            material.SetShaderPassEnabled("UniversalGBuffer", false);
-            material.SetShaderPassEnabled("SceneSelectionPass", false);
-            material.SetShaderPassEnabled("Picking", false);
-            
         }
 
         // MARK: OnGUI
@@ -101,11 +92,13 @@ namespace UniVFX.Editor
             // MARK: ViewOptions
             foreach (var option in _options)
             {
+                //Shader変更時の不正データを修正
+                option.VaridateCustomData();
+                //Inspector表示
+                option.OptionGUI();
                 //CustomDataの使用状況を収集
                 option.CollectCustomData(ref useVertexDataList);
                 option.CollectCustomColorData(ref useVertexColorDataList);
-                //Inspector表示
-                option.OptionGUI();
                 EditorGUILayout.Space(0.5f);
             }
 

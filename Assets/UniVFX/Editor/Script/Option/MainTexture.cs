@@ -79,6 +79,13 @@ namespace UniVFX.Editor
             useCustomDataList[_mat.GetInt(_Color + "_Data")].Add("Main Color");
         }
 
+        public override void VaridateCustomData()
+        {
+            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _UV + "Transform");
+            UniVFXGUILayout.VaridateArrayIndex(ref _mat, _UV + "Transform_Index", UniVFXGUILayout._UVChannelOption);
+            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _Color);
+        }
+
     }
 
 }

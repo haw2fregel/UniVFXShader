@@ -42,5 +42,14 @@ namespace UniVFX.Editor
             }
         }
 
+        public override void VaridateCustomData()
+        {
+            UniVFXGUILayout.VaridateCanvasCustomDataInt(ref _mat, _Intensity);
+            UniVFXGUILayout.VaridateCanvasCustomDataVector(ref _mat, _UV + "Transform");
+            UniVFXGUILayout.VaridateArrayIndex(ref _mat, _UV + "Transform_Index", UniVFXGUILayout._CanvasUVChannelOption);
+            UniVFXGUILayout.VaridateCanvasCustomColorDataInt(ref _mat, _Color);
+        }
+
+
     }
 }

@@ -115,6 +115,16 @@ namespace UniVFX.Editor
             useCustomDataList[_mat.GetInt(_Color11 + "_Data")].Add("Gradation Color11");
         }
 
+        public override void VaridateCustomData()
+        {
+            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _UV + "Transform");
+            UniVFXGUILayout.VaridateArrayIndex(ref _mat, _UV + "Transform_Index", UniVFXGUILayout._UVChannelOption);
+            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _Color00);
+            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _Color01);
+            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _Color10);
+            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _Color11);
+        }
+
     }
 
 }

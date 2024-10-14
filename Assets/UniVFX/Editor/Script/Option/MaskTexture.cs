@@ -220,6 +220,13 @@ namespace UniVFX.Editor
 
         }
 
+        public override void VaridateCustomData()
+        {
+            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _UV + "Transform");
+            UniVFXGUILayout.VaridateArrayIndex(ref _mat, _UV + "Transform_Index", UniVFXGUILayout._UVChannelOption);
+            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _Offset);
+        }
+
 
     }
 }

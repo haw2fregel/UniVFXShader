@@ -88,5 +88,12 @@ namespace UniVFX.Editor
             }
             GUI.color = new Color(1f, 1f, 1f, 1f);
         }
+
+        public override void VaridateCustomData()
+        {
+            UniVFXGUILayout.VaridateCanvasCustomDataInt(ref _mat, _Intensity);
+            UniVFXGUILayout.VaridateCanvasCustomDataVector(ref _mat, _UV + "Transform");
+            UniVFXGUILayout.VaridateArrayIndex(ref _mat, _UV + "Transform_Index", UniVFXGUILayout._CanvasUVChannelOption);
+        }
     }
 }
