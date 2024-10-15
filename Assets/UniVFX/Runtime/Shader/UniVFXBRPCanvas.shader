@@ -1014,6 +1014,7 @@ Shader "Shader Graphs/UniVFXBRPCanvas"
                 float _FACECOLOR;
                 float4 _BackFaceColor;
                 float _BackFaceColor_Data;
+                float4 _ClipRect;
                 float _UIMaskSoftnessX;
                 float _UIMaskSoftnessY;
                 float _AlphaClip;
