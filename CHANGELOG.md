@@ -1,6 +1,7 @@
 # ChangeLog
-## v1.0.0
-#### Releace
+
+## v1.0.2
+- 負荷軽減
 
 ## v1.0.1
 #### Bug Fix
@@ -11,3 +12,7 @@ CanvasShaderの修正
 
 UVBendの修正
 - PolarOnの時に一部テクスチャが途切れる不具合の修正
+
+
+## v1.0.0
+#### Releace
