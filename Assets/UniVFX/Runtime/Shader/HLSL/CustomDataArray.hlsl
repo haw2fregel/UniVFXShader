@@ -1,4 +1,5 @@
 
+float vertexData[25];
 
 #define GetVertexDataArray1(prop) prop##_Data.x > 0 ? vertexData[prop##_Data.x] : prop.x
 
@@ -15,56 +16,110 @@
 #define VertexDataArrayInitVert(texcoord1, texcoord2, vertexColor)\
     float4 times = _Time * _TimeSpeed;\
     float4 timeMaps = SAMPLE_TEXTURE2D_LOD(_TimeMap, sampler_TimeMap, frac(times.yy), 0);\
-    float vertexData[25] = \
-    {\
-        0.0, \
-        texcoord1.x, texcoord1.y, texcoord1.z, texcoord1.w, \
-        texcoord2.x, texcoord2.y, texcoord2.z, texcoord2.w, \
-        vertexColor.r, vertexColor.g, vertexColor.b, vertexColor.a, \
-        times.x, times.y, times.z, times.w, \
-        -times.x, -times.y, -times.z, -times.w, \
-        timeMaps.x, timeMaps.y, timeMaps.z, timeMaps.w\
-    };
+    vertexData[0] = 0.0;\
+    vertexData[1] = texcoord1.x;\
+    vertexData[2] = texcoord1.y;\
+    vertexData[3] = texcoord1.z;\
+    vertexData[4] = texcoord1.w;\
+    vertexData[5] = texcoord2.x;\
+    vertexData[6] = texcoord2.y;\
+    vertexData[7] = texcoord2.z;\
+    vertexData[8] = texcoord2.w;\
+    vertexData[9] = vertexColor.x;\
+    vertexData[10] = vertexColor.y;\
+    vertexData[11] = vertexColor.z;\
+    vertexData[12] = vertexColor.w;\
+    vertexData[13] = times.x;\
+    vertexData[14] = times.y;\
+    vertexData[15] = times.z;\
+    vertexData[16] = times.w;\
+    vertexData[17] = -times.x;\
+    vertexData[18] = -times.y;\
+    vertexData[19] = -times.z;\
+    vertexData[20] = -times.w;\
+    vertexData[21] = timeMaps.x;\
+    vertexData[22] = timeMaps.y;\
+    vertexData[23] = timeMaps.z;\
+    vertexData[24] = timeMaps.w;
 
 #define VertexDataArrayInitFrag(texcoord1, texcoord2, vertexColor)\
     float4 times = _Time * _TimeSpeed;\
     float4 timeMaps = SAMPLE_TEXTURE2D(_TimeMap, sampler_TimeMap, frac(times.yy));\
-    float vertexData[25] = \
-    {\
-        0.0, \
-        texcoord1.x, texcoord1.y, texcoord1.z, texcoord1.w, \
-        texcoord2.x, texcoord2.y, texcoord2.z, texcoord2.w, \
-        vertexColor.r, vertexColor.g, vertexColor.b, vertexColor.a, \
-        times.x, times.y, times.z, times.w, \
-        -times.x, -times.y, -times.z, -times.w, \
-        timeMaps.x, timeMaps.y, timeMaps.z, timeMaps.w\
-    };
+    vertexData[0] = 0.0;\
+    vertexData[1] = texcoord1.x;\
+    vertexData[2] = texcoord1.y;\
+    vertexData[3] = texcoord1.z;\
+    vertexData[4] = texcoord1.w;\
+    vertexData[5] = texcoord2.x;\
+    vertexData[6] = texcoord2.y;\
+    vertexData[7] = texcoord2.z;\
+    vertexData[8] = texcoord2.w;\
+    vertexData[9] = vertexColor.x;\
+    vertexData[10] = vertexColor.y;\
+    vertexData[11] = vertexColor.z;\
+    vertexData[12] = vertexColor.w;\
+    vertexData[13] = times.x;\
+    vertexData[14] = times.y;\
+    vertexData[15] = times.z;\
+    vertexData[16] = times.w;\
+    vertexData[17] = -times.x;\
+    vertexData[18] = -times.y;\
+    vertexData[19] = -times.z;\
+    vertexData[20] = -times.w;\
+    vertexData[21] = timeMaps.x;\
+    vertexData[22] = timeMaps.y;\
+    vertexData[23] = timeMaps.z;\
+    vertexData[24] = timeMaps.w;
 
 #define CanvasVertexDataArrayInitVert(texcoord2, texcoord3, vertexColor)\
     float4 times = _Time * _TimeSpeed;\
     float4 timeMaps = SAMPLE_TEXTURE2D_LOD(_TimeMap, sampler_TimeMap, frac(times.yy), 0);\
-    float vertexData[21] = \
-    {\
-        0.0, \
-        texcoord2.x, texcoord2.y, texcoord3.x, texcoord3.y,\
-        vertexColor.r, vertexColor.g, vertexColor.b, vertexColor.a, \
-        times.x, times.y, times.z, times.w, \
-        -times.x, -times.y, -times.z, -times.w, \
-        timeMaps.x, timeMaps.y, timeMaps.z, timeMaps.w\
-    };
+    vertexData[0] = 0.0;\
+    vertexData[1] = texcoord2.x;\
+    vertexData[2] = texcoord2.y;\
+    vertexData[3] = texcoord2.z;\
+    vertexData[4] = texcoord2.w;\
+    vertexData[5] = vertexColor.x;\
+    vertexData[6] = vertexColor.y;\
+    vertexData[7] = vertexColor.z;\
+    vertexData[8] = vertexColor.w;\
+    vertexData[9] = times.x;\
+    vertexData[10] = times.y;\
+    vertexData[11] = times.z;\
+    vertexData[12] = times.w;\
+    vertexData[13] = -times.x;\
+    vertexData[14] = -times.y;\
+    vertexData[15] = -times.z;\
+    vertexData[16] = -times.w;\
+    vertexData[17] = timeMaps.x;\
+    vertexData[18] = timeMaps.y;\
+    vertexData[19] = timeMaps.z;\
+    vertexData[20] = timeMaps.w;
 
 #define CanvasVertexDataArrayInitFrag(texcoord2, texcoord3, vertexColor)\
     float4 times = _Time * _TimeSpeed;\
     float4 timeMaps = SAMPLE_TEXTURE2D(_TimeMap, sampler_TimeMap, frac(times.yy));\
-    float vertexData[21] = \
-    {\
-        0.0, \
-        texcoord2.x, texcoord2.y, texcoord3.x, texcoord3.y,\
-        vertexColor.r, vertexColor.g, vertexColor.b, vertexColor.a, \
-        times.x, times.y, times.z, times.w, \
-        -times.x, -times.y, -times.z, -times.w, \
-        timeMaps.x, timeMaps.y, timeMaps.z, timeMaps.w\
-    };
+    vertexData[0] = 0.0;\
+    vertexData[1] = texcoord2.x;\
+    vertexData[2] = texcoord2.y;\
+    vertexData[3] = texcoord2.z;\
+    vertexData[4] = texcoord2.w;\
+    vertexData[5] = vertexColor.x;\
+    vertexData[6] = vertexColor.y;\
+    vertexData[7] = vertexColor.z;\
+    vertexData[8] = vertexColor.w;\
+    vertexData[9] = times.x;\
+    vertexData[10] = times.y;\
+    vertexData[11] = times.z;\
+    vertexData[12] = times.w;\
+    vertexData[13] = -times.x;\
+    vertexData[14] = -times.y;\
+    vertexData[15] = -times.z;\
+    vertexData[16] = -times.w;\
+    vertexData[17] = timeMaps.x;\
+    vertexData[18] = timeMaps.y;\
+    vertexData[19] = timeMaps.z;\
+    vertexData[20] = timeMaps.w;
 
 #define VertexColorDataArrayInit(texcoord1, texcoord2, vertexColor)\
     half4 vertexColorData[4] = \
