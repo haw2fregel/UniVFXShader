@@ -1,5 +1,6 @@
 
 float vertexData[25];
+half4 vertexColorDataArray[3];
 
 #define GetVertexDataArray1(prop) prop##_Data.x > 0 ? vertexData[prop##_Data.x] : prop.x
 
@@ -9,7 +10,7 @@ float vertexData[25];
 
 #define GetVertexDataArray4(prop) prop##_Data.xyzw > 0 ? float4(vertexData[prop##_Data.x], vertexData[prop##_Data.y], vertexData[prop##_Data.z], vertexData[prop##_Data.w]) : prop.xyzw
 
-#define GetVertexColorDataArray(prop) prop##_Data.x > 0 ? vertexColorData[prop##_Data.x] : prop.xyzw
+#define GetVertexColorDataArray(prop) prop##_Data.x > 0 ? prop##_Data.x > 3 ? vertexColorData : vertexColorDataArray[prop##_Data.x] : prop.xyzw
 
 #define GetUVDataArraty(index) uvData[index]
 
@@ -122,23 +123,17 @@ float vertexData[25];
     vertexData[20] = timeMaps.w;
 
 #define VertexColorDataArrayInit(texcoord1, texcoord2, vertexColor)\
-    half4 vertexColorData[4] = \
-    {\
-        half4(0.0,0.0,0.0,0.0),\
-        texcoord1,\
-        texcoord2,\
-        vertexColor\
-    };
+    vertexColorDataArray[0] = half4(0.0,0.0,0.0,0.0);\
+    vertexColorDataArray[1] = texcoord1;\
+    vertexColorDataArray[2] = texcoord2;\
+    half4 vertexColorData = vertexColor;\
 
 
 #define CanvasVertexColorDataArrayInit(texcoord2, texcoord3, vertexColor)\
-    half4 vertexColorData[4] = \
-    {\
-        half4(0.0,0.0,0.0,0.0),\
-        texcoord2.xyxy,\
-        texcoord3.xyxy,\
-        vertexColor\
-    };
+    vertexColorDataArray[0] = half4(0.0,0.0,0.0,0.0);\
+    vertexColorDataArray[1] = texcoord2.xyxy;\
+    vertexColorDataArray[2] = texcoord3.xyxy;\
+    half4 vertexColorData = vertexColor;\
 
 #define UVArrayInitFrag(uv, position, viewNormal, screenPosition, rotateUV, fripBookUV) \
     float2 uvData[9] = \
