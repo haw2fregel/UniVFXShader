@@ -10,7 +10,7 @@ half4 vertexColorDataArray[3];
 
 #define GetVertexDataArray4(prop) prop##_Data.xyzw > 0 ? float4(vertexData[prop##_Data.x], vertexData[prop##_Data.y], vertexData[prop##_Data.z], vertexData[prop##_Data.w]) : prop.xyzw
 
-#define GetVertexColorDataArray(prop) prop##_Data.x > 0 ? prop##_Data.x > 3 ? vertexColorData : vertexColorDataArray[prop##_Data.x] : prop.xyzw
+#define GetVertexColorDataArray(prop) prop##_Data.x > 0 ? prop##_Data.x > 2 ? vertexColorData : vertexColorDataArray[prop##_Data.x] : prop.xyzw
 
 #define GetUVDataArraty(index) uvData[index]
 
