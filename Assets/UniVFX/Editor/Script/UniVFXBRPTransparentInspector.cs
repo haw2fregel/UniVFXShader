@@ -56,6 +56,9 @@ namespace UniVFX.Editor
             Material material = materialEditor.target as Material;
             Undo.RecordObject(material, "UniVFX Change");
 
+            if(material.GetFloat("_ZWrite") == 1)
+                material.SetFloat("_ZWrite", 0);
+
             // MARK: Setup
             if (_options == null)
             {
