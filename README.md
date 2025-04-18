@@ -14,7 +14,8 @@ UnityのPackageManagerを開き「Add package from git URL...」で以下のURL�
 
 - .unitypackageでインストールする場合\
 こちらからダウンロードします。\
-https://github.com/haw2fregel/UniVFXShader/releases/download/v1.0.1_release/UniVFX_v1_0_1.unitypackage \
+https://github.com/haw2fregel/UniVFXShader/releases/download/v1.0.2_release/UniVFXShader_v1.0.2_URP.unitypackage \
+https://github.com/haw2fregel/UniVFXShader/releases/download/v1.0.2_release/UniVFXShader_v1.0.2_BRP.unitypackage \
 ※別途ShaderGraphのインストールが必要です。
 
 ## シェーダー
@@ -45,10 +46,10 @@ UI
 ## サンプルデータ
 
 URP用サンプル\
-https://github.com/haw2fregel/UniVFXShader/releases/download/v1.0.1_release/URPSample.unitypackage
+https://github.com/haw2fregel/UniVFXShader/releases/download/v1.0.2_release/URPSample.unitypackage
 
 Builtin用サンプル\
-https://github.com/haw2fregel/UniVFXShader/releases/download/v1.0.1_release/BuildInSample.unitypackage
+https://github.com/haw2fregel/UniVFXShader/releases/download/v1.0.2_release/BuildinSample.unitypackage
 
 PackageManagerのSamplesからもダウンロード可能です。
 
