@@ -2,6 +2,7 @@
 
 ## v1.0.2
 - 負荷軽減
+- TransparentShaderのDepthWriteを強制的にOffにする
 
 ## v1.0.1
 #### Bug Fix
