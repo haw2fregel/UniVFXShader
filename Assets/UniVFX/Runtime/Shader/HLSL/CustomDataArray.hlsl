@@ -13,7 +13,38 @@ half4 vertexColorDataArray[3];
 
 #define GetVertexColorDataArray(prop) prop##_Data.x ? prop##_Data.x > 2 ? vertexColorData : vertexColorDataArray[prop##_Data.x] : prop.xyzw
 
-#define GetUVDataArraty(index) uvData[index]
+#define GetUVDataArraty(uv, index)\
+    switch(index)\
+    {\
+        case 0: \
+            uv = uvData0;\
+            break;\
+        case 1: \
+            uv = uvData1;\
+            break;\
+        case 2: \
+            uv = uvData2;\
+            break;\
+        case 3: \
+            uv = uvData3;\
+            break;\
+        case 4: \
+            uv = uvData4;\
+            break;\
+        case 5: \
+            uv = uvData5;\
+            break;\
+        case 6: \
+            uv = uvData6;\
+            break;\
+        case 7: \
+            uv = uvData7;\
+            break;\
+        case 8: \
+            uv = uvData8;\
+            break;\
+    }
+
 
 #define VertexDataArrayInitVert(texcoord1, texcoord2, vertexColor)\
     float4 times = _Time * _TimeSpeed;\
@@ -85,8 +116,8 @@ half4 vertexColorDataArray[3];
     vertexData[0] = 0.0;\
     vertexData[1] = texcoord2.x;\
     vertexData[2] = texcoord2.y;\
-    vertexData[3] = texcoord2.z;\
-    vertexData[4] = texcoord2.w;\
+    vertexData[3] = texcoord3.x;\
+    vertexData[4] = texcoord3.y;\
     vertexData[5] = vertexColor.x;\
     vertexData[6] = vertexColor.y;\
     vertexData[7] = vertexColor.z;\
@@ -112,8 +143,8 @@ half4 vertexColorDataArray[3];
     vertexData[0] = 0.0;\
     vertexData[1] = texcoord2.x;\
     vertexData[2] = texcoord2.y;\
-    vertexData[3] = texcoord2.z;\
-    vertexData[4] = texcoord2.w;\
+    vertexData[3] = texcoord3.x;\
+    vertexData[4] = texcoord3.y;\
     vertexData[5] = vertexColor.x;\
     vertexData[6] = vertexColor.y;\
     vertexData[7] = vertexColor.z;\
@@ -144,52 +175,46 @@ half4 vertexColorDataArray[3];
     vertexColorDataArray[2] = texcoord3.xyxy;\
 
 #define UVArrayInitFrag(uv, position, viewNormal, screenPosition, rotateUV, fripBookUV) \
-    float2 uvData[9] = \
-    {\
-        uv,\
-        position.xy,\
-        position.xz,\
-        position.yz,\
-        screenPosition.xy,\
-        viewNormal.xy + 0.5,\
-        rotateUV,\
-        fripBookUV,\
-        GetBendUV\
-    };
+    float2 uvData0 = uv;\
+    float2 uvData1 = position.xy;\
+    float2 uvData2 = position.xz;\
+    float2 uvData3 = position.yz;\
+    float2 uvData4 = screenPosition.xy;\
+    float2 uvData5 = viewNormal.xy + 0.5;\
+    float2 uvData6 = rotateUV;\
+    float2 uvData7 = fripBookUV;\
+    float2 uvData8 = GetBendUV;
 
 #define CanvasUVArrayInitFrag(uv, uv2, screenPosition, rotateUV, fripBookUV) \
-    float2 uvData[6] = \
-    {\
-        uv,\
-        uv2,\
-        screenPosition.xy,\
-        rotateUV,\
-        fripBookUV,\
-        GetBendUV\
-    };
+    float2 uvData0 = uv;\
+    float2 uvData1 = uv2;\
+    float2 uvData2 = screenPosition.xy;\
+    float2 uvData3 = rotateUV;\
+    float2 uvData4 = fripBookUV;\
+    float2 uvData5 = GetBendUV;\
+    float2 uvData6 = uv;\
+    float2 uvData7 = uv;\
+    float2 uvData8 = uv;
 
 #define UVArrayInitVert(uv, position, viewNormal, screenPosition) \
-    float2 uvData[9] = \
-    {\
-        uv,\
-        position.xy,\
-        position.xz,\
-        position.yz,\
-        screenPosition.xy,\
-        viewNormal.xy + 0.5,\
-        GetRotateUV,\
-        GetFripBookUV,\
-        uv\
-    };
+    float2 uvData0 = uv;\
+    float2 uvData1 = position.xy;\
+    float2 uvData2 = position.xz;\
+    float2 uvData3 = position.yz;\
+    float2 uvData4 = screenPosition.xy;\
+    float2 uvData5 = viewNormal.xy + 0.5;\
+    float2 uvData6 = GetRotateUV;\
+    float2 uvData7 = GetFripBookUV;\
+    float2 uvData8 = uv;
 
 #define CanvasUVArrayInitVert(uv, uv2, screenPosition) \
-    float2 uvData[6] = \
-    {\
-        uv,\
-        uv2,\
-        screenPosition.xy,\
-        GetRotateUV,\
-        GetFripBookUV,\
-        uv\
-    };
+    float2 uvData0 = uv;\
+    float2 uvData1 = uv2;\
+    float2 uvData2 = screenPosition.xy;\
+    float2 uvData3 = GetRotateUV;\
+    float2 uvData4 = GetFripBookUV;\
+    float2 uvData5 = uv;\
+    float2 uvData6 = uv;\
+    float2 uvData7 = uv;\
+    float2 uvData8 = uv;
 

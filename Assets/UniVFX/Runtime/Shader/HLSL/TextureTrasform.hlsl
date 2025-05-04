@@ -1,7 +1,8 @@
 
 #define UVTransform(uv, prop, name) \
     float4 name##Transform = GetVertexDataArray4(prop##Transform); \
-    uv = (GetUVDataArraty(prop##Transform_Index) - float2(0.5, 0.5)) * name##Transform.xy + float2(0.5, 0.5) + name##Transform.zw;
+    GetUVDataArraty(uv, prop##Transform_Index);\
+    uv = (uv - float2(0.5, 0.5)) * name##Transform.xy + float2(0.5, 0.5) + name##Transform.zw;
 
 #define TextureSampler(result, prop, uv)\
     if (prop##UVTransform_Sampler == 0)\
