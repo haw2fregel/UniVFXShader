@@ -1,5 +1,8 @@
 # ChangeLog
 
+## v1.0.3
+- TransparentShaderでBlendAlphaを変更できるようにする
+
 ## v1.0.2
 - 負荷軽減
 - TransparentShaderのDepthWriteを強制的にOffにする
