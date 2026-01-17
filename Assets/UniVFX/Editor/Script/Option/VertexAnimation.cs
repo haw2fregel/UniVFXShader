@@ -83,6 +83,8 @@ namespace UniVFX.Editor
 
         public override void CollectCustomData(ref List<List<string>> useCustomDataList)
         {
+            if (!IsActive())
+                return;
             useCustomDataList[(int)_mat.GetVector(_UV + "Transform_Data").x].Add("VertexAnim Tile X");
             useCustomDataList[(int)_mat.GetVector(_UV + "Transform_Data").y].Add("VertexAnim Tile Y");
             useCustomDataList[(int)_mat.GetVector(_UV + "Transform_Data").z].Add("VertexAnim Offset X");
@@ -99,12 +101,108 @@ namespace UniVFX.Editor
 
         }
 
+        public override void CollectUVChannel(ref List<List<string>> useUVChannelList)
+        {
+            if (!IsActive())
+                return;
+            useUVChannelList[_mat.GetInt(_UV + "Transform_Index")].Add(_Tex);
+        }
+
 
         public override void VaridateCustomData()
         {
             UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _UV + "Transform");
             UniVFXGUILayout.VaridateArrayIndex(ref _mat, _UV + "Transform_Index", UniVFXGUILayout._UVChannelOptionVert);
             UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _Param);
+        }
+
+        public override List<string> GetPropertyCode()
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+            
+            code.Add("[NoScaleOffset]" + _Tex + "(\"" + _Tex.Replace("_", "") + "\", 2D) = \"white\" {}");
+            code.Add(_UV + "Transform(\"" + _UV.Replace("_", "") + "Transform\", Vector) = (0,0,1,1)");
+            code.Add(_Param + "(\"" + _Param.Replace("_", "") + "\", Vector) = (0,0,1,1)");
+            return code;
+        }
+        public override List<string> GetCBufferCode()
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            code.Add("float4 " + _UV + "Transform;");
+            code.Add("half4 " + _Param + ";");
+            return code;
+        }
+        public override List<string> GetTextureCode()
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+            
+            code.Add("TEXTURE2D(" + _Tex + ");");
+            return code;
+        }
+        public override List<string> GetUseV2fCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetVertexHeadCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetVertexCode()
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+            
+            var sampler = UniVFXGUILayout.GetSamplerName(_mat.GetInt(_UV + "Transform_Sampler"));
+
+            var uvName = UniVFXGUILayout.GetVertUVName(_mat.GetInt(_UV + "Transform_Index"), _mat);
+            var transform = "st_" + _Tex.Replace("_", "");
+            var transformX = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").x, _UV + "Transform.x");
+            var transformY = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").y, _UV + "Transform.y");
+            var transformZ = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").z, _UV + "Transform.z");
+            var transformW = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").w, _UV + "Transform.w");
+
+            var param = "param_" + _Tex.Replace("_", "");
+            var paramX = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").x, _Param + ".x");
+            var paramY = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").y, _Param + ".y");
+            var paramZ = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").z, _Param + ".z");
+            var paramW = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").w, _Param + ".w");
+
+            var uv = "uv_" + _Tex.Replace("_", "");
+            var tex = "tex_" + _Tex.Replace("_", "");
+
+            code.Add("//VertexAnimation");
+            code.Add("float4 " + param + " = float4(" + paramX + ", " + paramY + ", " + paramZ + ", " + paramW + ");");
+            code.Add("float4 " + transform + " = float4(" + transformX + ", " + transformY + ", " + transformZ + ", " + transformW + ");");
+            code.Add("float2 " + uv + " = (" + uvName + " - float2(0.5, 0.5)) * " + transform + ".xy + float2(0.5, 0.5) + " + transform + ".zw;");
+            code.Add("half4 " + tex + " = SAMPLE_TEXTURE2D_LOD(" + _Tex + ", " + sampler + ", " + uv + ", 0);");
+            code.Add("float3 biNormal = cross(normalize(v.normal), normalize(v.tangent.xyz));");
+            code.Add("float3 normalTangent = " + tex + ".xyz * 2.0 - 1.0;");
+            code.Add("normalTangent *= " + param + ".xyz * " + param + ".w;");
+            code.Add("v.vertex.xyz += v.tangent * normalTangent.x + biNormal * normalTangent.y + v.normal * normalTangent.z;");
+            code.Add("");
+
+            return code;
+        }
+        
+        public override List<string> GetFragmentHeadCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetFragmentCode()
+        {
+            var code = new List<string>();
+            return code;
         }
 
 

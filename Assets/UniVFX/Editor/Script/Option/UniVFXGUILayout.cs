@@ -10,7 +10,61 @@ namespace UniVFX.Editor
         public readonly static string[] _CanvasUVChannelOptionVert = { "TEXCOORD", "TEXCOORD1", "ScreenPosition", "RotateUV", "FripBookUV" };
         public readonly static string[] _UVChannelOption = { "TEXCOORD", "PositionZFace", "PositionYFace", "PositionXFace", "ScreenPosition", "ViewNormal", "RotateUV", "FripBookUV", "BendUV" };
         public readonly static string[] _UVChannelOptionVert = { "TEXCOORD", "PositionZFace", "PositionYFace", "PositionXFace", "ScreenPosition", "ViewNormal", "RotateUV", "FripBookUV" };
+        public static string GetVertUVName(int index, Material mat)
+        {
+            switch (index)
+            {
+                case 0:
+                    return "texCoord0.xy";
+                case 1:
+                    return "worldPos.xy";
+                case 2:
+                    return "worldPos.zx";
+                case 3:
+                    return "worldPos.yz";
+                case 4:
+                    return "screenPos.xy";
+                case 5:
+                    return "viewNormal.xy";
+                case 6:
+                    if (mat.GetInt("_ROTATEUVENABLE") == 1)
+                    {
+                        return "rotateUV.xy";
+                    }
+                    else
+                    {
+                        return "texCoord0.xy";
+                    }
+                case 7:
+                    if (mat.GetInt("_FRIPBOOK") == 1)
+                    {
+                        return "fripBookUV.xy";
+                    }
+                    else
+                    {
+                        return "texCoord0.xy";
+                    }
+                default:
+                    return "uv";
+                }
+        }
         public readonly static string[] _WrapMode = { "Clamp", "Repeat", "Mirror", "MirrorOnce" };
+        public static string GetSamplerName(int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    return "SamplerState_Linear_Clamp";
+                case 1:
+                    return "SamplerState_Linear_Repeat";
+                case 2:
+                    return "SamplerState_Linear_Mirror";
+                case 3:
+                    return "SamplerState_Linear_MirrorOnce";
+                default:
+                    return "SamplerState_Linear_Clamp";
+            }
+        }
 
         /// MARK: UVGUILayout
         /// <summary>

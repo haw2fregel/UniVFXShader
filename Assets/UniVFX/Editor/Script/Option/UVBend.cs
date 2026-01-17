@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEditor;
 
@@ -131,6 +131,8 @@ namespace UniVFX.Editor
 
         public override void CollectCustomData(ref List<List<string>> useCustomDataList)
         {
+            if (!IsActive())
+                return;
             useCustomDataList[(int)_mat.GetVector(_Param + "_Data").x].Add("Bend Center X");
             useCustomDataList[(int)_mat.GetVector(_Param + "_Data").y].Add("Bend Center Y");
             useCustomDataList[(int)_mat.GetVector(_Param + "_Data").z].Add("Bend X");
@@ -142,9 +144,54 @@ namespace UniVFX.Editor
 
         }
 
+        public override void CollectUVChannel(ref List<List<string>> useUVChannelList)
+        {
+        }
+
         public override void VaridateCustomData()
         {
             UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _Param);
+        }
+
+        public override List<string> GetPropertyCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetCBufferCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetTextureCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetUseV2fCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetVertexHeadCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetVertexCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetFragmentHeadCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetFragmentCode()
+        {
+            var code = new List<string>();
+            return code;
         }
 
 

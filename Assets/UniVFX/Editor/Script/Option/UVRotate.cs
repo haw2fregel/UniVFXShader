@@ -75,6 +75,8 @@ namespace UniVFX.Editor
         }
         public override void CollectCustomData(ref List<List<string>> useCustomDataList)
         {
+            if (!IsActive())
+                return;
             useCustomDataList[(int)_mat.GetFloat(_Rotate + "_Data")].Add("Rotate");
         }
 
@@ -83,9 +85,79 @@ namespace UniVFX.Editor
 
         }
 
+        public override void CollectUVChannel(ref List<List<string>> useUVChannelList)
+        {
+        }
+
         public override void VaridateCustomData()
         {
+            if (!IsActive())
+                return;
             UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _Rotate);
+        }
+
+        public override List<string> GetPropertyCode()
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+             
+            if (_mat.GetInt(_Rotate + "_Data") == 0)
+                code.Add(_Rotate + "(\"" + _Rotate.Replace("_", "") + "\", float) = 0");
+            return code;
+        }
+        public override List<string> GetCBufferCode()
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            if(_mat.GetInt(_Rotate + "_Data") == 0)
+                code.Add("half " + _Rotate + ";");
+            return code;
+        }
+        public override List<string> GetTextureCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetUseV2fCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetVertexHeadCode()
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            var rotate = VertexDataConvert.VertexDataToCode(_mat.GetInt(_Rotate + "_Data"), _Rotate);
+            var uv = "rotateUV";
+
+            code.Add("//RotateUV");
+            code.Add("float2 " + uv + " = 0;");
+            code.Add("float rotateAngle = " + rotate + " * 3.14 / 180 ;");
+            code.Add("float rotateCos = cos(rotateAngle);");
+            code.Add("float rotateSin = sin(rotateAngle);");
+            code.Add(uv + " = (mul(texCoord0.xy - float2(0.5, 0.5), float2x2(rotateCos, -rotateSin, rotateSin, rotateCos)) + float2(0.5, 0.5));");
+            code.Add("");
+            return code;
+        }
+        public override List<string> GetVertexCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetFragmentHeadCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetFragmentCode()
+        {
+            var code = new List<string>();
+            return code;
         }
 
 

@@ -101,6 +101,8 @@ namespace UniVFX.Editor
 
         public override void CollectCustomData(ref List<List<string>> useCustomDataList)
         {
+            if (!IsActive())
+                return;
             useCustomDataList[(int)_mat.GetVector(_UV + "Transform_Data").x].Add("GradationUV Offset X");
             useCustomDataList[(int)_mat.GetVector(_UV + "Transform_Data").y].Add("GradationUV Offset Y");
             useCustomDataList[(int)_mat.GetVector(_UV + "Transform_Data").z].Add("GradationUV Tile X");
@@ -109,10 +111,19 @@ namespace UniVFX.Editor
 
         public override void CollectCustomColorData(ref List<List<string>> useCustomDataList)
         {
+            if (!IsActive())
+                return;
             useCustomDataList[_mat.GetInt(_Color00 + "_Data")].Add("Gradation Color00");
             useCustomDataList[_mat.GetInt(_Color01 + "_Data")].Add("Gradation Color01");
             useCustomDataList[_mat.GetInt(_Color10 + "_Data")].Add("Gradation Color10");
             useCustomDataList[_mat.GetInt(_Color11 + "_Data")].Add("Gradation Color11");
+        }
+
+        public override void CollectUVChannel(ref List<List<string>> useUVChannelList)
+        {
+            if (!IsActive())
+                return;
+            useUVChannelList[_mat.GetInt(_UV + "Transform_Index")].Add("Gradation");
         }
 
         public override void VaridateCustomData()
@@ -124,6 +135,137 @@ namespace UniVFX.Editor
             UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _Color10);
             UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _Color11);
         }
+
+        public override List<string> GetPropertyCode()
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+    
+            code.Add(_UV + "Transform(\"" + _UV.Replace("_", "") + "Transform\", Vector) = (0,0,1,1)");
+
+            if (_mat.GetInt(_Color00 + "_Data") == 0)
+                code.Add(_Color00 + "(\"" + _Color00.Replace("_", "") + "\", Color) = (1,1,1,1)");
+            if (_mat.GetInt(_Color01 + "_Data") == 0)
+                code.Add(_Color01 + "(\"" + _Color01.Replace("_", "") + "\", Color) = (1,1,1,1)");
+            if (_mat.GetInt(_Color10 + "_Data") == 0)
+                code.Add(_Color10 + "(\"" + _Color10.Replace("_", "") + "\", Color) = (1,1,1,1)");
+            if (_mat.GetInt(_Color11 + "_Data") == 0)
+                code.Add(_Color11 + "(\"" + _Color11.Replace("_", "") + "\", Color) = (1,1,1,1)");
+
+            return code;
+        }
+        public override List<string> GetCBufferCode()
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            code.Add("float4 " + _UV + "Transform;");
+
+            if (_mat.GetInt(_Color00 + "_Data") == 0)
+                code.Add("half4 " + _Color00 + ";");
+            if (_mat.GetInt(_Color01 + "_Data") == 0)
+                code.Add("half4 " + _Color01 + ";");
+            if (_mat.GetInt(_Color10 + "_Data") == 0)
+                code.Add("half4 " + _Color10 + ";");
+            if (_mat.GetInt(_Color11 + "_Data") == 0)
+                code.Add("half4 " + _Color11 + ";");
+
+            return code;
+        }
+        public override List<string> GetTextureCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetUseV2fCode()
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+            
+            code.Add("float2 uv_Gradation");
+            return code;
+        }
+        public override List<string> GetVertexHeadCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetVertexCode()
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            var uvName = UniVFXGUILayout.GetVertUVName(_mat.GetInt(_UV + "Transform_Index"), _mat);
+            var transform = "st_Gradation";
+            var transformX = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").x, _UV + "Transform.x");
+            var transformY = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").y, _UV + "Transform.y");
+            var transformZ = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").z, _UV + "Transform.z");
+            var transformW = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").w, _UV + "Transform.w");
+
+            code.Add("//Gradation");
+            code.Add("float4 " + transform + " = float4(" + transformX + ", " + transformY + ", " + transformZ + ", " + transformW + ");");
+            code.Add("o.uv_Gradation = (" + uvName + " - float2(0.5, 0.5)) * " + transform + ".xy + float2(0.5, 0.5) + " + transform + ".zw;");
+            code.Add("");
+            return code;
+        }
+        public override List<string> GetFragmentHeadCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetFragmentCode()
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            var color00 = VertexColorDataConvert.VertexColorDataToCode(_mat.GetInt(_Color00 + "_Data"), _Color00);
+            var color01 = VertexColorDataConvert.VertexColorDataToCode(_mat.GetInt(_Color01 + "_Data"), _Color01);
+            var color10 = VertexColorDataConvert.VertexColorDataToCode(_mat.GetInt(_Color10 + "_Data"), _Color10);
+            var color11 = VertexColorDataConvert.VertexColorDataToCode(_mat.GetInt(_Color11 + "_Data"), _Color11);
+
+            var blendMode = _mat.GetInt(_BlendMode);
+            var uv = "uv_Gradation";
+            var color = "col_Gradation";
+
+            code.Add("//Gradation");
+            code.Add("float2 " + uv + " = i." + uv + ";");
+            code.Add("float2 gradationMinus = " + uv + " < 0 ? -1 : 0;");
+            code.Add("float2 gradationRepeat = abs((" + uv + " + gradationMinus)) % 2 >= 1 ? 1 - frac(" + uv + ") : frac(" + uv + ");");
+            code.Add("half4 gradationColor0 = lerp(" + color00 + ", " + color10 + ", gradationRepeat.x);");
+            code.Add("half4 gradationColor1 = lerp(" + color01 + ", " + color11 + ", gradationRepeat.x);");
+            code.Add("half4 gradationColor = lerp(gradationColor0, gradationColor1, gradationRepeat.y);");
+            code.Add("half4 " + color + " = gradationColor;");
+            if (MaskTexture.IsActive(_mat) && _mat.GetInt(MaskTexture._TargetGradation) == 1)
+                code.Add(color + ".a *= " + MaskTexture._ResultValue + ";");
+            switch (_BlendModeOption[blendMode])
+            {
+                case "Overwrite":
+                    code.Add("col.rgb = lerp(col.rgb, " + color + ".rgb, " + color + ".a);");
+                    break;
+                case "Add":
+                    code.Add("col.rgb = col.rgb + " + color + ".rgb * " + color + ".a;");
+                    break;
+                case "Multiply":
+                    code.Add("col.rgb = col.rgb * (1 - (1 -" + color + ".rgb) * " + color + ".a);");
+                    break;
+                case "Subtract":
+                    code.Add("col.rgb = col.rgb - " + color + ".rgb * " + color + ".a;");
+                    break;
+                case "Overlay":
+                    code.Add("col.rgb = lerp(col.rgb, col.rgb < 0.5 ? 2.0 * " + color + ".rgb * col.rgb : 1.0 - (1.0 - " + color + ".rgb) * (1.0 - col.rgb), " + color + ".a);");
+                    break;
+                default:
+                    break;
+            }
+            code.Add("");
+            return code;
+        }
+        
 
     }
 

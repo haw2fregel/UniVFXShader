@@ -7,15 +7,15 @@ namespace UniVFX.Editor
 {
     public class SurfaceOptionBRPTransparent  : UniVFXOption
     {
-        const string _ColorMultiplAlpha = "_ColorMultiplAlpha";
-        const string _SrcBlend = "_BUILTIN_SrcBlend";
-        const string _DstBlend = "_BUILTIN_DstBlend";
-        const string _ZTest = "_BUILTIN_ZTest";
-        const string _Cull = "_BUILTIN_CullMode";
+        public const string _ColorMultiplAlpha = "_ColorMultiplAlpha";
+        public const string _SrcBlend = "_BUILTIN_SrcBlend";
+        public const string _DstBlend = "_BUILTIN_DstBlend";
+        public const string _ZTest = "_BUILTIN_ZTest";
+        public const string _Cull = "_BUILTIN_CullMode";
 
-        readonly static string[] _BlendMode = { "Zero", "One", "DstColor", "SrcColor", "OneMinusDstColor", "SrcAlpha", "OneMinusSrcColor", "DstAlpha", "OneMinusDstAlpha", "SrcAlphaSaturate", "OneMinusSrcAlpha" };
-        readonly static string[] _ZTestMode = { "Disabled", "Never", "Less", "Equal", "LessEqual", "Greater", "NotEqual", "GreaterEqual", "Always"};
-        readonly static string[] _CullMode = { "Off", "Front", "Back"};
+        public readonly static string[] _BlendMode = { "Zero", "One", "DstColor", "SrcColor", "OneMinusDstColor", "SrcAlpha", "OneMinusSrcColor", "DstAlpha", "OneMinusDstAlpha", "SrcAlphaSaturate", "OneMinusSrcAlpha" };
+        public readonly static string[] _ZTestMode = { "Off", "Never", "Less", "Equal", "LEqual", "Greater", "NotEqual", "GEqual", "Always"};
+        public readonly static string[] _CullMode = { "Off", "Front", "Back" };
 
 
         public override bool IsActive()
@@ -76,8 +76,53 @@ namespace UniVFX.Editor
         {
         }
 
+        public override void CollectUVChannel(ref List<List<string>> useUVChannelList)
+        {
+        }
+
         public override void VaridateCustomData()
         {
+        }
+
+        public override List<string> GetPropertyCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetCBufferCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetTextureCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetUseV2fCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetVertexHeadCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetVertexCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetFragmentHeadCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetFragmentCode()
+        {
+            var code = new List<string>();
+            return code;
         }
     }
 }

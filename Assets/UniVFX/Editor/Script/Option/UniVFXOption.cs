@@ -61,7 +61,18 @@ namespace UniVFX.Editor
         /// <param name="useCustomDataList"></param>
         public abstract void CollectCustomColorData(ref List<List<string>> useCustomDataList);
 
+        public abstract void CollectUVChannel(ref List<List<string>> useUVChannelList);
         public abstract void VaridateCustomData();
+
+        public abstract List<string> GetPropertyCode();
+        public abstract List<string> GetCBufferCode();
+        public abstract List<string> GetTextureCode();
+        public abstract List<string> GetUseV2fCode();
+        public abstract List<string> GetVertexHeadCode();
+        public abstract List<string> GetVertexCode();
+        public abstract List<string> GetFragmentHeadCode();
+        public abstract List<string> GetFragmentCode();
+        
 
     }
 }

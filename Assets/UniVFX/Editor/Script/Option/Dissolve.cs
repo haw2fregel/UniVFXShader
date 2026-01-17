@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEditor;
 
@@ -99,6 +99,8 @@ namespace UniVFX.Editor
 
         public override void CollectCustomData(ref List<List<string>> useCustomDataList)
         {
+            if (!IsActive())
+                return;
             useCustomDataList[(int)_mat.GetVector(_UV + "Transform_Data").x].Add("DissolveUV Tile X");
             useCustomDataList[(int)_mat.GetVector(_UV + "Transform_Data").y].Add("DissolveUV Tile Y");
             useCustomDataList[(int)_mat.GetVector(_UV + "Transform_Data").z].Add("DissolveUV Offset X");
@@ -111,7 +113,16 @@ namespace UniVFX.Editor
 
         public override void CollectCustomColorData(ref List<List<string>> useCustomDataList)
         {
+            if (!IsActive())
+                return;
             useCustomDataList[_mat.GetInt(_Color + "_Data")].Add("Dissolve Color");
+        }
+
+        public override void CollectUVChannel(ref List<List<string>> useUVChannelList)
+        {
+            if (!IsActive())
+                return;
+            useUVChannelList[_mat.GetInt(_UV + "Transform_Index")].Add(_Tex);
         }
 
         public override void VaridateCustomData()
@@ -122,6 +133,158 @@ namespace UniVFX.Editor
             UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _Color);
         }
 
+        public override List<string> GetPropertyCode()
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+            
+            code.Add("[NoScaleOffset]" + _Tex + "(\"" + _Tex.Replace("_", "") + "\", 2D) = \"white\" {}");
+            code.Add(_UV + "Transform(\"" + _UV.Replace("_", "") + "Transform\", Vector) = (0,0,1,1)");
+            if (_mat.GetInt(_Color + "_Data") == 0)
+                code.Add("[HDR]" + _Color + "(\"" + _Color.Replace("_", "") + "\", Color) = (1,1,1,1)");
+            code.Add(_Param + "(\"" + _Param.Replace("_", "") + "\", Vector) = (1,0,0,0)");
+            return code;
+        }
+        public override List<string> GetCBufferCode()
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+            
+            code.Add("float4 " + _UV + "Transform;");
+            if (_mat.GetInt(_Color + "_Data") == 0)
+                code.Add("half4 " + _Color + ";");
+            code.Add("half4 " + _Param + ";");
+            return code;
+        }
+        public override List<string> GetTextureCode()
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+            
+            code.Add("TEXTURE2D(" + _Tex + ");");
+            return code;
+        }
+        public override List<string> GetUseV2fCode()
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+            
+            code.Add("float2 uv_" + _Tex.Replace("_", ""));
+            if (!SurfaceFade.IsActive(_mat) || _mat.GetInt(SurfaceFade._TargetDissolve) == 0)
+            {
+                code.Add("float4 param_" + _Tex.Replace("_", ""));
+            }
+            return code;
+        }
+        public override List<string> GetVertexHeadCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetVertexCode()
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+            
+            var uvName = UniVFXGUILayout.GetVertUVName(_mat.GetInt(_UV + "Transform_Index"), _mat);
+            var transform = "st_" + _Tex.Replace("_", "");
+            var transformX = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").x, _UV + "Transform.x");
+            var transformY = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").y, _UV + "Transform.y");
+            var transformZ = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").z, _UV + "Transform.z");
+            var transformW = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").w, _UV + "Transform.w");
 
+            code.Add("//Dissolve");
+            code.Add("float4 " + transform + " = float4(" + transformX + ", " + transformY + ", " + transformZ + ", " + transformW + ");");
+            code.Add("o.uv_" + _Tex.Replace("_", "") + " = (" + uvName + " - float2(0.5, 0.5)) * " + transform + ".xy + float2(0.5, 0.5) + " + transform + ".zw;");
+
+            if (!SurfaceFade.IsActive(_mat) || _mat.GetInt(SurfaceFade._TargetDissolve) == 0)
+            {
+                var param = "param_" + _Tex.Replace("_", "");
+                var paramX = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").x, _Param + ".x");
+                var paramY = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").y, _Param + ".y");
+                var paramZ = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").z, _Param + ".z");
+                var paramW = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").w, _Param + ".w");
+
+                code.Add("float4 " + param + " = float4(" + paramX + ", " + paramY + ", " + paramZ + ", " + paramW + ");");
+                code.Add("half dissolveEmissive = " + param + ".z + " + param + ".w;");
+                code.Add("half dissolveSmooth = max(0.0001, " + param + ".y);");
+                code.Add("half dissolveAlpha = 1 -  " + param + ".x;");
+                code.Add("half dissolveAlphaMin = dissolveAlpha - (dissolveSmooth + dissolveEmissive);");
+                code.Add("dissolveAlpha = dissolveAlphaMin + dissolveAlpha * (1 - dissolveAlphaMin);");
+                code.Add("dissolveSmooth += dissolveAlpha;");
+                code.Add("half dissolveEmissiveWidth = dissolveSmooth + " + param + ".z;");
+                code.Add("half dissolveEmissiveSmooth = dissolveEmissiveWidth + max(0.0001, " + param + ".w);");
+                code.Add("o." + param + " = float4(dissolveAlpha, dissolveSmooth, dissolveEmissiveWidth, dissolveEmissiveSmooth);");
+            }
+            
+            code.Add("");
+            return code;
+        }
+
+        public override List<string> GetFragmentHeadCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetFragmentCode()
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+            
+            var sampler = UniVFXGUILayout.GetSamplerName(_mat.GetInt(_UV + "Transform_Sampler"));
+            var color = VertexColorDataConvert.VertexColorDataToCode(_mat.GetInt(_Color + "_Data"), _Color);
+            var uv = "uv_" + _Tex.Replace("_", "");
+            var tex = "tex_" + _Tex.Replace("_", "");
+            var param = "param_" + _Tex.Replace("_", "");
+            
+
+            code.Add("//Dissolve");
+            code.Add("float2 " + uv + " = i." + uv + ";");
+            if (UVDistortion.IsActive(_mat) && _mat.GetInt(UVDistortion._TargetDissolveTex) == 1)
+                code.Add(uv + " += " + UVDistortion._ResultValue + ";");
+            code.Add("half4 " + tex + " = SAMPLE_TEXTURE2D(" + _Tex + ", " + sampler + ", " + uv + ");");
+            if (MaskTexture.IsActive(_mat) && _mat.GetInt(MaskTexture._TargetDissolveTex) == 1)
+                code.Add(tex + ".x = 1 - (1 - " + tex + ".x) * " + MaskTexture._ResultValue + ";");
+
+            if (!SurfaceFade.IsActive(_mat) || _mat.GetInt(SurfaceFade._TargetDissolve) == 0)
+            {
+                code.Add("half dissolveResult = smoothstep(i." + param + ".x, i." + param + ".y, " + tex + ".x);");
+                code.Add("half3 dissolveEmissiveResult = smoothstep(i." + param + ".w, i." + param + ".z, " + tex + ".x) * step(0.001, i." + param + ".w - + i." + param + ".y) * " + color + ".xyz;");
+
+            }
+            else
+            {
+                var paramX = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").x, _Param + ".x");
+                var paramY = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").y, _Param + ".y");
+                var paramZ = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").z, _Param + ".z");
+                var paramW = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").w, _Param + ".w");
+
+                code.Add("float4 " + param + " = float4(" + paramX + ", " + paramY + ", " + paramZ + ", " + paramW + ");");
+                code.Add(param + ".x *= " + SurfaceFade._ResultValue + ";");
+
+                code.Add("half dissolveEmissive = " + param + ".z + " + param + ".w;");
+                code.Add("half dissolveSmooth = max(0.0001, " + param + ".y);");
+                code.Add("half dissolveAlpha = 1 -  " + param + ".x;");
+                code.Add("half dissolveAlphaMin = dissolveAlpha - (dissolveSmooth + dissolveEmissive);");
+                code.Add("dissolveAlpha = dissolveAlphaMin + dissolveAlpha * (1 - dissolveAlphaMin);");
+                code.Add("dissolveSmooth += dissolveAlpha;");
+                code.Add("half dissolveEmissiveWidth = dissolveSmooth + " + param + ".z;");
+                code.Add("half dissolveEmissiveSmooth = dissolveEmissiveWidth + max(0.0001, " + param + ".w);");
+                code.Add("half dissolveResult = smoothstep(dissolveAlpha, dissolveSmooth, " + tex + ".x);");
+                code.Add("half3 dissolveEmissiveResult = smoothstep(dissolveEmissiveSmooth, dissolveEmissiveWidth, " + tex + ".x) * step(0.001, dissolveEmissive) * " + color + ".xyz;");
+            }
+            code.Add("col.a *= dissolveResult;");
+            code.Add("col.rgb += dissolveEmissiveResult;");
+
+
+            return code;
+        }
+        
     }
 }

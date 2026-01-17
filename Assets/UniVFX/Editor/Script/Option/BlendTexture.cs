@@ -85,16 +85,27 @@ namespace UniVFX.Editor
 
         public override void CollectCustomData(ref List<List<string>> useCustomDataList)
         {
+            if (!IsActive())
+                return;
             useCustomDataList[(int)_mat.GetVector(_UV + "Transform_Data").x].Add("BlendUV Offset X");
             useCustomDataList[(int)_mat.GetVector(_UV + "Transform_Data").y].Add("BlendUV Offset Y");
             useCustomDataList[(int)_mat.GetVector(_UV + "Transform_Data").z].Add("BlendUV Tile X");
             useCustomDataList[(int)_mat.GetVector(_UV + "Transform_Data").w].Add("BlendUV Tile Y");
-            useCustomDataList[_mat.GetInt(_Intensity)].Add("BlendTexture Intensity");
+            useCustomDataList[_mat.GetInt(_Intensity + "_Data")].Add("BlendTexture Intensity");
         }
 
         public override void CollectCustomColorData(ref List<List<string>> useCustomDataList)
         {
+            if (!IsActive())
+                return;
             useCustomDataList[_mat.GetInt(_Color + "_Data")].Add("BlendTex Color");
+        }
+
+        public override void CollectUVChannel(ref List<List<string>> useUVChannelList)
+        {
+            if (!IsActive())
+                return;
+            useUVChannelList[_mat.GetInt(_UV + "Transform_Index")].Add(_Tex);
         }
 
         public override void VaridateCustomData()
@@ -104,6 +115,130 @@ namespace UniVFX.Editor
             UniVFXGUILayout.VaridateArrayIndex(ref _mat, _UV + "Transform_Index", UniVFXGUILayout._UVChannelOption);
             UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _Color);
         }
+
+
+        public override List<string> GetPropertyCode()
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+            
+            code.Add("[NoScaleOffset]" + _Tex + "(\"" + _Tex.Replace("_", "") + "\", 2D) = \"white\" {}");
+            code.Add(_UV + "Transform(\"" + _UV.Replace("_", "") + "Transform\", Vector) = (0,0,1,1)");
+            if (_mat.GetInt(_Color + "_Data") == 0)
+                code.Add(_Color + "(\"" + _Color.Replace("_", "") + "\", Color) = (1,1,1,1)");
+            if(_mat.GetInt(_Intensity + "_Data") == 0)
+                code.Add(_Intensity + "(\"" + _Intensity.Replace("_", "") + "\", float) = 1");
+            return code;
+        }
+        public override List<string> GetCBufferCode()
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+            
+            code.Add("float4 " + _UV + "Transform;");
+            if (_mat.GetInt(_Color + "_Data") == 0)
+                code.Add("half4 " + _Color + ";");
+            if(_mat.GetInt(_Intensity + "_Data") == 0)
+                code.Add("half " + _Intensity + ";");
+            return code;
+        }
+        public override List<string> GetTextureCode()
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+            
+            code.Add("TEXTURE2D(" + _Tex + ");");
+            return code;
+        }
+        public override List<string> GetUseV2fCode()
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+            
+            code.Add("float2 uv_" + _Tex.Replace("_", ""));
+            return code;
+        }
+        public override List<string> GetVertexHeadCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetVertexCode()
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            var uvName = UniVFXGUILayout.GetVertUVName(_mat.GetInt(_UV + "Transform_Index"), _mat);
+            var transform = "st_" + _Tex.Replace("_", "");
+            var transformX = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").x, _UV + "Transform.x");
+            var transformY = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").y, _UV + "Transform.y");
+            var transformZ = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").z, _UV + "Transform.z");
+            var transformW = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").w, _UV + "Transform.w");
+
+            code.Add("//BlendTex");
+            code.Add("float4 " + transform + " = float4(" + transformX + ", " + transformY + ", " + transformZ + ", " + transformW + ");");
+            code.Add("o.uv_" + _Tex.Replace("_", "") + " = (" + uvName + " - float2(0.5, 0.5)) * " + transform + ".xy + float2(0.5, 0.5) + " + transform + ".zw;");
+            code.Add("");
+            return code;
+        }
+        public override List<string> GetFragmentHeadCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetFragmentCode()
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+            
+            var sampler = UniVFXGUILayout.GetSamplerName(_mat.GetInt(_UV + "Transform_Sampler"));
+            var color = VertexColorDataConvert.VertexColorDataToCode(_mat.GetInt(_Color + "_Data"), _Color);
+            var intensity = VertexDataConvert.VertexDataToCode(_mat.GetInt(_Intensity + "_Data"), _Intensity);
+            var blendMode = _mat.GetInt(_BlendMode);
+            var uv = "uv_" + _Tex.Replace("_", "");
+            var tex = "tex_" + _Tex.Replace("_", "");
+
+            code.Add("//BlendTex");
+            code.Add("float2 " + uv + " = i." + uv + ";");
+            if(UVDistortion.IsActive(_mat) && _mat.GetInt(UVDistortion._TargetBlendTex) == 1)
+                code.Add(uv + " += " + UVDistortion._ResultValue + ";");
+            code.Add("half4 " + tex + " = SAMPLE_TEXTURE2D(" + _Tex + ", " + sampler + ", " + uv + ");");
+            code.Add(tex + " *= " + color + ";");
+            code.Add(tex + ".a *= " + intensity + ";");
+            if (MaskTexture.IsActive(_mat) && _mat.GetInt(MaskTexture._TargetBlendTex) == 1)
+                code.Add(tex + ".a *= " + MaskTexture._ResultValue + ";");
+            if (SurfaceFade.IsActive(_mat) && _mat.GetInt(SurfaceFade._TargetBlendTex) == 1)
+                code.Add(tex + ".a *= " + SurfaceFade._ResultValue + ";");
+            switch (_BlendModeOption[blendMode])
+            {
+                case "Overwrite":
+                    code.Add("col.rgb = lerp(col.rgb, " + tex + ".rgb, " + tex + ".a);");
+                    break;
+                case "Add":
+                    code.Add("col.rgb = col.rgb + " + tex + ".rgb * " + tex + ".a;");
+                    break;
+                case "Multiply":
+                    code.Add("col.rgb = col.rgb * (1 - (1 -" + tex + ".rgb) * " + tex + ".a);");
+                    break;
+                case "Subtract":
+                    code.Add("col.rgb = col.rgb - " + tex + ".rgb * " + tex + ".a;");
+                    break;
+                case "Overlay":
+                    code.Add("col.rgb = lerp(col.rgb, col.rgb < 0.5 ? 2.0 * " + tex + ".rgb * col.rgb : 1.0 - (1.0 - " + tex + ".rgb) * (1.0 - col.rgb), " + tex + ".a);");
+                    break;
+                default:
+                    break;
+            }
+            code.Add("");
+            return code;
+        }
+
 
     }
 }

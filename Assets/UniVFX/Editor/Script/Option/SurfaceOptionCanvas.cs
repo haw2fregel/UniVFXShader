@@ -73,8 +73,53 @@ namespace UniVFX.Editor
         {
         }
 
+        public override void CollectUVChannel(ref List<List<string>> useUVChannelList)
+        {
+        }
+
         public override void VaridateCustomData()
         {
+        }
+
+        public override List<string> GetPropertyCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetCBufferCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetTextureCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetUseV2fCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetVertexHeadCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetVertexCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetFragmentHeadCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetFragmentCode()
+        {
+            var code = new List<string>();
+            return code;
         }
     }
 }

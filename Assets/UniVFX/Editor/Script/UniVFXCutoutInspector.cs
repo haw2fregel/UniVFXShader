@@ -1,13 +1,15 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEditor;
 using System;
+using System.IO;
 
 
 namespace UniVFX.Editor
 {
     public class UniVFXCutoutInspector : ShaderGUI
     {
+        ParticleSystem _ps;
         bool _viewVertexData = false;
         List<UniVFXOption> _options;
         Gradient _heatGradation;
@@ -179,8 +181,395 @@ namespace UniVFX.Editor
                     }
                 }
                 GUI.color = new Color(1f, 1f, 1f, 1.0f);
+                if (_ps != null)
+                {
+                    if (GUILayout.Button("Set CustomData Label"))
+                    {
+                        SetCustomDataLabel(useVertexDataList, useVertexColorDataList);
+                    }
+                }
+
+                GUILayout.Space(5);
+                EditorGUILayout.LabelField("最適化", EditorStyles.boldLabel);
+                if (GUILayout.Button("専用シェーダーに変換"))
+                {
+                    ConvertUniqueShader(materialEditor);
+                }
             }
             EditorUtility.SetDirty(material);
+        }
+
+        /// <summary>
+        /// Materialの設定状況に応じて、ParticleSystemのCustomDataを設定する
+        /// </summary>
+        /// <param name="useVertexDataList"></param>
+        /// <param name="useVertexColorDataList"></param>
+        void SetCustomDataLabel(List<List<string>> useVertexDataList, List<List<string>> useVertexColorDataList)
+        {
+            var particleSystemSo = new SerializedObject(_ps);
+
+            foreach (var item in useVertexDataList)
+                item.RemoveAt(0);
+            foreach (var item in useVertexColorDataList)
+                item.RemoveAt(0);
+
+            var isUseCustomVertex0 = useVertexDataList[(int)VertexData.TEXCOORD1X].Count + useVertexDataList[(int)VertexData.TEXCOORD1Y].Count + useVertexDataList[(int)VertexData.TEXCOORD1Z].Count + useVertexDataList[(int)VertexData.TEXCOORD1W].Count > 0;
+            var isUseCustomColor0 = useVertexColorDataList[(int)VertexColorData.TEXCOORD1].Count > 0;
+            var isUseCustomVertex1 = useVertexDataList[(int)VertexData.TEXCOORD2X].Count + useVertexDataList[(int)VertexData.TEXCOORD2Y].Count + useVertexDataList[(int)VertexData.TEXCOORD2Z].Count + useVertexDataList[(int)VertexData.TEXCOORD2W].Count > 0;
+            var isUseCustomColor1 = useVertexColorDataList[(int)VertexColorData.TEXCOORD2].Count > 0;
+
+            if (isUseCustomVertex0 || isUseCustomVertex1 || isUseCustomColor0 || isUseCustomColor1)
+            {
+                particleSystemSo.FindProperty("CustomDataModule.enabled").boolValue = true;
+            }
+            else
+            {
+                particleSystemSo.FindProperty("CustomDataModule.enabled").boolValue = false;
+            }
+
+            if (isUseCustomVertex0)
+            {
+                particleSystemSo.FindProperty("CustomDataModule.mode0").intValue = 1;
+
+                if (useVertexDataList[(int)VertexData.TEXCOORD1X].Count > 0)
+                    particleSystemSo.FindProperty("CustomDataModule.vectorComponentCount0").intValue = 1;
+                if (useVertexDataList[(int)VertexData.TEXCOORD1Y].Count > 0)
+                    particleSystemSo.FindProperty("CustomDataModule.vectorComponentCount0").intValue = 2;
+                if (useVertexDataList[(int)VertexData.TEXCOORD1Z].Count > 0)
+                    particleSystemSo.FindProperty("CustomDataModule.vectorComponentCount0").intValue = 3;
+                if (useVertexDataList[(int)VertexData.TEXCOORD1W].Count > 0)
+                    particleSystemSo.FindProperty("CustomDataModule.vectorComponentCount0").intValue = 4;
+            }
+            else
+            {
+                particleSystemSo.FindProperty("CustomDataModule.mode0").intValue = 0;
+            }
+            if (isUseCustomColor0)
+                particleSystemSo.FindProperty("CustomDataModule.mode0").intValue = 2;
+
+            if (isUseCustomVertex1)
+            {
+                particleSystemSo.FindProperty("CustomDataModule.mode1").intValue = 1;
+
+                if (useVertexDataList[(int)VertexData.TEXCOORD2X].Count > 0)
+                    particleSystemSo.FindProperty("CustomDataModule.vectorComponentCount1").intValue = 1;
+                if (useVertexDataList[(int)VertexData.TEXCOORD2Y].Count > 0)
+                    particleSystemSo.FindProperty("CustomDataModule.vectorComponentCount1").intValue = 2;
+                if (useVertexDataList[(int)VertexData.TEXCOORD2Z].Count > 0)
+                    particleSystemSo.FindProperty("CustomDataModule.vectorComponentCount1").intValue = 3;
+                if (useVertexDataList[(int)VertexData.TEXCOORD2W].Count > 0)
+                    particleSystemSo.FindProperty("CustomDataModule.vectorComponentCount1").intValue = 4;
+            }
+            else
+            {
+                particleSystemSo.FindProperty("CustomDataModule.mode1").intValue = 0;
+            }
+            if (isUseCustomColor1)
+                particleSystemSo.FindProperty("CustomDataModule.mode1").intValue = 2;
+
+            particleSystemSo.FindProperty("CustomDataModule.vectorLabel0_0").stringValue = string.Join("/", useVertexDataList[(int)VertexData.TEXCOORD1X]);
+            particleSystemSo.FindProperty("CustomDataModule.vectorLabel0_1").stringValue = string.Join("/", useVertexDataList[(int)VertexData.TEXCOORD1Y]);
+            particleSystemSo.FindProperty("CustomDataModule.vectorLabel0_2").stringValue = string.Join("/", useVertexDataList[(int)VertexData.TEXCOORD1Z]);
+            particleSystemSo.FindProperty("CustomDataModule.vectorLabel0_3").stringValue = string.Join("/", useVertexDataList[(int)VertexData.TEXCOORD1W]);
+            particleSystemSo.FindProperty("CustomDataModule.vectorLabel1_0").stringValue = string.Join("/", useVertexDataList[(int)VertexData.TEXCOORD2X]);
+            particleSystemSo.FindProperty("CustomDataModule.vectorLabel1_1").stringValue = string.Join("/", useVertexDataList[(int)VertexData.TEXCOORD2Y]);
+            particleSystemSo.FindProperty("CustomDataModule.vectorLabel1_2").stringValue = string.Join("/", useVertexDataList[(int)VertexData.TEXCOORD2Z]);
+            particleSystemSo.FindProperty("CustomDataModule.vectorLabel1_3").stringValue = string.Join("/", useVertexDataList[(int)VertexData.TEXCOORD2W]);
+
+            particleSystemSo.FindProperty("CustomDataModule.colorLabel0").stringValue = string.Join("/", useVertexColorDataList[(int)VertexColorData.TEXCOORD1]);
+            particleSystemSo.FindProperty("CustomDataModule.colorLabel1").stringValue = string.Join("/", useVertexColorDataList[(int)VertexColorData.TEXCOORD2]);
+
+            particleSystemSo.ApplyModifiedProperties();
+
+        }
+
+        override public void OnMaterialPreviewGUI(MaterialEditor materialEditor, Rect r, GUIStyle background)
+        {
+            if (Selection.activeGameObject != null)
+                _ps = Selection.activeGameObject.GetComponent<ParticleSystem>();
+             materialEditor.DefaultPreviewGUI(r, background);
+        }
+
+        override public void OnMaterialInteractivePreviewGUI(MaterialEditor materialEditor, Rect r, GUIStyle background)
+        {
+            if (Selection.activeGameObject != null)
+                _ps = Selection.activeGameObject.GetComponent<ParticleSystem>();
+            materialEditor.DefaultPreviewGUI(r, background);
+        }
+
+        public void ConvertUniqueShader(MaterialEditor materialEditor)
+        {
+            Material material = materialEditor.target as Material;
+            var dir = AssetDatabase.GetAssetPath(material.shader);
+            dir = System.IO.Path.GetDirectoryName(dir) + "/Cutout";
+            var path = dir + "/" + material.name + ".shader";
+
+            var useVertexDataList = new List<List<string>>();
+            for (int i = 0; i < Enum.GetValues(typeof(VertexData)).Length; i++)
+            {
+                useVertexDataList.Add(new List<string>());
+            }
+            foreach (var option in _options)
+            {
+                option.CollectCustomData(ref useVertexDataList);
+            }
+            
+            var useUVChannelList = new List<List<string>>();
+            for (int i = 0; i < UniVFXGUILayout._UVChannelOptionVert.Length; i++)
+            {
+                useUVChannelList.Add(new List<string>());
+            }
+            foreach (var option in _options)
+            {
+                option.CollectUVChannel(ref useUVChannelList);
+            }
+
+            
+
+            var shaderCode = "";
+            shaderCode += "Shader \"UniVFX/" + material.name + " \" \n";
+            shaderCode += "{\n";
+            shaderCode += "    Properties\n";
+            shaderCode += "    {\n";
+
+            // Properties定義をここに追加
+            foreach (var option in _options)
+            {
+                foreach (var code in option.GetPropertyCode())
+                {
+                    shaderCode += "        " + code + "\n";
+                }
+            }
+            if (useVertexDataList[13].Count >= 1 || useVertexDataList[14].Count >= 1 || useVertexDataList[15].Count >= 1 || useVertexDataList[16].Count >= 1 ||
+                useVertexDataList[17].Count >= 1 || useVertexDataList[18].Count >= 1 || useVertexDataList[19].Count >= 1 || useVertexDataList[20].Count >= 1 ||
+                useVertexDataList[21].Count >= 1 || useVertexDataList[22].Count >= 1 || useVertexDataList[23].Count >= 1 || useVertexDataList[24].Count >= 1)
+                shaderCode += "        " + Time._Speed + "(\"" + Time._Speed.Replace("_", "") + "\", float) = 0\n";
+            if (useVertexDataList[21].Count >= 1 || useVertexDataList[22].Count >= 1 || useVertexDataList[23].Count >= 1 || useVertexDataList[24].Count >= 1)
+                shaderCode += "        [NoScaleOffset]" + Time._Tex + "(\"" + Time._Tex.Replace("_", "") + "\", 2D) = \"white\" {}\n";
+            shaderCode += "        _AlphaClipThreshold(\"AlphaClipThreshold\", float) = 0\n";
+            shaderCode += "    }\n";
+            shaderCode += "    SubShader\n";
+            shaderCode += "    {\n";
+            shaderCode += "        Tags { \"RenderPipeline\" = \"UniversalPipeline\" \"RenderType\" = \"Opaque\" \"UniversalMaterialType\" = \"Unlit\" \"Queue\" = \"AlphaTest\" }\n";
+            shaderCode += "        Pass\n";
+            shaderCode += "        {\n";
+            shaderCode += "            Name \"Universal Forward\"\n";
+            shaderCode += "            Cull Off\n";
+            shaderCode += "            ZTest LEqual\n";
+            shaderCode += "            ZWrite On\n";
+            shaderCode += "\n";
+
+            shaderCode += "            HLSLPROGRAM\n";
+            shaderCode += "            #pragma vertex vert\n";
+            shaderCode += "            #pragma fragment frag\n";
+            shaderCode += "            #include \"Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl\"\n";
+            shaderCode += "            #include \"Packages/com.unity.render-pipelines.core/ShaderLibrary/SpaceTransforms.hlsl\"\n";
+            shaderCode += "            #include \"Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl\"\n";
+            shaderCode += "\n";
+
+            shaderCode += "            CBUFFER_START(UnityPerMaterial)\n";
+            shaderCode += "                " + "half _AlphaClipThreshold;\n";
+            // CBUFFER定義をここに追加
+            foreach (var option in _options)
+            {
+                foreach (var code in option.GetCBufferCode())
+                {
+                    shaderCode += "                " + code + "\n";
+                }
+            }
+
+            if (useVertexDataList[13].Count >= 1 || useVertexDataList[14].Count >= 1 || useVertexDataList[15].Count >= 1 || useVertexDataList[16].Count >= 1 ||
+                useVertexDataList[17].Count >= 1 || useVertexDataList[18].Count >= 1 || useVertexDataList[19].Count >= 1 || useVertexDataList[20].Count >= 1 ||
+                useVertexDataList[21].Count >= 1 || useVertexDataList[22].Count >= 1 || useVertexDataList[23].Count >= 1 || useVertexDataList[24].Count >= 1)
+                shaderCode += "                " + "float " + Time._Speed + ";\n";
+
+            shaderCode += "            CBUFFER_END\n";
+            shaderCode += "\n";
+            shaderCode += "            SAMPLER(SamplerState_Linear_Clamp);\n";
+            shaderCode += "            SAMPLER(SamplerState_Linear_Repeat);\n";
+            shaderCode += "            SAMPLER(SamplerState_Linear_Mirror);\n";
+            shaderCode += "            SAMPLER(SamplerState_Linear_MirrorOnce);\n";
+            if (useVertexDataList[21].Count >= 1 || useVertexDataList[22].Count >= 1 || useVertexDataList[23].Count >= 1 || useVertexDataList[24].Count >= 1)
+                shaderCode += "            TEXTURE2D(" + Time._Tex + ");\n";
+
+            // Texture定義をここに追加
+            foreach (var option in _options)
+            {
+                foreach (var code in option.GetTextureCode())
+                {
+                    shaderCode += "            " + code + "\n";
+                }
+            }
+            shaderCode += "\n";
+
+            shaderCode += "            struct appdata\n";
+            shaderCode += "            {\n";
+            shaderCode += "                float4 vertex : POSITION;\n";
+            if(useUVChannelList[5].Count >= 1 || VertexAnimation.IsActive(material) || SurfaceFade.IsActive(material) || FakeLight.IsActive(material))
+                shaderCode += "                float3 normal : NORMAL;\n";
+            if(VertexAnimation.IsActive(material) || UVParallax.IsActive(material))            
+                shaderCode += "                float4 tangent : TANGENT;\n";
+            shaderCode += "                float4 texCoord0 : TEXCOORD0;\n";
+            shaderCode += "                float4 texCoord1 : TEXCOORD1;\n";
+            shaderCode += "                float4 texCoord2 : TEXCOORD2;\n";
+            shaderCode += "                half4 vertexColor : COLOR;\n";
+            shaderCode += "            };\n";
+            shaderCode += "\n";
+
+
+            shaderCode += "            struct v2f\n";
+            shaderCode += "            {\n";
+            shaderCode += "                float4 positionCS : SV_POSITION;\n";
+            shaderCode += "                float4 texCoord1 : TEXCOORD0;\n";
+            shaderCode += "                float4 texCoord2 : TEXCOORD1;\n";
+            shaderCode += "                half4 vertexColor : COLOR;\n";
+            var v2fCount = 1;
+            foreach (var option in _options)
+            {
+                foreach (var code in option.GetUseV2fCode())
+                {
+                    v2fCount++;
+                    shaderCode += "                " + code + " : TEXCOORD" + v2fCount + ";\n";
+                }
+            }
+            if (SurfaceFade.IsActive(material) || FakeLight.IsActive(material))
+            {
+                v2fCount++;
+                shaderCode += "                float3 worldPos : TEXCOORD" + v2fCount + ";\n";
+            }
+            if (SurfaceFade.IsActive(material) || FakeLight.IsActive(material))
+            {
+                v2fCount++;
+                shaderCode += "                float3 normal : TEXCOORD" + v2fCount + ";\n";
+            }
+            if(UVParallax.IsActive(material))
+            {
+                v2fCount++;
+                shaderCode += "                float3 tangent : TEXCOORD" + v2fCount + ";\n";
+            }
+            shaderCode += "            };\n";
+            shaderCode += "\n";
+
+
+            shaderCode += "            v2f vert (appdata v)\n";
+            shaderCode += "            {\n";
+            shaderCode += "                v2f o;\n";
+            shaderCode += "\n";
+
+            shaderCode += "                o.texCoord1 = v.texCoord1;\n";
+            shaderCode += "                o.texCoord2 = v.texCoord2;\n";
+            shaderCode += "                o.vertexColor = v.vertexColor;\n";
+            shaderCode += "                float4 texCoord0 = v.texCoord0;\n";
+            shaderCode += "                float4 texCoord1 = v.texCoord1;\n";
+            shaderCode += "                float4 texCoord2 = v.texCoord2;\n";
+            shaderCode += "                half4 vertexColor = v.vertexColor;\n";
+            shaderCode += "\n";
+
+            if (useUVChannelList[1].Count >= 1 || useUVChannelList[2].Count >= 1 || useUVChannelList[3].Count >= 1 || SurfaceFade.IsActive(material))
+                shaderCode += "                float3 worldPos = TransformObjectToWorld(v.vertex.xyz);\n";
+            if (useUVChannelList[4].Count >= 1)
+            {
+                shaderCode += "                float4 screenPos = ComputeScreenPos(TransformObjectToHClip(v.vertex.xyz));\n";
+                shaderCode += "                screenPos.xy = screenPos.xy / screenPos.w;\n";
+            }
+            if (useUVChannelList[5].Count >= 1)
+                shaderCode += "                float3 viewNormal = TransformWorldToViewDir(TransformObjectToWorldDir(v.normal.xyz));\n";
+            if (SurfaceFade.IsActive(material) || FakeLight.IsActive(material))
+                shaderCode += "                o.worldPos = worldPos;\n";
+            if (SurfaceFade.IsActive(material) || FakeLight.IsActive(material))
+                shaderCode += "                o.normal = v.normal;\n";
+            if (UVParallax.IsActive(material))
+                shaderCode += "                o.tangent = v.tangent;\n";
+            shaderCode += "\n";
+
+            if (useVertexDataList[13].Count >= 1 || useVertexDataList[14].Count >= 1 || useVertexDataList[15].Count >= 1 || useVertexDataList[16].Count >= 1 ||
+                useVertexDataList[17].Count >= 1 || useVertexDataList[18].Count >= 1 || useVertexDataList[19].Count >= 1 || useVertexDataList[20].Count >= 1 ||
+                useVertexDataList[21].Count >= 1 || useVertexDataList[22].Count >= 1 || useVertexDataList[23].Count >= 1 || useVertexDataList[24].Count >= 1)
+            {
+                shaderCode += "                float4 time = _Time * " + Time._Speed + ";\n";
+                if (useVertexDataList[21].Count >= 1 || useVertexDataList[22].Count >= 1 || useVertexDataList[23].Count >= 1 || useVertexDataList[24].Count >= 1)
+                    shaderCode += "                float4 timeMap = SAMPLE_TEXTURE2D(" + Time._Tex + ", SamplerState_Linear_Clamp, frac(time.yy));\n";
+            }
+
+            // 頂点シェーダー早期実行する処理をここに追加
+            shaderCode += "//早期計算\n";
+            foreach (var option in _options)
+            {
+                foreach (var code in option.GetVertexHeadCode())
+                {
+                    shaderCode += "                " + code + "\n";
+                }
+            }
+
+            // 頂点シェーダー処理をここに追加
+            shaderCode += "//メイン計算\n";
+            foreach (var option in _options)
+            {
+                foreach (var code in option.GetVertexCode())
+                {
+                    shaderCode += "                " + code + "\n";
+                }
+            }
+
+            shaderCode += "                o.positionCS = TransformObjectToHClip(v.vertex.xyz);\n";
+            shaderCode += "                return o;\n";
+            shaderCode += "            }\n";
+            shaderCode += "\n";
+
+            shaderCode += "            half4 frag (v2f i" + (FaceColor.IsActive(material) ? ", half face : VFACE" : "") + ") : SV_Target\n";
+            shaderCode += "            {\n";
+            shaderCode += "                half4 col = half4(1,1,1,1);\n";
+            shaderCode += "                float4 texCoord1 = i.texCoord1;\n";
+            shaderCode += "                float4 texCoord2 = i.texCoord2;\n";
+            shaderCode += "                half4 vertexColor = i.vertexColor;\n";
+            shaderCode += "\n";
+
+            // フラグメントシェーダーの早期実行処理をここに追加
+            shaderCode += "//早期計算\n";
+            foreach (var option in _options)
+            {
+                foreach (var code in option.GetFragmentHeadCode())
+                {
+                    shaderCode += "                " + code + "\n";
+                }
+            }
+
+            // フラグメントシェーダー処理をここに追加
+            shaderCode += "//メイン計算\n";
+            foreach (var option in _options)
+            {
+                foreach (var code in option.GetFragmentCode())
+                {
+                    shaderCode += "                " + code + "\n";
+                }
+            }
+
+            if (material.GetInt(SurfaceOptionTransparent._ColorMultiplAlpha) == 1)
+            {
+                shaderCode += "                col.rgb *= col.a;\n";
+            }
+
+            shaderCode += "                clip(col.a - _AlphaClipThreshold);\n";
+
+            shaderCode += "                return col;\n";
+            shaderCode += "            }\n";
+            shaderCode += "\n";
+
+            shaderCode += "            ENDHLSL\n";
+            shaderCode += "        }\n";
+            shaderCode += "    }\n";
+            shaderCode += "}\n";
+
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+
+            File.WriteAllText(path, shaderCode);
+            AssetDatabase.ImportAsset(path);
+
+            var asset = AssetDatabase.LoadAssetAtPath<Shader>(path);
+            material.shader = asset;
         }
     }
 }

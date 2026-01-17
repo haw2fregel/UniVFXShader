@@ -115,6 +115,8 @@ namespace UniVFX.Editor
 
         public override void CollectCustomData(ref List<List<string>> useCustomDataList)
         {
+            if (!IsActive())
+                return;
             useCustomDataList[(int)_mat.GetVector(_Param + "_Data").x].Add("FakeLight X");
             useCustomDataList[(int)_mat.GetVector(_Param + "_Data").y].Add("FakeLight Y");
             useCustomDataList[(int)_mat.GetVector(_Param + "_Data").z].Add("FakeLight Z");
@@ -124,8 +126,14 @@ namespace UniVFX.Editor
 
         public override void CollectCustomColorData(ref List<List<string>> useCustomDataList)
         {
+            if (!IsActive())
+                return;
             useCustomDataList[_mat.GetInt(_LightColor + "_Data")].Add("FakeLight Color");
             useCustomDataList[_mat.GetInt(_ShadowColor + "_Data")].Add("FakeShadow Color");
+        }
+
+        public override void CollectUVChannel(ref List<List<string>> useUVChannelList)
+        {
         }
 
         public override void VaridateCustomData()
@@ -134,6 +142,47 @@ namespace UniVFX.Editor
             UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _Param);
             UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _LightColor);
             UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _ShadowColor);
+        }
+
+        public override List<string> GetPropertyCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetCBufferCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetTextureCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetUseV2fCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetVertexHeadCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetVertexCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetFragmentHeadCode()
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetFragmentCode()
+        {
+            var code = new List<string>();
+            return code;
         }
 
     }
