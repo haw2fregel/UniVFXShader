@@ -470,7 +470,7 @@ namespace UniVFX.Editor
             shaderCode += "                half4 vertexColor = v.vertexColor;\n";
             shaderCode += "\n";
 
-            if (useUVChannelList[1].Count >= 1 || useUVChannelList[2].Count >= 1 || useUVChannelList[3].Count >= 1 || SurfaceFade.IsActive(material))
+            if (useUVChannelList[1].Count >= 1 || useUVChannelList[2].Count >= 1 || useUVChannelList[3].Count >= 1 || SurfaceFade.IsActive(material) || FakeLight.IsActive(material))
                 shaderCode += "                float3 worldPos = TransformObjectToWorld(v.vertex.xyz);\n";
             if (useUVChannelList[4].Count >= 1)
             {

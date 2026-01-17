@@ -147,6 +147,15 @@ namespace UniVFX.Editor
         public override List<string> GetPropertyCode()
         {
             var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            //Texが空
+            if (_mat.GetTexture(_Tex) == null)
+                    return code;
+
+            code.Add("[NoScaleOffset]" + _Tex + "(\"" + _Tex.Replace("_", "") + "\", 2D) = \"white\" {}");
+            
             return code;
         }
         public override List<string> GetCBufferCode()
@@ -157,6 +166,17 @@ namespace UniVFX.Editor
         public override List<string> GetTextureCode()
         {
             var code = new List<string>();
+
+            if (!IsActive())
+                return code;
+
+            //Texが空
+            if (_mat.GetTexture(_Tex) == null)
+                    return code;
+
+            code.Add("TEXTURE2D(" + _Tex + ");");
+            
+                
             return code;
         }
         public override List<string> GetUseV2fCode()
@@ -182,6 +202,66 @@ namespace UniVFX.Editor
         public override List<string> GetFragmentCode()
         {
             var code = new List<string>();
+
+            if (!IsActive())
+                return code;
+
+            var lightColor = VertexColorDataConvert.VertexColorDataToCode(_mat.GetInt(_LightColor + "_Data"), (_mat.GetColor(_LightColor) + "").Replace("RGBA", "half4"));
+            var shadowColor = VertexColorDataConvert.VertexColorDataToCode(_mat.GetInt(_ShadowColor + "_Data"), (_mat.GetColor(_ShadowColor) + "").Replace("RGBA", "half4"));
+            var intensity = VertexDataConvert.VertexDataToCode(_mat.GetInt(_Intensity + "_Data"), _mat.GetFloat(_Intensity) + "");
+            
+            var uv = "uv_" + _Tex.Replace("_", "");
+            var tex = "tex_" + _Tex.Replace("_", "");
+
+            var param = "param_" + _Tex.Replace("_", "");
+            var paramX = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").x, _mat.GetVector(_Param).x + "");
+            var paramY = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").y, _mat.GetVector(_Param).y + "");
+            var paramZ = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").z, _mat.GetVector(_Param).z + "");
+            var paramW = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").w, _mat.GetVector(_Param).w + "");
+
+            var useTex = true;
+            //Texが空
+            if (_mat.GetTexture(_Tex) == null)
+                    useTex = false;
+                    
+            code.Add("//Dissolve");
+
+            code.Add("float4 " + param + " = float4(" + paramX + ", " + paramY + ", " + paramZ + ", " + paramW + ");");
+
+            if (_mat.GetInt(_Type) == 0)
+            {
+                code.Add("float3 fakeLightDir = " + param + ".xyz;");
+                code.Add("float attan = 1;");
+            }
+            else
+            {
+                code.Add("float3 fakeLightDir = i.worldPos.xyz - (i.texCoord3.xyz + " + param + ".xyz);");
+                code.Add("float attan = min(length(fakeLightDir), " + param + ".w);");
+                code.Add("attan = 1 - (attan / " + param + ".w);");
+                code.Add("attan *= attan;");
+            }
+
+            code.Add("float fakeLightIntensity = saturate(" + intensity + " * attan);");
+
+            if (MaskTexture.IsActive(_mat) && _mat.GetInt(MaskTexture._TargetFakeLight) == 1)
+                code.Add("fakeLightIntensity *= " + MaskTexture._ResultValue + ";");
+
+            code.Add("float nDotL = -dot(TransformObjectToWorldDir(i.normal.xyz), normalize(fakeLightDir)) * 0.5 + 0.5;");
+
+            if (useTex)
+            {
+                code.Add("half4 " + tex + " = SAMPLE_TEXTURE2D(" + _Tex + ", SamplerState_Linear_Clamp, nDotL.xx);");
+            }
+            else
+            {
+                code.Add("half4 " + tex + " = nDotL.xxxx;");
+            }
+
+            code.Add("col.rgb = lerp(col.rgb, col.rgb * " + shadowColor + ".rgb, (1 - saturate(" + tex + ".x * 2)) * fakeLightIntensity);");
+            code.Add("col.rgb = lerp(col.rgb, col.rgb + " + lightColor + ".rgb, saturate((" + tex + ".x - 0.5) * 2) * fakeLightIntensity);");
+
+            code.Add("");
+
             return code;
         }
 
