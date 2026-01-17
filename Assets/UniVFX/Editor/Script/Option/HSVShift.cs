@@ -150,6 +150,34 @@ namespace UniVFX.Editor
         public override List<string> GetFragmentCode()
         {
             var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+
+            var param = "param_HSVShift";
+            var paramX = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").x, _mat.GetVector(_Param).x + "");
+            var paramY = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").y, _mat.GetVector(_Param).y + "");
+            var paramZ = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").z, _mat.GetVector(_Param).z + "");
+            var paramW = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").w, _mat.GetVector(_Param).w + "");
+
+            code.Add("//HsvShift");
+
+            code.Add("float4 " + param + " = float4(" + paramX + ", " + paramY + ", " + paramZ + ", " + paramW + ");");
+
+            if (MaskTexture.IsActive(_mat) && _mat.GetInt(MaskTexture._TargetHSVShift) == 1)
+                code.Add(param + " *= " + MaskTexture._ResultValue + ";");
+            if (SurfaceFade.IsActive(_mat) && _mat.GetInt(SurfaceFade._TargetHSVShift) == 1)
+                code.Add(param + " *= 1 - " + SurfaceFade._ResultValue + ";");
+
+            code.Add("half4 hsv_k = half4(0.0, -0.3333, 0.6666, -1.0);");
+            code.Add("half4 hsv_p = lerp(half4(col.b, col.g, hsv_k.w, hsv_k.z), half4(col.y, col.z, hsv_k.x, hsv_k.y), step(col.b, col.g));");
+            code.Add("half4 hsv_q = lerp(half4(hsv_p.x, hsv_p.y, hsv_p.w, col.r), half4(col.r, hsv_p.y, hsv_p.z, hsv_p.x), step(hsv_p.x, col.r));");
+            code.Add("half hsv_d = hsv_q.x - min(hsv_q.w, hsv_q.y);");
+            code.Add("half3 hsv = half3(abs(hsv_q.z + (hsv_q.w - hsv_q.y) / (6.0 * hsv_d + 0.001)), hsv_d / (hsv_q.x + 0.001), hsv_q.x);");
+            code.Add("col.rgb = lerp(half3(1, 1, 1), saturate(3.0 * abs(1.0 - 2.0 * frac((" + param + ".x + hsv.r) + half3(0.0, -0.3333, 0.3333))) - 1), (hsv.g + " + param + ".y)) * (hsv.b + " + param + ".z);");
+
+            code.Add("");
+
             return code;
         }
 
