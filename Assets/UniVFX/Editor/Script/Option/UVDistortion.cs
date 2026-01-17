@@ -244,9 +244,9 @@ namespace UniVFX.Editor
             code.Add("half4 " + tex + " = SAMPLE_TEXTURE2D(" + _Tex + ", " + sampler + ", " + uv + ");");
             code.Add(tex + ".xy -= float2(0.5, 0.5);");
             code.Add(tex + ".xy *= " + intensity + ";");
-            if (MaskTexture.IsActive(_mat) && _mat.GetInt(MaskTexture._TargetBlendTex) == 1)
+            if (MaskTexture.IsActive(_mat) && _mat.GetInt(MaskTexture._TargetDistortionTex) == 1)
                 code.Add(tex + ".xy *= " + MaskTexture._ResultValue + ";");
-            if (SurfaceFade.IsActive(_mat) && _mat.GetInt(SurfaceFade._TargetBlendTex) == 1)
+            if (SurfaceFade.IsActive(_mat) && _mat.GetInt(SurfaceFade._TargetDistortion) == 1)
                 code.Add(tex + ".xy *= 1 - " + SurfaceFade._ResultValue + ";");
             code.Add("float2 " + _ResultValue + " = " + tex + ".xy;");
             code.Add("");

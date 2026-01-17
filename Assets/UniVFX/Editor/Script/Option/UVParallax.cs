@@ -7,12 +7,13 @@ namespace UniVFX.Editor
 {
     public class UVParallax : UniVFXOption
     {
-        const string _IsActive = "_PARALLAXMAPPING";
-        const string _Tex = "_ParallaxTex";
-        const string _Intensity = "_ParallaxAmplitude";
-        const string _TargetMainTex = "_MainUVParallax";
-        const string _TargetBlendTex = "_BlendUVParallax";
-        const string _TargetDissolveTex = "_DissolveUVParallax";
+        public const string _IsActive = "_PARALLAXMAPPING";
+        public const string _Tex = "_ParallaxTex";
+        public const string _Intensity = "_ParallaxAmplitude";
+        public const string _TargetMainTex = "_MainUVParallax";
+        public const string _TargetBlendTex = "_BlendUVParallax";
+        public const string _TargetDissolveTex = "_DissolveUVParallax";
+        public const string _ResultValue = "parallaxResult";
 
         public override bool IsActive()
         {
@@ -130,6 +131,7 @@ namespace UniVFX.Editor
         public override List<string> GetPropertyCode()
         {
             var code = new List<string>();
+            code.Add("[NoScaleOffset]" + _Tex + "(\"" + _Tex.Replace("_", "") + "\", 2D) = \"white\" {}");
             return code;
         }
         public override List<string> GetCBufferCode()
@@ -140,6 +142,7 @@ namespace UniVFX.Editor
         public override List<string> GetTextureCode()
         {
             var code = new List<string>();
+            code.Add("TEXTURE2D(" + _Tex + ");");
             return code;
         }
         public override List<string> GetUseV2fCode()
@@ -160,11 +163,33 @@ namespace UniVFX.Editor
         public override List<string> GetFragmentHeadCode()
         {
             var code = new List<string>();
+
+            var intensity = VertexDataConvert.VertexDataToCode(_mat.GetInt(_Intensity + "_Data"), _mat.GetFloat(_Intensity) + "");
+            var uv = "uv_" + _Tex.Replace("_", "");
+            var tex = "tex_" + _Tex.Replace("_", "");
+
+            code.Add("//UVParallax");
+            code.Add("float2 " + uv + " = i.texCoord0.xy;");
+            code.Add("half4 " + tex + " = SAMPLE_TEXTURE2D(" + _Tex + ", SamplerState_Linear_Clamp, " + uv + ");");
+            code.Add(tex + ".x -= 0.5;");
+            code.Add("float2 parallax = tangentSpaceViewDirection.xy * " + tex + ".x * " + intensity + " / tangentSpaceViewDirection.z;");
+            if (MaskTexture.IsActive(_mat) && _mat.GetInt(MaskTexture._TargetParallax) == 1)
+                code.Add( "parallax *= " + MaskTexture._ResultValue + ";");
+
+            code.Add("float2 " + _ResultValue + " = parallax;");
+            code.Add("");
             return code;
+
+            
+
         }
         public override List<string> GetFragmentCode()
         {
             var code = new List<string>();
+
+            
+
+
             return code;
         }
 

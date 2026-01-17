@@ -248,6 +248,8 @@ namespace UniVFX.Editor
             code.Add("float2 " + uv + " = i." + uv + ";");
             if (UVDistortion.IsActive(_mat) && _mat.GetInt(UVDistortion._TargetDissolveTex) == 1)
                 code.Add(uv + " += " + UVDistortion._ResultValue + ";");
+            if (UVParallax.IsActive(_mat) && _mat.GetInt(UVParallax._TargetDissolveTex) == 1)
+                code.Add(uv + " += " + UVParallax._ResultValue + ";");
             code.Add("half4 " + tex + " = SAMPLE_TEXTURE2D(" + _Tex + ", " + sampler + ", " + uv + ");");
             if (MaskTexture.IsActive(_mat) && _mat.GetInt(MaskTexture._TargetDissolveTex) == 1)
                 code.Add(tex + ".x = 1 - (1 - " + tex + ".x) * " + MaskTexture._ResultValue + ";");

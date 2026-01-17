@@ -208,6 +208,8 @@ namespace UniVFX.Editor
             code.Add("float2 " + uv + " = i." + uv + ";");
             if(UVDistortion.IsActive(_mat) && _mat.GetInt(UVDistortion._TargetBlendTex) == 1)
                 code.Add(uv + " += " + UVDistortion._ResultValue + ";");
+            if (UVParallax.IsActive(_mat) && _mat.GetInt(UVParallax._TargetBlendTex) == 1)
+                code.Add(uv + " += " + UVParallax._ResultValue + ";");
             code.Add("half4 " + tex + " = SAMPLE_TEXTURE2D(" + _Tex + ", " + sampler + ", " + uv + ");");
             code.Add(tex + " *= " + color + ";");
             code.Add(tex + ".a *= " + intensity + ";");
