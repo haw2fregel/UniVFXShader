@@ -181,8 +181,22 @@ namespace UniVFX.Editor
             var transformW = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").w, _UV + "Transform.w");
 
             code.Add("//BlendTex");
+            var uv = "o.uv_" + _Tex.Replace("_", "");
+            code.Add(uv + " = " + uvName + ";");
+            if(UVBend.IsActive(_mat) && UniVFXGUILayout._UVChannelOption[_mat.GetInt(_UV + "Transform_Index")] == "BendUV" && _mat.GetInt(UVBend._Polar) == 1)
+            {
+                code.Add("");
+                return code;
+            }
+
+            if (UVBend.IsActive(_mat) && UniVFXGUILayout._UVChannelOption[_mat.GetInt(_UV + "Transform_Index")] == "BendUV")
+            {
+                UVBend.ApplyBendCode(ref code, _mat, uv);
+            }
+
             code.Add("float4 " + transform + " = float4(" + transformX + ", " + transformY + ", " + transformZ + ", " + transformW + ");");
-            code.Add("o.uv_" + _Tex.Replace("_", "") + " = (" + uvName + " - float2(0.5, 0.5)) * " + transform + ".xy + float2(0.5, 0.5) + " + transform + ".zw;");
+            code.Add(uv + " = (" + uv + " - float2(0.5, 0.5)) * " + transform + ".xy + float2(0.5, 0.5) + " + transform + ".zw;");
+
             code.Add("");
             return code;
         }
@@ -206,6 +220,21 @@ namespace UniVFX.Editor
 
             code.Add("//BlendTex");
             code.Add("float2 " + uv + " = i." + uv + ";");
+            if (UVBend.IsActive(_mat) && UniVFXGUILayout._UVChannelOption[_mat.GetInt(_UV + "Transform_Index")] == "BendUV" && _mat.GetInt(UVBend._Polar) == 1)
+            {
+                var transform = "st_" + _Tex.Replace("_", "");
+                var transformX = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").x, _UV + "Transform.x");
+                var transformY = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").y, _UV + "Transform.y");
+                var transformZ = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").z, _UV + "Transform.z");
+                var transformW = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").w, _UV + "Transform.w");
+
+                UVBend.ApplyBendPolarCode(ref code, uv);
+                UVBend.ApplyBendCode(ref code, _mat, uv);
+
+                code.Add("float4 " + transform + " = float4(" + transformX + ", " + transformY + ", " + transformZ + ", " + transformW + ");");
+                code.Add(uv + " = (" + uv + " - float2(0.5, 0.5)) * " + transform + ".xy + float2(0.5, 0.5) + " + transform + ".zw;");
+
+            }
             if(UVDistortion.IsActive(_mat) && _mat.GetInt(UVDistortion._TargetBlendTex) == 1)
                 code.Add(uv + " += " + UVDistortion._ResultValue + ";");
             if (UVParallax.IsActive(_mat) && _mat.GetInt(UVParallax._TargetBlendTex) == 1)

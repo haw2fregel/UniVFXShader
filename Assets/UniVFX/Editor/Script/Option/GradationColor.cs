@@ -207,8 +207,22 @@ namespace UniVFX.Editor
             var transformW = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").w, _UV + "Transform.w");
 
             code.Add("//Gradation");
+            var uv = "o.uv_Gradation";
+            code.Add(uv + " = " + uvName + ";");
+            if (UVBend.IsActive(_mat) && UniVFXGUILayout._UVChannelOption[_mat.GetInt(_UV + "Transform_Index")] == "BendUV" && _mat.GetInt(UVBend._Polar) == 1)
+            {
+                code.Add("");
+                return code;
+            }
+
+            if (UVBend.IsActive(_mat) && UniVFXGUILayout._UVChannelOption[_mat.GetInt(_UV + "Transform_Index")] == "BendUV")
+            {
+                UVBend.ApplyBendCode(ref code, _mat, uv);
+            }
+
             code.Add("float4 " + transform + " = float4(" + transformX + ", " + transformY + ", " + transformZ + ", " + transformW + ");");
-            code.Add("o.uv_Gradation = (" + uvName + " - float2(0.5, 0.5)) * " + transform + ".xy + float2(0.5, 0.5) + " + transform + ".zw;");
+            code.Add(uv + " = (" + uv + " - float2(0.5, 0.5)) * " + transform + ".xy + float2(0.5, 0.5) + " + transform + ".zw;");
+
             code.Add("");
             return code;
         }
@@ -234,11 +248,24 @@ namespace UniVFX.Editor
 
             code.Add("//Gradation");
             code.Add("float2 " + uv + " = i." + uv + ";");
-            code.Add("float2 gradationMinus = " + uv + " < 0 ? -1 : 0;");
-            code.Add("float2 gradationRepeat = abs((" + uv + " + gradationMinus)) % 2 >= 1 ? 1 - frac(" + uv + ") : frac(" + uv + ");");
-            code.Add("half4 gradationColor0 = lerp(" + color00 + ", " + color10 + ", gradationRepeat.x);");
-            code.Add("half4 gradationColor1 = lerp(" + color01 + ", " + color11 + ", gradationRepeat.x);");
-            code.Add("half4 gradationColor = lerp(gradationColor0, gradationColor1, gradationRepeat.y);");
+            if (UVBend.IsActive(_mat) && UniVFXGUILayout._UVChannelOption[_mat.GetInt(_UV + "Transform_Index")] == "BendUV" && _mat.GetInt(UVBend._Polar) == 1)
+            {
+                var transform = "st_Gradation";
+                var transformX = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").x, _UV + "Transform.x");
+                var transformY = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").y, _UV + "Transform.y");
+                var transformZ = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").z, _UV + "Transform.z");
+                var transformW = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").w, _UV + "Transform.w");
+
+                UVBend.ApplyBendPolarCode(ref code, uv);
+                UVBend.ApplyBendCode(ref code, _mat, uv);
+
+                code.Add("float4 " + transform + " = float4(" + transformX + ", " + transformY + ", " + transformZ + ", " + transformW + ");");
+                code.Add(uv + " = (" + uv + " - float2(0.5, 0.5)) * " + transform + ".xy + float2(0.5, 0.5) + " + transform + ".zw;");
+
+            }
+            code.Add("half4 gradationColor0 = lerp(" + color00 + ", " + color10 + ", " + uv + ".x);");
+            code.Add("half4 gradationColor1 = lerp(" + color01 + ", " + color11 + ", " + uv + ".x);");
+            code.Add("half4 gradationColor = lerp(gradationColor0, gradationColor1, " + uv + ".y);");
             code.Add("half4 " + color + " = gradationColor;");
             if (MaskTexture.IsActive(_mat) && _mat.GetInt(MaskTexture._TargetGradation) == 1)
                 code.Add(color + ".a *= " + MaskTexture._ResultValue + ";");

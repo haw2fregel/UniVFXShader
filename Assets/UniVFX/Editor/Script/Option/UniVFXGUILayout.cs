@@ -44,6 +44,8 @@ namespace UniVFX.Editor
                     {
                         return "texCoord0.xy";
                     }
+                case 8:
+                        return "texCoord0.xy";
                 default:
                     return "uv";
                 }

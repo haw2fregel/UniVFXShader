@@ -7,9 +7,9 @@ namespace UniVFX.Editor
 {
     public class UVBend : UniVFXOption
     {
-        protected const string _IsActive = "_UVBEND";
-        protected const string _Polar = "_UVPolar";
-        protected const string _Param = "_UVBendParam";
+        public const string _IsActive = "_UVBEND";
+        public const string _Polar = "_UVPolar";
+        public const string _Param = "_UVBendParam";
 
         public override bool IsActive()
         {
@@ -192,6 +192,30 @@ namespace UniVFX.Editor
         {
             var code = new List<string>();
             return code;
+        }
+
+        public static void ApplyBendCode(ref List<string> code, Material mat, string uvName)
+        {
+
+            var paramX = VertexDataConvert.VertexDataToCode((int)mat.GetVector(_Param + "_Data").x, mat.GetVector(_Param).x + "");
+            var paramY = VertexDataConvert.VertexDataToCode((int)mat.GetVector(_Param + "_Data").y, mat.GetVector(_Param).y + "");
+            var paramZ = VertexDataConvert.VertexDataToCode((int)mat.GetVector(_Param + "_Data").z, mat.GetVector(_Param).z + "");
+            var paramW = VertexDataConvert.VertexDataToCode((int)mat.GetVector(_Param + "_Data").w, mat.GetVector(_Param).w + "");
+
+            if (paramZ == "0" && paramW == "0")
+                return ;
+
+            code.Add(uvName + " += float2(abs(" + uvName + ".y - " + paramX + ") * " + paramZ + ", abs(" + uvName + ".x - " + paramY + ") * " + paramW + ");");
+            code.Add("");
+        }
+
+        public static void ApplyBendPolarCode(ref List<string> code, string uvName)
+        {
+            code.Add("float2 " + uvName + "_polarDelta = " + uvName + " - float2(0.5, 0.5);");
+            code.Add("float " + uvName + "_polarRadius = length(" + uvName + "_polarDelta) * 2;");
+            code.Add("float " + uvName + "_polarAngle = (atan2(" + uvName + "_polarDelta.y, " + uvName + "_polarDelta.x) + 3.14) / 6.28;");
+            code.Add(uvName + " = float2(" + uvName + "_polarRadius, " + uvName + "_polarAngle);");
+            code.Add("");
         }
 
 

@@ -315,7 +315,7 @@ namespace UniVFX.Editor
             }
             
             var useUVChannelList = new List<List<string>>();
-            for (int i = 0; i < UniVFXGUILayout._UVChannelOptionVert.Length; i++)
+            for (int i = 0; i < UniVFXGUILayout._UVChannelOption.Length; i++)
             {
                 useUVChannelList.Add(new List<string>());
             }
