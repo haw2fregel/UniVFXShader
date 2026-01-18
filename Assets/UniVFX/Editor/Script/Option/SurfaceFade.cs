@@ -26,6 +26,10 @@ namespace UniVFX.Editor
         public const string _TargetDissolve = "_DissolveSurfaceFade";
         public const string _ResultValue = "surfaceFadeResult";
 
+        public SurfaceFade(bool isCanvas, bool isBRP) : base(isCanvas, isBRP)
+        {
+        }
+
         public override bool IsActive()
         {
             return _mat.IsKeywordEnabled(_IsActive);
@@ -206,9 +210,9 @@ namespace UniVFX.Editor
         {
             if (!IsActive())
                 return;
-            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _Pow);
-            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _FadeIn);
-            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _FadeOut);
+            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _Pow, _isCanvas);
+            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _FadeIn, _isCanvas);
+            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _FadeOut, _isCanvas);
         }
 
         public override List<string> GetPropertyCode()

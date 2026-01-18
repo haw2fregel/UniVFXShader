@@ -10,6 +10,10 @@ namespace UniVFX.Editor
         protected const string _IsActive = "_HSVSHIFT";
         protected const string _Param = "_HSVShiftParametors";
 
+        public HSVShift(bool isCanvas, bool isBRP) : base(isCanvas, isBRP)
+        {
+        }
+
         public override bool IsActive()
         {
             return _mat.IsKeywordEnabled(_IsActive);
@@ -109,7 +113,7 @@ namespace UniVFX.Editor
 
         public override void VaridateCustomData()
         {
-            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _Param);
+            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _Param, _isCanvas);
         }
 
         public override List<string> GetPropertyCode()

@@ -10,6 +10,10 @@ namespace UniVFX.Editor
     {
         protected const string _IsActive = "_ROTATEUVENABLE";
         protected const string _Rotate = "_UVRotate";
+
+        public UVRotate(bool isCanvas, bool isBRP) : base(isCanvas, isBRP)
+        {
+        }
         public override bool IsActive()
         {
             return _mat.GetInt(_IsActive) == 1;
@@ -93,7 +97,7 @@ namespace UniVFX.Editor
         {
             if (!IsActive())
                 return;
-            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _Rotate);
+            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _Rotate, _isCanvas);
         }
 
         public override List<string> GetPropertyCode()

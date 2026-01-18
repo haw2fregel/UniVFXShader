@@ -15,6 +15,10 @@ namespace UniVFX.Editor
         public const string _TargetDissolveTex = "_DissolveUVParallax";
         public const string _ResultValue = "parallaxResult";
 
+        public UVParallax(bool isCanvas, bool isBRP) : base(isCanvas, isBRP)
+        {
+        }
+
         public override bool IsActive()
         {
             return _mat.IsKeywordEnabled(_IsActive);
@@ -125,7 +129,7 @@ namespace UniVFX.Editor
 
         public override void VaridateCustomData()
         {
-            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _Intensity);
+            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _Intensity, _isCanvas);
         }
 
         public override List<string> GetPropertyCode()

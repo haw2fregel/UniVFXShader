@@ -12,6 +12,10 @@ namespace UniVFX.Editor
         protected const string _Column = "_FripBookColumn";
         protected const string _Index = "_FripBookIndex";
 
+        public UVFripBook(bool isCanvas, bool isBRP) : base(isCanvas, isBRP)
+        {
+        }
+
 
         public override bool IsActive()
         {
@@ -98,7 +102,7 @@ namespace UniVFX.Editor
 
         public override void VaridateCustomData()
         {
-            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _Index);
+            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _Index, _isCanvas);
         }
 
         public override List<string> GetPropertyCode()

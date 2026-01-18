@@ -59,23 +59,23 @@ namespace UniVFX.Editor
             if (_options == null)
             {
                 _options = new List<UniVFXOption>();
-                _options.Add(new MainTexture());
-                _options.Add(new MaskTexture());
-                _options.Add(new BlendTexture());
-                _options.Add(new GradationColor());
-                _options.Add(new Dissolve());
-                _options.Add(new UVDistortion());
-                _options.Add(new UVBend());
-                _options.Add(new UVParallax());
-                _options.Add(new UVRotate());
-                _options.Add(new UVFripBook());
-                _options.Add(new HSVShift());
-                _options.Add(new SurfaceFade());
-                _options.Add(new FakeLight());
-                _options.Add(new VertexAnimation());
-                _options.Add(new FaceColor());
-                _options.Add(new Time());
-                _options.Add(new SurfaceOptionCutout());
+                _options.Add(new MainTexture(false, false));
+                _options.Add(new MaskTexture(false, false));
+                _options.Add(new BlendTexture(false, false));
+                _options.Add(new GradationColor(false, false));
+                _options.Add(new Dissolve(false, false));
+                _options.Add(new UVDistortion(false, false));
+                _options.Add(new UVBend(false, false));
+                _options.Add(new UVParallax(false, false));
+                _options.Add(new UVRotate(false, false));
+                _options.Add(new UVFripBook(false, false));
+                _options.Add(new HSVShift(false, false));
+                _options.Add(new SurfaceFade(false, false));
+                _options.Add(new FakeLight(false, false));
+                _options.Add(new VertexAnimation(false, false));
+                _options.Add(new FaceColor(false, false));
+                _options.Add(new Time(false, false));
+                _options.Add(new SurfaceOptionCutout(false, false));
             }
             foreach (var option in _options)
                 option.SetMaterial(material);

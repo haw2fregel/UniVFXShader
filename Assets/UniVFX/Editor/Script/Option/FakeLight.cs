@@ -16,6 +16,10 @@ namespace UniVFX.Editor
         readonly static string _Type = "_FakeLightType";
         readonly static string[] _TypeOption = { "Direction", "Point" };
 
+        public FakeLight(bool isCanvas, bool isBRP) : base(isCanvas, isBRP)
+        {
+        }
+
         public override bool IsActive()
         {
             return _mat.IsKeywordEnabled(_IsActive);
@@ -138,10 +142,10 @@ namespace UniVFX.Editor
 
         public override void VaridateCustomData()
         {
-            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _Intensity);
-            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _Param);
-            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _LightColor);
-            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _ShadowColor);
+            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _Intensity, _isCanvas);
+            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _Param, _isCanvas);
+            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _LightColor, _isCanvas);
+            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _ShadowColor, _isCanvas);
         }
 
         public override List<string> GetPropertyCode()

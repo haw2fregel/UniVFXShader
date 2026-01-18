@@ -10,6 +10,10 @@ namespace UniVFX.Editor
         public const string _Speed = "_TimeSpeed";
         public const string _Tex = "_TimeMap";
 
+        public Time(bool isCanvas, bool isBRP) : base(isCanvas, isBRP)
+        {
+        }
+
         public override bool IsActive()
         {
             return true;

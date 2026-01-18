@@ -17,6 +17,10 @@ namespace UniVFX.Editor
         public readonly static string[] _ZTestMode = { "Off", "Never", "Less", "Equal", "LEqual", "Greater", "NotEqual", "GEqual", "Always"};
         public readonly static string[] _CullMode = { "Off", "Front", "Back" };
 
+        public SurfaceOptionBRPTransparent(bool isCanvas, bool isBRP) : base(isCanvas, isBRP)
+        {
+        }
+
 
         public override bool IsActive()
         {

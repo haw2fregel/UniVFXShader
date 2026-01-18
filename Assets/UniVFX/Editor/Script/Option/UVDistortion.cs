@@ -17,6 +17,10 @@ namespace UniVFX.Editor
         public const string _TargetGradation = "_GradationUVDistortion";
         public const string _ResultValue = "distortionResult";
 
+        public UVDistortion(bool isCanvas, bool isBRP) : base(isCanvas, isBRP)
+        {
+        }
+
         public override bool IsActive()
         {
             return _mat.GetInt(_IsActive) == 1;
@@ -74,7 +78,7 @@ namespace UniVFX.Editor
                                     GUI.color = new Color(1f, 1f, 1f, 1f);
                                     UniVFXGUILayout.OptionTextureField(ref _mat, _Tex, "Texture");
                                     UniVFXGUILayout.OptionSlider(ref _mat, _Intensity, "Intensity", -1, 1);
-                                    UniVFXGUILayout.UVGUILayout(ref _mat, ref _viewUVGUI, _UV);
+                                    UniVFXGUILayout.UVGUILayout(ref _mat, ref _viewUVGUI, _UV, _isCanvas);
                                     _viewTargetGUI = EditorGUILayout.Foldout(_viewTargetGUI, "Target");
                                     if (_viewTargetGUI)
                                     {
@@ -158,8 +162,8 @@ namespace UniVFX.Editor
 
         public override void VaridateCustomData()
         {
-            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _Intensity);
-            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _UV + "Transform");
+            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _Intensity, _isCanvas);
+            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _UV + "Transform", _isCanvas);
             UniVFXGUILayout.VaridateArrayIndex(ref _mat, _UV + "Transform_Index", UniVFXGUILayout._UVChannelOption);
         }
 

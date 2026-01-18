@@ -8,7 +8,15 @@ namespace UniVFX.Editor
         protected bool _viewGUI = false;
         protected bool _viewUVGUI = false;
         protected bool _viewTargetGUI = false;
+        protected bool _isCanvas = false;
+        protected bool _isBRP = false;
         protected Material _mat;
+
+        public UniVFXOption(bool isCanvas, bool isBRP)
+        {
+            _isCanvas = isCanvas;
+            _isBRP = isBRP;
+        }
 
         /// <summary>
         /// 対象マテリアルをセット

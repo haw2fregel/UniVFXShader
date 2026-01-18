@@ -14,8 +14,9 @@ namespace UniVFX.Editor
 
 
         readonly static string[] _BlendMode = { "Zero", "One", "DstColor", "SrcColor", "OneMinusDstColor", "SrcAlpha", "OneMinusSrcColor", "DstAlpha", "OneMinusDstAlpha", "SrcAlphaSaturate", "OneMinusSrcAlpha" };
-
-
+        public SurfaceOptionCanvas(bool isCanvas, bool isBRP) : base(isCanvas, isBRP)
+        {
+        }
         public override bool IsActive()
         {
             return true;

@@ -13,6 +13,10 @@ namespace UniVFX.Editor
         protected const string _ColorMultiple = "_MainColorMultiple";
         protected const string _AlphaMultiple = "_MainAlphaMultiple";
 
+        public MainTexture(bool isCanvas, bool isBRP) : base(isCanvas, isBRP)
+        {
+        }
+
         public override bool IsActive()
         {
             return true;
@@ -53,11 +57,11 @@ namespace UniVFX.Editor
                             using (new EditorGUI.IndentLevelScope())
                             {
                                 GUI.color = new Color(1f, 1f, 1f, 1f);
-                                UniVFXGUILayout.OptionTextureField(ref _mat, _Tex, "Texture");
+                                if(!_isCanvas) UniVFXGUILayout.OptionTextureField(ref _mat, _Tex, "Texture");
                                 UniVFXGUILayout.OptionColorField(ref _mat, _Color, "Color");
                                 UniVFXGUILayout.OptionBoolField(ref _mat, _ColorMultiple, "Color Multiple");
                                 UniVFXGUILayout.OptionBoolField(ref _mat, _AlphaMultiple, "Alpha Multiple");
-                                UniVFXGUILayout.UVGUILayout(ref _mat, ref _viewUVGUI, _UV);
+                                UniVFXGUILayout.UVGUILayout(ref _mat, ref _viewUVGUI, _UV, _isCanvas);
                             }
                         }
                     }
@@ -86,9 +90,9 @@ namespace UniVFX.Editor
 
         public override void VaridateCustomData()
         {
-            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _UV + "Transform");
+            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _UV + "Transform", _isCanvas);
             UniVFXGUILayout.VaridateArrayIndex(ref _mat, _UV + "Transform_Index", UniVFXGUILayout._UVChannelOption);
-            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _Color);
+            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _Color, _isCanvas);
         }
 
         public override List<string> GetPropertyCode()

@@ -68,6 +68,43 @@ namespace UniVFX.Editor
             }
         }
 
+
+        public static void UVGUILayout(ref Material mat, ref bool viewGUI, string property, bool isCamvas)
+        {
+            if (isCamvas)
+            {
+                CanvasUVGUILayout(ref mat, ref viewGUI, property);
+            }
+            else
+            {
+                UVGUILayout(ref mat, ref viewGUI, property);
+            }
+        }
+
+        public static void UVGUILayoutVert(ref Material mat, ref bool viewGUI, string property, bool isCamvas)
+        {
+            if (isCamvas)
+            {
+                CanvasUVGUILayoutVert(ref mat, ref viewGUI, property);
+            }
+            else
+            {
+                UVGUILayoutVert(ref mat, ref viewGUI, property);
+            }
+        }
+
+        public static void UVGUILayoutClamp(ref Material mat, ref bool viewGUI, string property, bool isCamvas)
+        {
+            if (isCamvas)
+            {
+                CanvasUVGUILayoutClamp(ref mat, ref viewGUI, property);
+            }
+            else
+            {
+                UVGUILayoutClamp(ref mat, ref viewGUI, property);
+            }
+        }
+
         /// MARK: UVGUILayout
         /// <summary>
         /// UVField表示のテンプレ
@@ -75,7 +112,7 @@ namespace UniVFX.Editor
         /// <param name="mat"></param>
         /// <param name="viewGUI"></param>
         /// <param name="property">uv name, "+Transform" "+Transform_Index" "+Transform_Sampler"</param>
-        public static void UVGUILayout(ref Material mat, ref bool viewGUI, string property)
+        static void UVGUILayout(ref Material mat, ref bool viewGUI, string property)
         {
             viewGUI = EditorGUILayout.Foldout(viewGUI, "UV");
             if (viewGUI)
@@ -138,7 +175,7 @@ namespace UniVFX.Editor
         /// <param name="mat"></param>
         /// <param name="viewGUI"></param>
         /// <param name="property">uv name, "+Transform" "+Transform_Index" "+Transform_Sampler"</param>
-        public static void CanvasUVGUILayout(ref Material mat, ref bool viewGUI, string property)
+        static void CanvasUVGUILayout(ref Material mat, ref bool viewGUI, string property)
         {
             viewGUI = EditorGUILayout.Foldout(viewGUI, "UV");
             if (viewGUI)
@@ -202,7 +239,7 @@ namespace UniVFX.Editor
         /// <param name="mat"></param>
         /// <param name="viewGUI"></param>
         /// <param name="property">uv name, "+Transform" "+Transform_Index" "+Transform_Sampler"</param>
-        public static void UVGUILayoutVert(ref Material mat, ref bool viewGUI, string property)
+        static void UVGUILayoutVert(ref Material mat, ref bool viewGUI, string property)
         {
             viewGUI = EditorGUILayout.Foldout(viewGUI, "UV");
             if (viewGUI)
@@ -255,7 +292,7 @@ namespace UniVFX.Editor
         /// <param name="mat"></param>
         /// <param name="viewGUI"></param>
         /// <param name="property">uv name, "+Transform" "+Transform_Index" "+Transform_Sampler"</param>
-        public static void CanvasUVGUILayoutVert(ref Material mat, ref bool viewGUI, string property)
+        static void CanvasUVGUILayoutVert(ref Material mat, ref bool viewGUI, string property)
         {
             viewGUI = EditorGUILayout.Foldout(viewGUI, "UV");
             if (viewGUI)
@@ -307,7 +344,7 @@ namespace UniVFX.Editor
         /// <param name="mat"></param>
         /// <param name="viewGUI"></param>
         /// <param name="property">uv name, "+Transform" "+Transform_Index"</param>
-        public static void UVGUILayoutClamp(ref Material mat, ref bool viewGUI, string property)
+        static void UVGUILayoutClamp(ref Material mat, ref bool viewGUI, string property)
         {
             viewGUI = EditorGUILayout.Foldout(viewGUI, "UV");
             if (viewGUI)
@@ -370,7 +407,7 @@ namespace UniVFX.Editor
         /// <param name="mat"></param>
         /// <param name="viewGUI"></param>
         /// <param name="property">uv name, "+Transform" "+Transform_Index"</param>
-        public static void CanvasUVGUILayoutClamp(ref Material mat, ref bool viewGUI, string property)
+        static void CanvasUVGUILayoutClamp(ref Material mat, ref bool viewGUI, string property)
         {
             viewGUI = EditorGUILayout.Foldout(viewGUI, "UV");
             if (viewGUI)
@@ -1177,6 +1214,30 @@ namespace UniVFX.Editor
             }
         }
 
+        public static Vector4 VaridateCustomDataVector(ref Material mat, string property, bool isCamvas)
+        {
+            if (isCamvas)
+                return VaridateCanvasCustomDataVector(ref mat, property);
+            else
+                return VaridateCustomDataVector(ref mat, property);
+        }
+
+        public static int VaridateCustomDataInt(ref Material mat, string property, bool isCamvas)
+        {
+            if (isCamvas)
+                return VaridateCanvasCustomDataInt(ref mat, property);
+            else
+                return VaridateCustomDataInt(ref mat, property);
+        }
+
+        public static int VaridateCustomColorDataInt(ref Material mat, string property, bool isCamvas)
+        {
+            if (isCamvas)
+                return VaridateCanvasCustomColorDataInt(ref mat, property);
+            else
+                return VaridateCustomColorDataInt(ref mat, property);
+        }
+
         /// MARK: VaridateVertexDataVector
         /// <summary>
         /// プロパティがEnumの範囲内かチェック
@@ -1185,7 +1246,7 @@ namespace UniVFX.Editor
         /// <param name="mat"></param>
         /// <param name="property"></param>
         /// <returns></returns>
-        public static Vector4 VaridateCustomDataVector(ref Material mat, string property)
+        static Vector4 VaridateCustomDataVector(ref Material mat, string property)
         {
             var value = mat.GetVector(property + "_Data");
             var length = Enum.GetValues(typeof(VertexData)).Length;
@@ -1221,7 +1282,7 @@ namespace UniVFX.Editor
         /// <param name="mat"></param>
         /// <param name="property"></param>
         /// <returns></returns>
-        public static int VaridateCustomDataInt(ref Material mat, string property)
+        static int VaridateCustomDataInt(ref Material mat, string property)
         {
             var value = mat.GetInt(property + "_Data");
             var length = Enum.GetValues(typeof(VertexData)).Length;
@@ -1242,7 +1303,7 @@ namespace UniVFX.Editor
         /// <param name="mat"></param>
         /// <param name="property"></param>
         /// <returns></returns>
-        public static int VaridateCustomColorDataInt(ref Material mat, string property)
+        static int VaridateCustomColorDataInt(ref Material mat, string property)
         {
             var value = mat.GetInt(property + "_Data");
             var length = Enum.GetValues(typeof(VertexColorData)).Length;
@@ -1263,7 +1324,7 @@ namespace UniVFX.Editor
         /// <param name="mat"></param>
         /// <param name="property"></param>
         /// <returns></returns>
-        public static Vector4 VaridateCanvasCustomDataVector(ref Material mat, string property)
+        static Vector4 VaridateCanvasCustomDataVector(ref Material mat, string property)
         {
             var value = mat.GetVector(property + "_Data");
             var length = Enum.GetValues(typeof(CanvasVertexData)).Length;
@@ -1300,7 +1361,7 @@ namespace UniVFX.Editor
         /// <param name="mat"></param>
         /// <param name="property"></param>
         /// <returns></returns>
-        public static int VaridateCanvasCustomDataInt(ref Material mat, string property)
+        static int VaridateCanvasCustomDataInt(ref Material mat, string property)
         {
             var value = mat.GetInt(property + "_Data");
             var length = Enum.GetValues(typeof(CanvasVertexData)).Length;
@@ -1321,7 +1382,7 @@ namespace UniVFX.Editor
         /// <param name="mat"></param>
         /// <param name="property"></param>
         /// <returns></returns>
-        public static int VaridateCanvasCustomColorDataInt(ref Material mat, string property)
+        static int VaridateCanvasCustomColorDataInt(ref Material mat, string property)
         {
             var value = mat.GetInt(property + "_Data");
             var length = Enum.GetValues(typeof(CanvasVertexColorData)).Length;

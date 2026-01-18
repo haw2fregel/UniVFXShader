@@ -7,11 +7,16 @@ namespace UniVFX.Editor
 {
     public class Dissolve : UniVFXOption
     {
+        
         protected const string _IsActive = "_DISSOLVE";
         protected const string _Tex = "_DissolveTex";
         protected const string _UV = "_DissolveUV";
         protected const string _Color = "_DissolveColor";
         protected const string _Param = "_DissolveParam";
+
+        public Dissolve(bool isCanvas, bool isBRP) : base(isCanvas, isBRP)
+        {
+        }
 
         public override bool IsActive()
         {
@@ -87,7 +92,7 @@ namespace UniVFX.Editor
                                     UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Smooth", 1, 0, 1);
                                     UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Emissive Width", 2, 0, 1);
                                     UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Emissive Smooth", 3, 0, 1);
-                                    UniVFXGUILayout.UVGUILayout(ref _mat, ref _viewUVGUI, _UV);
+                                    UniVFXGUILayout.UVGUILayout(ref _mat, ref _viewUVGUI, _UV, _isCanvas);
                                 }
                             }
                         }
@@ -127,10 +132,10 @@ namespace UniVFX.Editor
 
         public override void VaridateCustomData()
         {
-            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _UV + "Transform");
-            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _Param);
+            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _UV + "Transform", _isCanvas);
+            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _Param, _isCanvas);
             UniVFXGUILayout.VaridateArrayIndex(ref _mat, _UV + "Transform_Index", UniVFXGUILayout._UVChannelOption);
-            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _Color);
+            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _Color, _isCanvas);
         }
 
         public override List<string> GetPropertyCode()

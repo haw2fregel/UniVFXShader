@@ -15,6 +15,10 @@ namespace UniVFX.Editor
         protected const string _BlendMode = "_BlendTexBlendMode";
         protected readonly static string[] _BlendModeOption = { "Overwrite", "Add", "Multiply", "Subtract", "Overlay" };
 
+        public BlendTexture(bool isCanvas, bool isBRP) : base(isCanvas, isBRP)
+        {
+        }
+
         public override bool IsActive()
         {
             return _mat.GetInt(_IsActive) == 1;
@@ -73,7 +77,7 @@ namespace UniVFX.Editor
                                     UniVFXGUILayout.OptionColorField(ref _mat, _Color, "Color");
                                     UniVFXGUILayout.OptionSlider(ref _mat, _Intensity, "Intensity", 0, 1);
                                     UniVFXGUILayout.OptionPopupField(ref _mat, _BlendMode, "Blend Mode", _BlendModeOption);
-                                    UniVFXGUILayout.UVGUILayout(ref _mat, ref _viewUVGUI, _UV);
+                                    UniVFXGUILayout.UVGUILayout(ref _mat, ref _viewUVGUI, _UV, _isCanvas);
                                 }
                             }
                         }
@@ -110,10 +114,10 @@ namespace UniVFX.Editor
 
         public override void VaridateCustomData()
         {
-            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _Intensity);
-            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _UV + "Transform");
+            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _Intensity, _isCanvas);
+            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _UV + "Transform", _isCanvas);
             UniVFXGUILayout.VaridateArrayIndex(ref _mat, _UV + "Transform_Index", UniVFXGUILayout._UVChannelOption);
-            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _Color);
+            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _Color, _isCanvas);
         }
 
 

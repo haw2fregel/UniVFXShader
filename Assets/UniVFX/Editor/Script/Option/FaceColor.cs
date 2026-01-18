@@ -11,6 +11,10 @@ namespace UniVFX.Editor
         const string _FrontColor = "_FrontFaceColor";
         const string _BackColor = "_BackFaceColor";
 
+        public FaceColor(bool isCanvas, bool isBRP) : base(isCanvas, isBRP)
+        {
+        }
+
         public override bool IsActive()
         {
             return _mat.GetInt(_IsActive) == 1;
@@ -95,8 +99,8 @@ namespace UniVFX.Editor
 
         public override void VaridateCustomData()
         {
-            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _FrontColor);
-            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _BackColor);
+            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _FrontColor, _isCanvas);
+            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _BackColor, _isCanvas);
         }
 
         public override List<string> GetPropertyCode()

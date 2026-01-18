@@ -11,6 +11,11 @@ namespace UniVFX.Editor
         public const string _Polar = "_UVPolar";
         public const string _Param = "_UVBendParam";
 
+        public UVBend(bool isCanvas, bool isBRP) : base(isCanvas, isBRP)
+        {
+        }
+
+
         public override bool IsActive()
         {
             return _mat.IsKeywordEnabled(_IsActive);
@@ -150,7 +155,7 @@ namespace UniVFX.Editor
 
         public override void VaridateCustomData()
         {
-            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _Param);
+            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _Param, _isCanvas);
         }
 
         public override List<string> GetPropertyCode()

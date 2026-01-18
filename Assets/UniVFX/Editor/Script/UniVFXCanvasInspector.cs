@@ -60,18 +60,18 @@ namespace UniVFX.Editor
             if (_options == null)
             {
                 _options = new List<UniVFXOption>();
-                _options.Add(new CanvasMainTexture());
-                _options.Add(new CanvasMaskTexture());
-                _options.Add(new CanvasBlendTexture());
-                _options.Add(new CanvasGradationColor());
-                _options.Add(new CanvasDissolve());
-                _options.Add(new CanvasUVDistortion());
-                _options.Add(new CanvasUVBend());
-                _options.Add(new CanvasUVRotate());
-                _options.Add(new CanvasUVFripBook());
-                _options.Add(new CanvasHSVShift());
-                _options.Add(new Time());
-                _options.Add(new SurfaceOptionCanvas());
+                _options.Add(new MainTexture(true, false));
+                _options.Add(new MaskTexture(true, false));
+                _options.Add(new BlendTexture(true, false));
+                _options.Add(new GradationColor(true, false));
+                _options.Add(new Dissolve(true, false));
+                _options.Add(new UVDistortion(true, false));
+                _options.Add(new UVBend(true, false));
+                _options.Add(new UVRotate(true, false));
+                _options.Add(new UVFripBook(true, false));
+                _options.Add(new HSVShift(true, false));
+                _options.Add(new Time(true, false));
+                _options.Add(new SurfaceOptionCanvas(true, false));
             }
             foreach (var option in _options)
                 option.SetMaterial(material);

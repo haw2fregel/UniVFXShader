@@ -13,6 +13,10 @@ namespace UniVFX.Editor
         const string _UV = "_VertexAnimUV";
         const string _Param = "_VertexAnimParam";
 
+        public VertexAnimation(bool isCanvas, bool isBRP) : base(isCanvas, isBRP)
+        {
+        }
+
         public override bool IsActive()
         {
             return _mat.GetInt(_IsActive) == 1;
@@ -71,7 +75,7 @@ namespace UniVFX.Editor
                                     UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Y", 1, -1, 1);
                                     UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Z", 2, -1, 1);
                                     UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Intensity", 3, -1, 1);
-                                    UniVFXGUILayout.UVGUILayoutVert(ref _mat, ref _viewUVGUI, _UV);
+                                    UniVFXGUILayout.UVGUILayoutVert(ref _mat, ref _viewUVGUI, _UV, _isCanvas);
                                 }
                             }
                         }
@@ -111,9 +115,9 @@ namespace UniVFX.Editor
 
         public override void VaridateCustomData()
         {
-            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _UV + "Transform");
+            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _UV + "Transform", _isCanvas);
             UniVFXGUILayout.VaridateArrayIndex(ref _mat, _UV + "Transform_Index", UniVFXGUILayout._UVChannelOptionVert);
-            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _Param);
+            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _Param, _isCanvas);
         }
 
         public override List<string> GetPropertyCode()

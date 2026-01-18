@@ -23,6 +23,10 @@ namespace UniVFX.Editor
         public const string _TargetParallax = "_ParallaxMask";
         public const string _ResultValue = "maskResult";
 
+        public MaskTexture(bool isCanvas, bool isBRP) : base(isCanvas, isBRP)
+        {
+        }
+
         public override bool IsActive()
         {
             return _mat.GetInt(_IsActive) == 1;
@@ -81,7 +85,7 @@ namespace UniVFX.Editor
                                     UniVFXGUILayout.OptionTextureField(ref _mat, _Tex, "Texture");
                                     UniVFXGUILayout.OptionSlider(ref _mat, _Offset, "Value Offset", -2, 2);
                                     UniVFXGUILayout.OptionBoolField(ref _mat, _Repeat, "Repeat");
-                                    UniVFXGUILayout.UVGUILayout(ref _mat, ref _viewUVGUI, _UV);
+                                    UniVFXGUILayout.UVGUILayout(ref _mat, ref _viewUVGUI, _UV, _isCanvas);
 
                                     _viewTargetGUI = EditorGUILayout.Foldout(_viewTargetGUI, "Target");
                                     if (_viewTargetGUI)
@@ -235,9 +239,9 @@ namespace UniVFX.Editor
             if (!IsActive())
                 return;
 
-            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _UV + "Transform");
+            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _UV + "Transform", _isCanvas);
             UniVFXGUILayout.VaridateArrayIndex(ref _mat, _UV + "Transform_Index", UniVFXGUILayout._UVChannelOption);
-            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _Offset);
+            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _Offset, _isCanvas);
         }
 
         public override List<string> GetPropertyCode()

@@ -9,6 +9,10 @@ namespace UniVFX.Editor
     {
         const string _AlphaClip = "_AlphaClipThreshold";
 
+        public SurfaceOptionCutout(bool isCanvas, bool isBRP) : base(isCanvas, isBRP)
+        {
+        }
+
 
         public override bool IsActive()
         {

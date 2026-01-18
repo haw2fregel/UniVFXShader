@@ -16,6 +16,10 @@ namespace UniVFX.Editor
         protected const string _BlendMode = "_GradationBlendMode";
         protected readonly static string[] _BlendModeOption = { "Overwrite", "Add", "Multiply", "Subtract", "Overlay" };
 
+        public GradationColor(bool isCanvas, bool isBRP) : base(isCanvas, isBRP)
+        {
+        }
+
         public override bool IsActive()
         {
             return _mat.IsKeywordEnabled(_IsActive);
@@ -89,7 +93,7 @@ namespace UniVFX.Editor
                                     UniVFXGUILayout.OptionColorField(ref _mat, _Color10, "Color10");
                                     UniVFXGUILayout.OptionColorField(ref _mat, _Color11, "Color11");
                                     UniVFXGUILayout.OptionPopupField(ref _mat, _BlendMode, "Blend Mode", _BlendModeOption);
-                                    UniVFXGUILayout.UVGUILayoutClamp(ref _mat, ref _viewUVGUI, _UV);
+                                    UniVFXGUILayout.UVGUILayoutClamp(ref _mat, ref _viewUVGUI, _UV, _isCanvas);
                                 }
                             }
                         }
@@ -128,12 +132,12 @@ namespace UniVFX.Editor
 
         public override void VaridateCustomData()
         {
-            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _UV + "Transform");
+            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _UV + "Transform", _isCanvas);
             UniVFXGUILayout.VaridateArrayIndex(ref _mat, _UV + "Transform_Index", UniVFXGUILayout._UVChannelOption);
-            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _Color00);
-            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _Color01);
-            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _Color10);
-            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _Color11);
+            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _Color00, _isCanvas);
+            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _Color01, _isCanvas);
+            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _Color10, _isCanvas);
+            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _Color11, _isCanvas);
         }
 
         public override List<string> GetPropertyCode()
