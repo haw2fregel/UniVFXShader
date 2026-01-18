@@ -163,6 +163,8 @@ namespace UniVFX.Editor
         public override List<string> GetFragmentHeadCode()
         {
             var code = new List<string>();
+            if (!IsActive())
+                return code;
 
             var intensity = VertexDataConvert.VertexDataToCode(_mat.GetInt(_Intensity + "_Data"), _mat.GetFloat(_Intensity) + "");
             var uv = "uv_" + _Tex.Replace("_", "");
