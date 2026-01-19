@@ -145,18 +145,6 @@ namespace UniVFX.Editor
             var code = new List<string>();
             if (!IsActive())
                 return code;
-    
-            code.Add(_UV + "Transform(\"" + _UV.Replace("_", "") + "Transform\", Vector) = (0,0,1,1)");
-
-            if (_mat.GetInt(_Color00 + "_Data") == 0)
-                code.Add(_Color00 + "(\"" + _Color00.Replace("_", "") + "\", Color) = (1,1,1,1)");
-            if (_mat.GetInt(_Color01 + "_Data") == 0)
-                code.Add(_Color01 + "(\"" + _Color01.Replace("_", "") + "\", Color) = (1,1,1,1)");
-            if (_mat.GetInt(_Color10 + "_Data") == 0)
-                code.Add(_Color10 + "(\"" + _Color10.Replace("_", "") + "\", Color) = (1,1,1,1)");
-            if (_mat.GetInt(_Color11 + "_Data") == 0)
-                code.Add(_Color11 + "(\"" + _Color11.Replace("_", "") + "\", Color) = (1,1,1,1)");
-
             return code;
         }
         public override List<string> GetCBufferCode()
@@ -164,18 +152,6 @@ namespace UniVFX.Editor
             var code = new List<string>();
             if (!IsActive())
                 return code;
-
-            code.Add("float4 " + _UV + "Transform;");
-
-            if (_mat.GetInt(_Color00 + "_Data") == 0)
-                code.Add("half4 " + _Color00 + ";");
-            if (_mat.GetInt(_Color01 + "_Data") == 0)
-                code.Add("half4 " + _Color01 + ";");
-            if (_mat.GetInt(_Color10 + "_Data") == 0)
-                code.Add("half4 " + _Color10 + ";");
-            if (_mat.GetInt(_Color11 + "_Data") == 0)
-                code.Add("half4 " + _Color11 + ";");
-
             return code;
         }
         public override List<string> GetTextureCode()
@@ -205,10 +181,10 @@ namespace UniVFX.Editor
 
             var uvName = UniVFXGUILayout.GetVertUVName(_mat.GetInt(_UV + "Transform_Index"), _mat);
             var transform = "st_Gradation";
-            var transformX = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").x, _UV + "Transform.x", _isCanvas);
-            var transformY = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").y, _UV + "Transform.y", _isCanvas);
-            var transformZ = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").z, _UV + "Transform.z", _isCanvas);
-            var transformW = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").w, _UV + "Transform.w", _isCanvas);
+            var transformX = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").x, _mat.GetVector(_UV + "Transform").x.ToString(), _isCanvas);
+            var transformY = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").y, _mat.GetVector(_UV + "Transform").y.ToString(), _isCanvas);
+            var transformZ = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").z, _mat.GetVector(_UV + "Transform").z.ToString(), _isCanvas);
+            var transformW = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").w, _mat.GetVector(_UV + "Transform").w.ToString(), _isCanvas);
 
             code.Add("//Gradation");
             var uv = "o.uv_Gradation";
@@ -241,10 +217,10 @@ namespace UniVFX.Editor
             if (!IsActive())
                 return code;
 
-            var color00 = UniVFXGUILayout.VertexColorDataToCode(_mat.GetInt(_Color00 + "_Data"), _Color00, _isCanvas);
-            var color01 = UniVFXGUILayout.VertexColorDataToCode(_mat.GetInt(_Color01 + "_Data"), _Color01, _isCanvas);
-            var color10 = UniVFXGUILayout.VertexColorDataToCode(_mat.GetInt(_Color10 + "_Data"), _Color10, _isCanvas);
-            var color11 = UniVFXGUILayout.VertexColorDataToCode(_mat.GetInt(_Color11 + "_Data"), _Color11, _isCanvas);
+            var color00 = UniVFXGUILayout.VertexColorDataToCode(_mat.GetInt(_Color00 + "_Data"), _mat.GetColor(_Color00).ToString().Replace("RGBA", "half4"), _isCanvas);
+            var color01 = UniVFXGUILayout.VertexColorDataToCode(_mat.GetInt(_Color01 + "_Data"), _mat.GetColor(_Color01).ToString().Replace("RGBA", "half4"), _isCanvas);
+            var color10 = UniVFXGUILayout.VertexColorDataToCode(_mat.GetInt(_Color10 + "_Data"), _mat.GetColor(_Color10).ToString().Replace("RGBA", "half4"), _isCanvas);
+            var color11 = UniVFXGUILayout.VertexColorDataToCode(_mat.GetInt(_Color11 + "_Data"), _mat.GetColor(_Color11).ToString().Replace("RGBA", "half4"), _isCanvas);
 
             var blendMode = _mat.GetInt(_BlendMode);
             var uv = "uv_Gradation";
@@ -255,10 +231,10 @@ namespace UniVFX.Editor
             if (UVBend.IsActive(_mat) && UniVFXGUILayout._UVChannelOption[_mat.GetInt(_UV + "Transform_Index")] == "BendUV" && _mat.GetInt(UVBend._Polar) == 1)
             {
                 var transform = "st_Gradation";
-                var transformX = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").x, _UV + "Transform.x", _isCanvas);
-                var transformY = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").y, _UV + "Transform.y", _isCanvas);
-                var transformZ = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").z, _UV + "Transform.z", _isCanvas);
-                var transformW = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").w, _UV + "Transform.w", _isCanvas);
+                var transformX = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").x, _mat.GetVector(_UV + "Transform").x.ToString(), _isCanvas);
+                var transformY = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").y, _mat.GetVector(_UV + "Transform").y.ToString(), _isCanvas);
+                var transformZ = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").z, _mat.GetVector(_UV + "Transform").z.ToString(), _isCanvas);
+                var transformW = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").w, _mat.GetVector(_UV + "Transform").w.ToString(), _isCanvas);
 
                 UVBend.ApplyBendPolarCode(ref code, uv);
                 UVBend.ApplyBendCode(ref code, _mat, uv, _isCanvas);

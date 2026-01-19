@@ -220,13 +220,6 @@ namespace UniVFX.Editor
             var code = new List<string>();
             if (!IsActive())
                 return code;
-
-            if (_mat.GetInt(_Pow + "_Data") == 0 && _mat.GetInt(_Frenel) == 1)
-                code.Add(_Pow + "(\"" + _Pow.Replace("_", "") + "\", float) = 1");
-            if (_mat.GetInt(_FadeIn + "_Data") == 0)
-                code.Add(_FadeIn + "(\"" + _FadeIn.Replace("_", "") + "\", float) = 1");
-            if(_mat.GetInt(_FadeOut + "_Data") == 0)
-                code.Add(_FadeOut + "(\"" + _FadeOut.Replace("_", "") + "\", float) = 1");
             return code;
         }
         public override List<string> GetCBufferCode()
@@ -234,13 +227,6 @@ namespace UniVFX.Editor
             var code = new List<string>();
             if (!IsActive())
                 return code;
-
-            if (_mat.GetInt(_Pow + "_Data") == 0 && _mat.GetInt(_Frenel) == 1)
-                code.Add("half " + _Pow + ";");
-            if (_mat.GetInt(_FadeIn + "_Data") == 0)
-                code.Add("float " + _FadeIn + ";");
-            if (_mat.GetInt(_FadeOut + "_Data") == 0)
-                code.Add("float " + _FadeOut + ";");
             return code;
         }
         public override List<string> GetTextureCode()
@@ -270,15 +256,15 @@ namespace UniVFX.Editor
             if (!IsActive())
                 return code;
 
-            var fadeIn = UniVFXGUILayout.VertexDataToCode(_mat.GetInt(_FadeIn + "_Data"), _FadeIn, _isCanvas);
-            var fadeOut = UniVFXGUILayout.VertexDataToCode(_mat.GetInt(_FadeOut + "_Data"), _FadeOut, _isCanvas);
+            var fadeIn = UniVFXGUILayout.VertexDataToCode(_mat.GetInt(_FadeIn + "_Data"), _mat.GetFloat(_FadeIn).ToString(), _isCanvas);
+            var fadeOut = UniVFXGUILayout.VertexDataToCode(_mat.GetInt(_FadeOut + "_Data"), _mat.GetFloat(_FadeOut).ToString(), _isCanvas);
 
             code.Add("//SurfaceFade");
             code.Add("half " + _ResultValue + " = 1;");
 
             if (_mat.GetInt(_Frenel) == 1)
             {
-                var pow = UniVFXGUILayout.VertexDataToCode(_mat.GetInt(_Pow + "_Data"), _Pow, _isCanvas);
+                var pow = UniVFXGUILayout.VertexDataToCode(_mat.GetInt(_Pow + "_Data"), _mat.GetFloat(_Pow).ToString(), _isCanvas);
                 code.Add("float rimFade = saturate(dot(i.normal, GetWorldSpaceNormalizeViewDir(i.worldPos)));");
                 code.Add("rimFade = pow(rimFade, " + pow + ");");
                 if (_mat.GetInt(_Reverce) == 1)

@@ -111,10 +111,6 @@ namespace UniVFX.Editor
             if (!IsActive())
                 return code;
 
-            code.Add(_Row + "(\"" + _Row.Replace("_", "") + "\", float) = 0");
-            code.Add(_Column + "(\"" + _Column.Replace("_", "") + "\", float) = 0");
-            if (_mat.GetInt(_Index + "_Data") == 0)
-                code.Add(_Index + "(\"" + _Index.Replace("_", "") + "\", float) = 0");
             return code;
         }
         public override List<string> GetCBufferCode()
@@ -122,11 +118,6 @@ namespace UniVFX.Editor
             var code = new List<string>();
             if (!IsActive())
                 return code;
-
-            code.Add("half " + _Row + ";");
-            code.Add("half " + _Column + ";");
-            if(_mat.GetInt(_Index + "_Data") == 0)
-                code.Add("half " + _Index + ";");
             return code;
         }
         public override List<string> GetTextureCode()
@@ -145,13 +136,14 @@ namespace UniVFX.Editor
             if (!IsActive())
                 return code;
 
-            var index = UniVFXGUILayout.VertexDataToCode(_mat.GetInt(_Index + "_Data"), _Index, _isCanvas);
+            var index = UniVFXGUILayout.VertexDataToCode(_mat.GetInt(_Index + "_Data"), _mat.GetFloat(_Index).ToString(), _isCanvas);
+            
             var uv = "fripBookUV";
 
             code.Add("//FripBookUV");
             code.Add("float2 " + uv + " = 0;");
-            code.Add("float invRow = 1.0 / (float)" + _Row + ";");
-            code.Add("float invColumn = 1.0 / (float)" + _Column + ";");
+            code.Add("float invRow = 1.0 / (float)" + _mat.GetInt(_Row) + ";");
+            code.Add("float invColumn = 1.0 / (float)" + _mat.GetInt(_Column) + ";");
             code.Add("int indexColumn = " + index + " / _FripBookRow;");
             code.Add("int indexRow = " + index + " % _FripBookRow;");
             code.Add("float2 fripbook_tiling = float2(invRow, invColumn);");

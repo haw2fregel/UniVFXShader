@@ -254,9 +254,7 @@ namespace UniVFX.Editor
                 return code;
              
             code.Add("[NoScaleOffset]" + _Tex + "(\"" + _Tex.Replace("_", "") + "\", 2D) = \"white\" {}");
-            code.Add(_UV + "Transform(\"" + _UV.Replace("_", "") + "Transform\", Vector) = (0,0,1,1)");
-            if (_mat.GetInt(_Offset + "_Data") == 0)
-                code.Add(_Offset + "(\"" + _Offset.Replace("_", "") + "\", float) = 0");
+
             return code;
         }
         public override List<string> GetCBufferCode()
@@ -264,13 +262,7 @@ namespace UniVFX.Editor
             var code = new List<string>();
             if (!IsActive())
                 return code;
-            if (_mat.GetInt(_TargetMainTex) == 0 && _mat.GetInt(_TargetBlendTex) == 0 && _mat.GetInt(_TargetGradation) == 0 && _mat.GetInt(_TargetDistortionTex) == 0 && _mat.GetInt(_TargetDissolveTex) == 0
-                && _mat.GetInt(_TargetSurfaceFade) == 0 && _mat.GetInt(_TargetHSVShift) == 0 && _mat.GetInt(_TargetFakeLight) == 0 && _mat.GetInt(_TargetParallax) == 0)
-                return code;
-             
-            code.Add("float4 " + _UV + "Transform;");
-            if(_mat.GetInt(_Offset + "_Data") == 0)
-                code.Add("half " + _Offset + ";");
+
             return code;
         }
         public override List<string> GetTextureCode()
@@ -313,10 +305,10 @@ namespace UniVFX.Editor
              
             var uvName = UniVFXGUILayout.GetVertUVName(_mat.GetInt(_UV + "Transform_Index"), _mat);
             var transform = "st_" + _Tex.Replace("_", "");
-            var transformX = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").x, _UV + "Transform.x", _isCanvas);
-            var transformY = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").y, _UV + "Transform.y", _isCanvas);
-            var transformZ = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").z, _UV + "Transform.z", _isCanvas);
-            var transformW = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").w, _UV + "Transform.w", _isCanvas);
+            var transformX = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").x, _mat.GetVector(_UV + "Transform").x.ToString(), _isCanvas);
+            var transformY = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").y, _mat.GetVector(_UV + "Transform").y.ToString(), _isCanvas);
+            var transformZ = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").z, _mat.GetVector(_UV + "Transform").z.ToString(), _isCanvas);
+            var transformW = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").w, _mat.GetVector(_UV + "Transform").w.ToString(), _isCanvas);
 
             code.Add("//MaskTex");
             var uv = "o.uv_" + _Tex.Replace("_", "");
@@ -348,7 +340,8 @@ namespace UniVFX.Editor
                 return code;
              
             var sampler = UniVFXGUILayout.GetSamplerName(_mat.GetInt(_UV + "Transform_Sampler"));
-            var offset = UniVFXGUILayout.VertexDataToCode(_mat.GetInt(_Offset + "_Data"), _Offset, _isCanvas);
+            var offset = UniVFXGUILayout.VertexDataToCode(_mat.GetInt(_Offset + "_Data"), _mat.GetFloat(_Offset).ToString(), _isCanvas);
+           
             var uv = "uv_" + _Tex.Replace("_", "");
             var tex = "tex_" + _Tex.Replace("_", "");
 
@@ -357,10 +350,10 @@ namespace UniVFX.Editor
             if (UVBend.IsActive(_mat) && UniVFXGUILayout._UVChannelOption[_mat.GetInt(_UV + "Transform_Index")] == "BendUV" && _mat.GetInt(UVBend._Polar) == 1)
             {
                 var transform = "st_" + _Tex.Replace("_", "");
-                var transformX = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").x, _UV + "Transform.x", _isCanvas);
-                var transformY = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").y, _UV + "Transform.y", _isCanvas);
-                var transformZ = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").z, _UV + "Transform.z", _isCanvas);
-                var transformW = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").w, _UV + "Transform.w", _isCanvas);
+                var transformX = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").x, _mat.GetVector(_UV + "Transform").x.ToString(), _isCanvas);
+                var transformY = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").y, _mat.GetVector(_UV + "Transform").y.ToString(), _isCanvas);
+                var transformZ = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").z, _mat.GetVector(_UV + "Transform").z.ToString(), _isCanvas);
+                var transformW = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").w, _mat.GetVector(_UV + "Transform").w.ToString(), _isCanvas);
 
                 UVBend.ApplyBendPolarCode(ref code, uv);
                 UVBend.ApplyBendCode(ref code, _mat, uv, _isCanvas);

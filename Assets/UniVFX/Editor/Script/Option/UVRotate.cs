@@ -105,9 +105,6 @@ namespace UniVFX.Editor
             var code = new List<string>();
             if (!IsActive())
                 return code;
-             
-            if (_mat.GetInt(_Rotate + "_Data") == 0)
-                code.Add(_Rotate + "(\"" + _Rotate.Replace("_", "") + "\", float) = 0");
             return code;
         }
         public override List<string> GetCBufferCode()
@@ -115,9 +112,6 @@ namespace UniVFX.Editor
             var code = new List<string>();
             if (!IsActive())
                 return code;
-
-            if(_mat.GetInt(_Rotate + "_Data") == 0)
-                code.Add("half " + _Rotate + ";");
             return code;
         }
         public override List<string> GetTextureCode()
@@ -136,7 +130,8 @@ namespace UniVFX.Editor
             if (!IsActive())
                 return code;
 
-            var rotate = UniVFXGUILayout.VertexDataToCode(_mat.GetInt(_Rotate + "_Data"), _Rotate, _isCanvas);
+            var rotate = UniVFXGUILayout.VertexDataToCode(_mat.GetInt(_Rotate + "_Data"), _mat.GetFloat(_Rotate).ToString(), _isCanvas);
+            
             var uv = "rotateUV";
 
             code.Add("//RotateUV");
