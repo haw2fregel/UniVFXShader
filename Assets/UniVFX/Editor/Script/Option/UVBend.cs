@@ -199,13 +199,13 @@ namespace UniVFX.Editor
             return code;
         }
 
-        public static void ApplyBendCode(ref List<string> code, Material mat, string uvName)
+        public static void ApplyBendCode(ref List<string> code, Material mat, string uvName, bool isCanvas)
         {
 
-            var paramX = VertexDataConvert.VertexDataToCode((int)mat.GetVector(_Param + "_Data").x, mat.GetVector(_Param).x + "");
-            var paramY = VertexDataConvert.VertexDataToCode((int)mat.GetVector(_Param + "_Data").y, mat.GetVector(_Param).y + "");
-            var paramZ = VertexDataConvert.VertexDataToCode((int)mat.GetVector(_Param + "_Data").z, mat.GetVector(_Param).z + "");
-            var paramW = VertexDataConvert.VertexDataToCode((int)mat.GetVector(_Param + "_Data").w, mat.GetVector(_Param).w + "");
+            var paramX = UniVFXGUILayout.VertexDataToCode((int)mat.GetVector(_Param + "_Data").x, mat.GetVector(_Param).x + "", isCanvas);
+            var paramY = UniVFXGUILayout.VertexDataToCode((int)mat.GetVector(_Param + "_Data").y, mat.GetVector(_Param).y + "", isCanvas);
+            var paramZ = UniVFXGUILayout.VertexDataToCode((int)mat.GetVector(_Param + "_Data").z, mat.GetVector(_Param).z + "", isCanvas);
+            var paramW = UniVFXGUILayout.VertexDataToCode((int)mat.GetVector(_Param + "_Data").w, mat.GetVector(_Param).w + "", isCanvas);
 
             if (paramZ == "0" && paramW == "0")
                 return ;

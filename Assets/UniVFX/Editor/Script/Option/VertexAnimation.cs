@@ -170,16 +170,16 @@ namespace UniVFX.Editor
 
             var uvName = UniVFXGUILayout.GetVertUVName(_mat.GetInt(_UV + "Transform_Index"), _mat);
             var transform = "st_" + _Tex.Replace("_", "");
-            var transformX = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").x, _UV + "Transform.x");
-            var transformY = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").y, _UV + "Transform.y");
-            var transformZ = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").z, _UV + "Transform.z");
-            var transformW = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").w, _UV + "Transform.w");
+            var transformX = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").x, _UV + "Transform.x", _isCanvas);
+            var transformY = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").y, _UV + "Transform.y", _isCanvas);
+            var transformZ = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").z, _UV + "Transform.z", _isCanvas);
+            var transformW = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").w, _UV + "Transform.w", _isCanvas);
 
             var param = "param_" + _Tex.Replace("_", "");
-            var paramX = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").x, _Param + ".x");
-            var paramY = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").y, _Param + ".y");
-            var paramZ = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").z, _Param + ".z");
-            var paramW = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").w, _Param + ".w");
+            var paramX = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").x, _Param + ".x", _isCanvas);
+            var paramY = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").y, _Param + ".y", _isCanvas);
+            var paramZ = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").z, _Param + ".z", _isCanvas);
+            var paramW = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").w, _Param + ".w", _isCanvas);
 
             var uv = "uv_" + _Tex.Replace("_", "");
             var tex = "tex_" + _Tex.Replace("_", "");

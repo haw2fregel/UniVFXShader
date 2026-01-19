@@ -159,10 +159,10 @@ namespace UniVFX.Editor
 
 
             var param = "param_HSVShift";
-            var paramX = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").x, _mat.GetVector(_Param).x + "");
-            var paramY = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").y, _mat.GetVector(_Param).y + "");
-            var paramZ = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").z, _mat.GetVector(_Param).z + "");
-            var paramW = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").w, _mat.GetVector(_Param).w + "");
+            var paramX = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").x, _mat.GetVector(_Param).x + "", _isCanvas);
+            var paramY = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").y, _mat.GetVector(_Param).y + "", _isCanvas);
+            var paramZ = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").z, _mat.GetVector(_Param).z + "", _isCanvas);
+            var paramW = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").w, _mat.GetVector(_Param).w + "", _isCanvas);
 
             code.Add("//HsvShift");
 

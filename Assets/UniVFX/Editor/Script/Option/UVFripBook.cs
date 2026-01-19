@@ -145,7 +145,7 @@ namespace UniVFX.Editor
             if (!IsActive())
                 return code;
 
-            var index = VertexDataConvert.VertexDataToCode(_mat.GetInt(_Index + "_Data"), _Index);
+            var index = UniVFXGUILayout.VertexDataToCode(_mat.GetInt(_Index + "_Data"), _Index, _isCanvas);
             var uv = "fripBookUV";
 
             code.Add("//FripBookUV");

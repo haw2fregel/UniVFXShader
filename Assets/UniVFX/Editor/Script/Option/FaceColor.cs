@@ -158,8 +158,8 @@ namespace UniVFX.Editor
             if (!IsActive())
                 return code;
 
-            var frontColor = VertexColorDataConvert.VertexColorDataToCode(_mat.GetInt(_FrontColor + "_Data"), _FrontColor);
-            var backColor = VertexColorDataConvert.VertexColorDataToCode(_mat.GetInt(_BackColor + "_Data"), _BackColor);
+            var frontColor = UniVFXGUILayout.VertexColorDataToCode(_mat.GetInt(_FrontColor + "_Data"), _FrontColor, _isCanvas);
+            var backColor = UniVFXGUILayout.VertexColorDataToCode(_mat.GetInt(_BackColor + "_Data"), _BackColor, _isCanvas);
 
             code.Add("col *= max(0, face) ? " + frontColor + " : " + backColor + ";");
             code.Add("");

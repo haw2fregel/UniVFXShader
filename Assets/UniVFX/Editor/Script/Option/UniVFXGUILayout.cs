@@ -1416,5 +1416,165 @@ namespace UniVFX.Editor
             return value;
         }
 
+        public static string VertexDataToCode(int vertexData, string prop, bool isCanvas)
+        {
+            if (isCanvas)
+                return CanvasVertexDataToCode(vertexData, prop);
+            else
+                return VertexDataToCode(vertexData, prop);
+        }
+
+        public static string VertexColorDataToCode(int vertexColorData, string prop, bool isCanvas)
+        {
+            if (isCanvas)
+                return CanvasVertexColorDataToCode(vertexColorData, prop);
+            else
+                return VertexColorDataToCode(vertexColorData, prop);
+        }
+
+        static string VertexDataToCode(int vertexData, string prop)
+        {
+            switch (vertexData)
+            {
+                case (int)VertexData.Input:
+                    return prop;
+                case (int)VertexData.TEXCOORD1X:
+                    return "texCoord1.x";
+                case (int)VertexData.TEXCOORD1Y:
+                    return "texCoord1.y";
+                case (int)VertexData.TEXCOORD1Z:
+                    return "texCoord1.z";
+                case (int)VertexData.TEXCOORD1W:
+                    return "texCoord1.w";
+                case (int)VertexData.TEXCOORD2X:
+                    return "texCoord2.x";
+                case (int)VertexData.TEXCOORD2Y:
+                    return "texCoord2.y";
+                case (int)VertexData.TEXCOORD2Z:
+                    return "texCoord2.z";
+                case (int)VertexData.TEXCOORD2W:
+                    return "texCoord2.w";
+                case (int)VertexData.VertexColorR:
+                    return "vertexColor.r";
+                case (int)VertexData.VertexColorG:
+                    return "vertexColor.g";
+                case (int)VertexData.VertexColorB:
+                    return "vertexColor.b";
+                case (int)VertexData.VertexColorA:
+                    return "vertexColor.a";
+                case (int)VertexData.TimeX:
+                    return "time.x";
+                case (int)VertexData.TimeY:
+                    return "time.y";
+                case (int)VertexData.TimeZ:
+                    return "time.z";
+                case (int)VertexData.TimeW:
+                    return "time.w";
+                case (int)VertexData.MinusTimeX:
+                    return "-time.x";
+                case (int)VertexData.MinusTimeY:
+                    return "-time.y";
+                case (int)VertexData.MinusTimeZ:
+                    return "-time.z";
+                case (int)VertexData.MinusTimeW:
+                    return "-time.w";
+                case (int)VertexData.TimeMapX:
+                    return "timeMap.x";
+                case (int)VertexData.TimeMapY:
+                    return "timeMap.y";
+                case (int)VertexData.TimeMapZ:
+                    return "timeMap.z";
+                case (int)VertexData.TimeMapW:
+                    return "timeMap.w";
+                default:
+                    return prop;
+            }
+        }
+
+        static string CanvasVertexDataToCode(int vertexData, string prop)
+        {
+            switch (vertexData)
+            {
+                case (int)CanvasVertexData.Input:
+                    return prop;
+                case (int)CanvasVertexData.TEXCOORD2X:
+                    return "texCoord1.x";
+                case (int)CanvasVertexData.TEXCOORD2Y:
+                    return "texCoord1.y";
+                case (int)CanvasVertexData.TEXCOORD3X:
+                    return "texCoord3.x";
+                case (int)CanvasVertexData.TEXCOORD3Y:
+                    return "texCoord3.y";
+                case (int)CanvasVertexData.VertexColorR:
+                    return "vertexColor.r";
+                case (int)CanvasVertexData.VertexColorG:
+                    return "vertexColor.g";
+                case (int)CanvasVertexData.VertexColorB:
+                    return "vertexColor.b";
+                case (int)CanvasVertexData.VertexColorA:
+                    return "vertexColor.a";
+                case (int)CanvasVertexData.TimeX:
+                    return "time.x";
+                case (int)CanvasVertexData.TimeY:
+                    return "time.y";
+                case (int)CanvasVertexData.TimeZ:
+                    return "time.z";
+                case (int)CanvasVertexData.TimeW:
+                    return "time.w";
+                case (int)CanvasVertexData.MinusTimeX:
+                    return "-time.x";
+                case (int)CanvasVertexData.MinusTimeY:
+                    return "-time.y";
+                case (int)CanvasVertexData.MinusTimeZ:
+                    return "-time.z";
+                case (int)CanvasVertexData.MinusTimeW:
+                    return "-time.w";
+                case (int)CanvasVertexData.TimeMapX:
+                    return "timeMap.x";
+                case (int)CanvasVertexData.TimeMapY:
+                    return "timeMap.y";
+                case (int)CanvasVertexData.TimeMapZ:
+                    return "timeMap.z";
+                case (int)CanvasVertexData.TimeMapW:
+                    return "timeMap.w";
+                default:
+                    return prop;
+            }
+        }
+
+        static string VertexColorDataToCode(int vertexColorData, string prop)
+        {
+            switch (vertexColorData)
+            {
+                case (int)VertexColorData.Input:
+                    return prop;
+                case (int)VertexColorData.TEXCOORD1:
+                    return "texCoord1";
+                case (int)VertexColorData.TEXCOORD2:
+                    return "texCoord2";
+                case (int)VertexColorData.VertexColor:
+                    return "vertexColor";
+                default:
+                    return prop;
+            }
+        }
+
+        static string CanvasVertexColorDataToCode(int vertexColorData, string prop)
+        {
+            switch (vertexColorData)
+            {
+                case (int)CanvasVertexColorData.Input:
+                    return prop;
+                case (int)CanvasVertexColorData.TEXCOORD2:
+                    return "texCoord2";
+                case (int)CanvasVertexColorData.TEXCOORD3:
+                    return "texCoord3";
+                case (int)CanvasVertexColorData.VertexColor:
+                    return "vertexColor";
+                default:
+                    return prop;
+            }
+        }
+
     }
 }

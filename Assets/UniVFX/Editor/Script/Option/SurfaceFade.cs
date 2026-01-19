@@ -270,15 +270,15 @@ namespace UniVFX.Editor
             if (!IsActive())
                 return code;
 
-            var fadeIn = VertexDataConvert.VertexDataToCode(_mat.GetInt(_FadeIn + "_Data"), _FadeIn);
-            var fadeOut = VertexDataConvert.VertexDataToCode(_mat.GetInt(_FadeOut + "_Data"), _FadeOut);
+            var fadeIn = UniVFXGUILayout.VertexDataToCode(_mat.GetInt(_FadeIn + "_Data"), _FadeIn, _isCanvas);
+            var fadeOut = UniVFXGUILayout.VertexDataToCode(_mat.GetInt(_FadeOut + "_Data"), _FadeOut, _isCanvas);
 
             code.Add("//SurfaceFade");
             code.Add("half " + _ResultValue + " = 1;");
 
             if (_mat.GetInt(_Frenel) == 1)
             {
-                var pow = VertexDataConvert.VertexDataToCode(_mat.GetInt(_Pow + "_Data"), _Pow);
+                var pow = UniVFXGUILayout.VertexDataToCode(_mat.GetInt(_Pow + "_Data"), _Pow, _isCanvas);
                 code.Add("float rimFade = saturate(dot(i.normal, GetWorldSpaceNormalizeViewDir(i.worldPos)));");
                 code.Add("rimFade = pow(rimFade, " + pow + ");");
                 if (_mat.GetInt(_Reverce) == 1)

@@ -221,10 +221,10 @@ namespace UniVFX.Editor
 
             var uvName = UniVFXGUILayout.GetVertUVName(_mat.GetInt(_UV + "Transform_Index"), _mat);
             var transform = "st_" + _Tex.Replace("_", "");
-            var transformX = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").x, _UV + "Transform.x");
-            var transformY = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").y, _UV + "Transform.y");
-            var transformZ = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").z, _UV + "Transform.z");
-            var transformW = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").w, _UV + "Transform.w");
+            var transformX = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").x, _UV + "Transform.x", _isCanvas);
+            var transformY = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").y, _UV + "Transform.y", _isCanvas);
+            var transformZ = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").z, _UV + "Transform.z", _isCanvas);
+            var transformW = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").w, _UV + "Transform.w", _isCanvas);
 
             code.Add("//Distortion");
             var uv = "o.uv_" + _Tex.Replace("_", "");
@@ -237,7 +237,7 @@ namespace UniVFX.Editor
 
             if (UVBend.IsActive(_mat) && UniVFXGUILayout._UVChannelOption[_mat.GetInt(_UV + "Transform_Index")] == "BendUV")
             {
-                UVBend.ApplyBendCode(ref code, _mat, uv);
+                UVBend.ApplyBendCode(ref code, _mat, uv, _isCanvas);
             }
 
             code.Add("float4 " + transform + " = float4(" + transformX + ", " + transformY + ", " + transformZ + ", " + transformW + ");");
@@ -253,7 +253,7 @@ namespace UniVFX.Editor
                 return code;
             
             var sampler = UniVFXGUILayout.GetSamplerName(_mat.GetInt(_UV + "Transform_Sampler"));
-            var intensity = VertexDataConvert.VertexDataToCode(_mat.GetInt(_Intensity + "_Data"), _Intensity);
+            var intensity = UniVFXGUILayout.VertexDataToCode(_mat.GetInt(_Intensity + "_Data"), _Intensity, _isCanvas);
             var uv = "uv_" + _Tex.Replace("_", "");
             var tex = "tex_" + _Tex.Replace("_", "");
 
@@ -262,13 +262,13 @@ namespace UniVFX.Editor
             if (UVBend.IsActive(_mat) && UniVFXGUILayout._UVChannelOption[_mat.GetInt(_UV + "Transform_Index")] == "BendUV" && _mat.GetInt(UVBend._Polar) == 1)
             {
                 var transform = "st_" + _Tex.Replace("_", "");
-                var transformX = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").x, _UV + "Transform.x");
-                var transformY = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").y, _UV + "Transform.y");
-                var transformZ = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").z, _UV + "Transform.z");
-                var transformW = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").w, _UV + "Transform.w");
+                var transformX = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").x, _UV + "Transform.x", _isCanvas);
+                var transformY = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").y, _UV + "Transform.y", _isCanvas);
+                var transformZ = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").z, _UV + "Transform.z", _isCanvas);
+                var transformW = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").w, _UV + "Transform.w", _isCanvas);
 
                 UVBend.ApplyBendPolarCode(ref code, uv);
-                UVBend.ApplyBendCode(ref code, _mat, uv);
+                UVBend.ApplyBendCode(ref code, _mat, uv, _isCanvas);
 
                 code.Add("float4 " + transform + " = float4(" + transformX + ", " + transformY + ", " + transformZ + ", " + transformW + ");");
                 code.Add(uv + " = (" + uv + " - float2(0.5, 0.5)) * " + transform + ".xy + float2(0.5, 0.5) + " + transform + ".zw;");

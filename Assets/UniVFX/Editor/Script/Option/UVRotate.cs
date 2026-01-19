@@ -136,7 +136,7 @@ namespace UniVFX.Editor
             if (!IsActive())
                 return code;
 
-            var rotate = VertexDataConvert.VertexDataToCode(_mat.GetInt(_Rotate + "_Data"), _Rotate);
+            var rotate = UniVFXGUILayout.VertexDataToCode(_mat.GetInt(_Rotate + "_Data"), _Rotate, _isCanvas);
             var uv = "rotateUV";
 
             code.Add("//RotateUV");

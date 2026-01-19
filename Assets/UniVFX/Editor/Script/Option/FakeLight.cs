@@ -210,18 +210,18 @@ namespace UniVFX.Editor
             if (!IsActive())
                 return code;
 
-            var lightColor = VertexColorDataConvert.VertexColorDataToCode(_mat.GetInt(_LightColor + "_Data"), (_mat.GetColor(_LightColor) + "").Replace("RGBA", "half4"));
-            var shadowColor = VertexColorDataConvert.VertexColorDataToCode(_mat.GetInt(_ShadowColor + "_Data"), (_mat.GetColor(_ShadowColor) + "").Replace("RGBA", "half4"));
-            var intensity = VertexDataConvert.VertexDataToCode(_mat.GetInt(_Intensity + "_Data"), _mat.GetFloat(_Intensity) + "");
+            var lightColor = UniVFXGUILayout.VertexColorDataToCode(_mat.GetInt(_LightColor + "_Data"), (_mat.GetColor(_LightColor) + "").Replace("RGBA", "half4"), _isCanvas);
+            var shadowColor = UniVFXGUILayout.VertexColorDataToCode(_mat.GetInt(_ShadowColor + "_Data"), (_mat.GetColor(_ShadowColor) + "").Replace("RGBA", "half4"), _isCanvas);
+            var intensity = UniVFXGUILayout.VertexDataToCode(_mat.GetInt(_Intensity + "_Data"), _mat.GetFloat(_Intensity) + "", _isCanvas);
             
             var uv = "uv_" + _Tex.Replace("_", "");
             var tex = "tex_" + _Tex.Replace("_", "");
 
             var param = "param_" + _Tex.Replace("_", "");
-            var paramX = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").x, _mat.GetVector(_Param).x + "");
-            var paramY = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").y, _mat.GetVector(_Param).y + "");
-            var paramZ = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").z, _mat.GetVector(_Param).z + "");
-            var paramW = VertexDataConvert.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").w, _mat.GetVector(_Param).w + "");
+            var paramX = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").x, _mat.GetVector(_Param).x + "", _isCanvas);
+            var paramY = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").y, _mat.GetVector(_Param).y + "", _isCanvas);
+            var paramZ = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").z, _mat.GetVector(_Param).z + "", _isCanvas);
+            var paramW = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").w, _mat.GetVector(_Param).w + "", _isCanvas);
 
             var useTex = true;
             //Texが空
