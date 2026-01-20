@@ -7,6 +7,8 @@ namespace UniVFX.Editor
 {
     public class UVParallax : UniVFXOption
     {
+        static bool _viewGUI = false;
+        static bool _viewTargetGUI = false;
         public const string _IsActive = "_PARALLAXMAPPING";
         public const string _Tex = "_ParallaxTex";
         public const string _Intensity = "_ParallaxAmplitude";
@@ -198,7 +200,7 @@ namespace UniVFX.Editor
                 code.Add("");
                 return code;
             }
-            
+
             code.Add("float2 " + uv + " = i.texCoord0.xy;");
             code.Add("half4 " + tex + " = SAMPLE_TEXTURE2D(" + _Tex + ", SamplerState_Linear_Clamp, " + uv + ");");
             code.Add(tex + ".x -= 0.5;");

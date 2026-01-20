@@ -7,6 +7,8 @@ namespace UniVFX.Editor
 {
     public class MainTexture : UniVFXOption
     {
+        static bool _viewGUI = false;
+        static bool _viewUVGUI = false;
         protected const string _Tex = "_MainTex";
         protected const string _UV = "_MainUV";
         protected const string _Color = "_MainColor";

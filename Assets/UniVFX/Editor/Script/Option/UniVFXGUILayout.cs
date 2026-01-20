@@ -1576,5 +1576,7 @@ namespace UniVFX.Editor
             }
         }
 
+        public static readonly string[] _refactOptions = new string[] {"properties to fixed value", "Texture None to fixed value"};
+
     }
 }

@@ -7,6 +7,8 @@ namespace UniVFX.Editor
 {
     public class SurfaceFade : UniVFXOption
     {
+        static bool _viewGUI = false;
+        static bool _viewTargetGUI = false;
         const string _IsActive = "_SURFACEFADE";
         const string _Frenel = "_Frenel";
         const string _Pow = "_FrenelPow";

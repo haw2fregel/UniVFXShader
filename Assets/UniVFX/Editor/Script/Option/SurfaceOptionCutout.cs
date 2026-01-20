@@ -7,6 +7,7 @@ namespace UniVFX.Editor
 {
     public class SurfaceOptionCutout : UniVFXOption
     {
+        static bool _viewGUI = false;
         const string _AlphaClip = "_AlphaClipThreshold";
 
         public SurfaceOptionCutout(bool isCanvas, bool isBRP) : base(isCanvas, isBRP)

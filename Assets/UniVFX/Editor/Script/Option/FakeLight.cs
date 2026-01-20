@@ -7,6 +7,7 @@ namespace UniVFX.Editor
 {
     public class FakeLight : UniVFXOption
     {
+        static bool _viewGUI = false;
         const string _IsActive = "_FAKELIGHT";
         const string _Tex = "_FakeLightMap";
         const string _Param = "_FakeLightParam";

@@ -7,6 +7,7 @@ namespace UniVFX.Editor
 {
     public class HSVShift : UniVFXOption
     {
+        static bool _viewGUI = false;
         protected const string _IsActive = "_HSVSHIFT";
         protected const string _Param = "_HSVShiftParametors";
 

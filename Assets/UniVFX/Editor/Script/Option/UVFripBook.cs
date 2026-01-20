@@ -7,6 +7,7 @@ namespace UniVFX.Editor
 {
     public class UVFripBook : UniVFXOption
     {
+        static bool _viewGUI = false;
         protected const string _IsActive = "_FRIPBOOK";
         protected const string _Row = "_FripBookRow";
         protected const string _Column = "_FripBookColumn";
@@ -150,7 +151,7 @@ namespace UniVFX.Editor
                 code.Add("");
                 return code;
             }
-            
+
             code.Add("float2 " + uv + " = 0;");
             code.Add("float invRow = 1.0 / (float)" + row + ";");
             code.Add("float invColumn = 1.0 / (float)" + column + ";");

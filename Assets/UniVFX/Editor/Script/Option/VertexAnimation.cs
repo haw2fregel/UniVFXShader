@@ -8,6 +8,8 @@ namespace UniVFX.Editor
 {
     public class VertexAnimation : UniVFXOption
     {
+        static bool _viewGUI = false;
+        static bool _viewUVGUI = false;
         const string _IsActive = "_VERTEXANIMATION";
         const string _Tex = "_VertexAnimTex";
         const string _UV = "_VertexAnimUV";

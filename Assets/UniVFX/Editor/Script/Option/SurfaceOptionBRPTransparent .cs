@@ -7,6 +7,7 @@ namespace UniVFX.Editor
 {
     public class SurfaceOptionBRPTransparent  : UniVFXOption
     {
+        static bool _viewGUI = false;
         public const string _ColorMultiplAlpha = "_ColorMultiplAlpha";
         public const string _SrcBlend = "_BUILTIN_SrcBlend";
         public const string _DstBlend = "_BUILTIN_DstBlend";

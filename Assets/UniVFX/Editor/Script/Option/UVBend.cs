@@ -7,6 +7,7 @@ namespace UniVFX.Editor
 {
     public class UVBend : UniVFXOption
     {
+        static bool _viewGUI = false;
         public const string _IsActive = "_UVBEND";
         public const string _Polar = "_UVPolar";
         public const string _Param = "_UVBendParam";

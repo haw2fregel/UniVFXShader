@@ -7,6 +7,7 @@ namespace UniVFX.Editor
 {
     public class FaceColor : UniVFXOption
     {
+        static bool _viewGUI = false;
         const string _IsActive = "_FACECOLOR";
         const string _FrontColor = "_FrontFaceColor";
         const string _BackColor = "_BackFaceColor";

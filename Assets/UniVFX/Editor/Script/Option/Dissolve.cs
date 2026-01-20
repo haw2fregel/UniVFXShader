@@ -7,7 +7,8 @@ namespace UniVFX.Editor
 {
     public class Dissolve : UniVFXOption
     {
-        
+        static bool _viewGUI = false;
+        static bool _viewUVGUI = false;
         protected const string _IsActive = "_DISSOLVE";
         protected const string _Tex = "_DissolveTex";
         protected const string _UV = "_DissolveUV";

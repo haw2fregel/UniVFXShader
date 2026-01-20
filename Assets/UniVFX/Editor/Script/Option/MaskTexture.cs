@@ -7,6 +7,9 @@ namespace UniVFX.Editor
 {
     public class MaskTexture : UniVFXOption
     {
+        static bool _viewGUI = false;
+        static bool _viewUVGUI = false;
+        static bool _viewTargetGUI = false;
         protected const string _IsActive = "_MASKTEXTURE";
         protected const string _Tex = "_MaskTex";
         protected const string _UV = "_MaskUV";

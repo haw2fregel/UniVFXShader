@@ -8,6 +8,7 @@ namespace UniVFX.Editor
 
     public class UVRotate : UniVFXOption
     {
+        static bool _viewGUI = false;
         protected const string _IsActive = "_ROTATEUVENABLE";
         protected const string _Rotate = "_UVRotate";
 

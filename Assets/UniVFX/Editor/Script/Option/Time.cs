@@ -7,6 +7,7 @@ namespace UniVFX.Editor
 {
     public class Time : UniVFXOption
     {
+        static bool _viewGUI = false;
         public const string _Speed = "_TimeSpeed";
         public const string _Tex = "_TimeMap";
 

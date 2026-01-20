@@ -7,6 +7,9 @@ namespace UniVFX.Editor
 {
     public class UVDistortion : UniVFXOption
     {
+        static bool _viewGUI = false;
+        static bool _viewUVGUI = false;
+        static bool _viewTargetGUI = false;
         protected const string _IsActive = "_DISTORTIONENABLE";
         protected const string _Tex = "_DistortionTex";
         protected const string _UV = "_DistortionUV";

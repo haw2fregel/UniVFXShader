@@ -5,9 +5,6 @@ namespace UniVFX.Editor
 {
     public abstract class UniVFXOption
     {
-        protected bool _viewGUI = false;
-        protected bool _viewUVGUI = false;
-        protected bool _viewTargetGUI = false;
         protected bool _isCanvas = false;
         protected bool _isBRP = false;
         protected Material _mat;

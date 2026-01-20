@@ -7,6 +7,8 @@ namespace UniVFX.Editor
 {
     public class BlendTexture : UniVFXOption
     {
+        static bool _viewGUI = false;
+        static bool _viewUVGUI = false;
         protected const string _IsActive = "_BLENDTEXTURE";
         protected const string _Tex = "_BlendTex";
         protected const string _Color = "_BlendTexColor";

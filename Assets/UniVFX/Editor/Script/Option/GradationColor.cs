@@ -7,6 +7,8 @@ namespace UniVFX.Editor
 {
     public class GradationColor : UniVFXOption
     {
+        static bool _viewGUI = false;
+        static bool _viewUVGUI = false;
         protected const string _IsActive = "_GRADATIONCOLOR";
         protected const string _Color00 = "_GradationColor00";
         protected const string _Color01 = "_GradationColor01";

@@ -7,6 +7,7 @@ namespace UniVFX.Editor
 {
     public class SurfaceOptionCanvas : UniVFXOption
     {
+        static bool _viewGUI = false;
         const string _SrcBlend = "_SrcBlend";
         const string _DstBlend = "_DstBlend";
         const string _AlphaClipActive = "_ALPHATEST_ON";
