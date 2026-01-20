@@ -137,13 +137,23 @@ namespace UniVFX.Editor
                 return code;
 
             var index = UniVFXGUILayout.VertexDataToCode(_mat.GetInt(_Index + "_Data"), _mat.GetFloat(_Index).ToString(), _isCanvas);
+            var row = _mat.GetInt(_Row).ToString();
+            var column = _mat.GetInt(_Column).ToString();
             
             var uv = "fripBookUV";
 
             code.Add("//FripBookUV");
+            if(row == "1" && column == "1")
+            {
+                code.Add("float2 " + uv + " = texCoord0.xy;");
+                code.Add("//FripBook Skipped, Row and Column are 1");
+                code.Add("");
+                return code;
+            }
+            
             code.Add("float2 " + uv + " = 0;");
-            code.Add("float invRow = 1.0 / (float)" + _mat.GetInt(_Row) + ";");
-            code.Add("float invColumn = 1.0 / (float)" + _mat.GetInt(_Column) + ";");
+            code.Add("float invRow = 1.0 / (float)" + row + ";");
+            code.Add("float invColumn = 1.0 / (float)" + column + ";");
             code.Add("int indexColumn = " + index + " / _FripBookRow;");
             code.Add("int indexRow = " + index + " % _FripBookRow;");
             code.Add("float2 fripbook_tiling = float2(invRow, invColumn);");

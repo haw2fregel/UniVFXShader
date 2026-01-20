@@ -162,11 +162,16 @@ namespace UniVFX.Editor
             var paramX = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").x, _mat.GetVector(_Param).x + "", _isCanvas);
             var paramY = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").y, _mat.GetVector(_Param).y + "", _isCanvas);
             var paramZ = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").z, _mat.GetVector(_Param).z + "", _isCanvas);
-            var paramW = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").w, _mat.GetVector(_Param).w + "", _isCanvas);
 
             code.Add("//HsvShift");
+            if(paramX == "0" && paramY == "0" && paramZ == "0")
+            {
+                code.Add("//HSV Shift Skipped, Intensity is 0");
+                code.Add("");
+                return code;
+            }
 
-            code.Add("float4 " + param + " = float4(" + paramX + ", " + paramY + ", " + paramZ + ", " + paramW + ");");
+            code.Add("float3 " + param + " = float3(" + paramX + ", " + paramY + ", " + paramZ + ");");
 
             if (MaskTexture.IsActive(_mat) && _mat.GetInt(MaskTexture._TargetHSVShift) == 1)
                 code.Add(param + " *= " + MaskTexture._ResultValue + ";");

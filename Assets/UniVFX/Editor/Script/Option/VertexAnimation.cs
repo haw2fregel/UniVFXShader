@@ -125,6 +125,22 @@ namespace UniVFX.Editor
             var code = new List<string>();
             if (!IsActive())
                 return code;
+
+            var paramX = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").x, _mat.GetVector(_Param).x.ToString(), _isCanvas);
+            var paramY = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").y, _mat.GetVector(_Param).y.ToString(), _isCanvas);
+            var paramZ = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").z, _mat.GetVector(_Param).z.ToString(), _isCanvas);
+            var paramW = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").w, _mat.GetVector(_Param).w.ToString(), _isCanvas);
+            if((paramX == "0" && paramY == "0" && paramZ == "0") || paramW == "0")
+            {
+                code.Add("//VertexAnimation Skipped, Intensity is 0");
+                return code;
+            }
+
+            if (_mat.GetTexture(_Tex) == null)
+            {
+                code.Add("//VertexAnimationTex Skipped, Texture is null");
+                return code;
+            }
             
             code.Add("[NoScaleOffset]" + _Tex + "(\"" + _Tex.Replace("_", "") + "\", 2D) = \"white\" {}");
             return code;
@@ -141,6 +157,21 @@ namespace UniVFX.Editor
             var code = new List<string>();
             if (!IsActive())
                 return code;
+
+            var paramX = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").x, _mat.GetVector(_Param).x.ToString(), _isCanvas);
+            var paramY = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").y, _mat.GetVector(_Param).y.ToString(), _isCanvas);
+            var paramZ = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").z, _mat.GetVector(_Param).z.ToString(), _isCanvas);
+            var paramW = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").w, _mat.GetVector(_Param).w.ToString(), _isCanvas);
+            if((paramX == "0" && paramY == "0" && paramZ == "0") || paramW == "0")
+            {
+                code.Add("//VertexAnimation Skipped, Intensity is 0");
+                return code;
+            }
+            if (_mat.GetTexture(_Tex) == null)
+            {
+                code.Add("//VertexAnimationTex Skipped, Texture is null");
+                return code;
+            }
             
             code.Add("TEXTURE2D(" + _Tex + ");");
             return code;
@@ -180,12 +211,31 @@ namespace UniVFX.Editor
             var tex = "tex_" + _Tex.Replace("_", "");
 
             code.Add("//VertexAnimation");
-            code.Add("float4 " + param + " = float4(" + paramX + ", " + paramY + ", " + paramZ + ", " + paramW + ");");
-            code.Add("float4 " + transform + " = float4(" + transformX + ", " + transformY + ", " + transformZ + ", " + transformW + ");");
-            code.Add("float2 " + uv + " = (" + uvName + " - float2(0.5, 0.5)) * " + transform + ".xy + float2(0.5, 0.5) + " + transform + ".zw;");
-            code.Add("half4 " + tex + " = SAMPLE_TEXTURE2D_LOD(" + _Tex + ", " + sampler + ", " + uv + ", 0);");
+            if((paramX == "0" && paramY == "0" && paramZ == "0") || paramW == "0")
+            {
+                code.Add("//VertexAnimation Skipped, Intensity is 0");
+                code.Add("");
+                return code;
+            }
+            if (_mat.GetTexture(_Tex) == null)
+            {
+                code.Add("float4 " + tex + " = float4(0.5,0.5,0.5,0.5);");
+                code.Add("//VertexAnimationTex Skipped, Texture is null");
+            }
+            else
+            {
+                code.Add("float4 " + transform + " = float4(" + transformX + ", " + transformY + ", " + transformZ + ", " + transformW + ");");
+                code.Add("float2 " + uv + " = " + uvName + ";");
+                if(transformX != "1" || transformY != "1" || transformZ != "0" || transformW != "0")
+                {
+                    code.Add("float4 " + transform + " = float4(" + transformX + ", " + transformY + ", " + transformZ + ", " + transformW + ");");
+                    code.Add(uv + " = (" + uv + " - float2(0.5, 0.5)) * " + transform + ".xy + float2(0.5, 0.5) + " + transform + ".zw;");
+                }
+                code.Add("half4 " + tex + " = SAMPLE_TEXTURE2D_LOD(" + _Tex + ", " + sampler + ", " + uv + ", 0);");
+            }
             code.Add("float3 biNormal = cross(normalize(v.normal), normalize(v.tangent.xyz));");
             code.Add("float3 normalTangent = " + tex + ".xyz * 2.0 - 1.0;");
+            code.Add("float4 " + param + " = float4(" + paramX + ", " + paramY + ", " + paramZ + ", " + paramW + ");");
             code.Add("normalTangent *= " + param + ".xyz * " + param + ".w;");
             code.Add("v.vertex.xyz += v.tangent * normalTangent.x + biNormal * normalTangent.y + v.normal * normalTangent.z;");
             code.Add("");

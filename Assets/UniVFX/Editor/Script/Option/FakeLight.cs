@@ -154,9 +154,11 @@ namespace UniVFX.Editor
             if (!IsActive())
                 return code;
 
-            //Texが空
             if (_mat.GetTexture(_Tex) == null)
-                    return code;
+            {
+                code.Add("//FakeLightTex Skipped, Texture is null");
+                return code;
+            }
 
             code.Add("[NoScaleOffset]" + _Tex + "(\"" + _Tex.Replace("_", "") + "\", 2D) = \"white\" {}");
             
@@ -174,9 +176,11 @@ namespace UniVFX.Editor
             if (!IsActive())
                 return code;
 
-            //Texが空
             if (_mat.GetTexture(_Tex) == null)
-                    return code;
+            {
+                code.Add("//FakeLightTex Skipped, Texture is null");
+                return code;
+            }
 
             code.Add("TEXTURE2D(" + _Tex + ");");
             
@@ -224,12 +228,8 @@ namespace UniVFX.Editor
             var paramZ = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").z, _mat.GetVector(_Param).z.ToString(), _isCanvas);
             var paramW = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").w, _mat.GetVector(_Param).w.ToString(), _isCanvas);
 
-            var useTex = true;
-            //Texが空
-            if (_mat.GetTexture(_Tex) == null)
-                    useTex = false;
                     
-            code.Add("//Dissolve");
+            code.Add("//FakeLight");
 
             code.Add("float4 " + param + " = float4(" + paramX + ", " + paramY + ", " + paramZ + ", " + paramW + ");");
 
@@ -253,13 +253,14 @@ namespace UniVFX.Editor
 
             code.Add("float nDotL = -dot(TransformObjectToWorldDir(i.normal.xyz), normalize(fakeLightDir)) * 0.5 + 0.5;");
 
-            if (useTex)
+            if (_mat.GetTexture(_Tex) == null)
             {
-                code.Add("half4 " + tex + " = SAMPLE_TEXTURE2D(" + _Tex + ", SamplerState_Linear_Clamp, nDotL.xx);");
+                code.Add("half4 " + tex + " = nDotL.xxxx;");
+                code.Add("//DissolveTex Skipped, Texture is null");
             }
             else
             {
-                code.Add("half4 " + tex + " = nDotL.xxxx;");
+                code.Add("half4 " + tex + " = SAMPLE_TEXTURE2D(" + _Tex + ", SamplerState_Linear_Clamp, nDotL.xx);");
             }
 
             code.Add("col.rgb = lerp(col.rgb, col.rgb * " + shadowColor + ".rgb, (1 - saturate(" + tex + ".x * 2)) * fakeLightIntensity);");

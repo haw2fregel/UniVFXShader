@@ -135,6 +135,13 @@ namespace UniVFX.Editor
             var uv = "rotateUV";
 
             code.Add("//RotateUV");
+            if(rotate == "0")
+            {
+                code.Add("float2 " + uv + " = texCoord0.xy;");
+                code.Add("//RotateUV Skipped, Rotate is 0");
+                code.Add("");
+                return code;
+            }
             code.Add("float2 " + uv + " = 0;");
             code.Add("float rotateAngle = " + rotate + " * 3.14 / 180 ;");
             code.Add("float rotateCos = cos(rotateAngle);");

@@ -356,10 +356,18 @@ namespace UniVFX.Editor
             shaderCode += "        {\n";
             shaderCode += "            Name \"Universal Forward\"\n";
             shaderCode += "            Cull " + SurfaceOptionTransparent._CullMode[material.GetInt(SurfaceOptionTransparent._Cull)] + "\n";
-            shaderCode += "            Blend " + SurfaceOptionTransparent._BlendMode[material.GetInt(SurfaceOptionTransparent._SrcBlend)] + " " 
-                                            + SurfaceOptionTransparent._BlendMode[material.GetInt(SurfaceOptionTransparent._DstBlend)] + ", "
-                                            + SurfaceOptionTransparent._BlendMode[material.GetInt(SurfaceOptionTransparent._SrcBlendAlpha)] + " "
-                                            + SurfaceOptionTransparent._BlendMode[material.GetInt(SurfaceOptionTransparent._DstBlendAlpha)] + "\n";
+            if(material.HasProperty(SurfaceOptionTransparent._SrcBlendAlpha) && material.HasProperty(SurfaceOptionTransparent._DstBlendAlpha))
+            {
+                shaderCode += "            Blend " + SurfaceOptionTransparent._BlendMode[material.GetInt(SurfaceOptionTransparent._SrcBlend)] + " " 
+                                                + SurfaceOptionTransparent._BlendMode[material.GetInt(SurfaceOptionTransparent._DstBlend)] + ", "
+                                                + SurfaceOptionTransparent._BlendMode[material.GetInt(SurfaceOptionTransparent._SrcBlendAlpha)] + " "
+                                                + SurfaceOptionTransparent._BlendMode[material.GetInt(SurfaceOptionTransparent._DstBlendAlpha)] + "\n";
+            }
+            else
+            {
+                shaderCode += "            Blend " + SurfaceOptionTransparent._BlendMode[material.GetInt(SurfaceOptionTransparent._SrcBlend)] + " " 
+                                                + SurfaceOptionTransparent._BlendMode[material.GetInt(SurfaceOptionTransparent._DstBlend)] + "\n";
+            }
             shaderCode += "            ZTest " + SurfaceOptionTransparent._ZTestMode[material.GetInt(SurfaceOptionTransparent._ZTest)] + "\n";
             shaderCode += "            ZWrite Off\n";
             shaderCode += "\n";
@@ -495,7 +503,7 @@ namespace UniVFX.Editor
             {
                 shaderCode += "                float4 time = _Time * " + Time._Speed + ";\n";
                 if (useVertexDataList[21].Count >= 1 || useVertexDataList[22].Count >= 1 || useVertexDataList[23].Count >= 1 || useVertexDataList[24].Count >= 1)
-                    shaderCode += "                float4 timeMap = SAMPLE_TEXTURE2D(" + Time._Tex + ", SamplerState_Linear_Clamp, frac(time.yy));\n";
+                    shaderCode += "                float4 timeMap = SAMPLE_TEXTURE2D_LOD(" + Time._Tex + ", SamplerState_Linear_Clamp, frac(time.yy), 0);\n";
             }
 
             // 頂点シェーダー早期実行する処理をここに追加

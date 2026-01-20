@@ -252,6 +252,11 @@ namespace UniVFX.Editor
             if (_mat.GetInt(_TargetMainTex) == 0 && _mat.GetInt(_TargetBlendTex) == 0 && _mat.GetInt(_TargetGradation) == 0 && _mat.GetInt(_TargetDistortionTex) == 0 && _mat.GetInt(_TargetDissolveTex) == 0
                 && _mat.GetInt(_TargetSurfaceFade) == 0 && _mat.GetInt(_TargetHSVShift) == 0 && _mat.GetInt(_TargetFakeLight) == 0 && _mat.GetInt(_TargetParallax) == 0)
                 return code;
+            if (_mat.GetTexture(_Tex) == null)
+            {
+                code.Add("//MaskTex Skipped, Texture is null");
+                return code;
+            }
              
             code.Add("[NoScaleOffset]" + _Tex + "(\"" + _Tex.Replace("_", "") + "\", 2D) = \"white\" {}");
 
@@ -273,6 +278,11 @@ namespace UniVFX.Editor
             if (_mat.GetInt(_TargetMainTex) == 0 && _mat.GetInt(_TargetBlendTex) == 0 && _mat.GetInt(_TargetGradation) == 0 && _mat.GetInt(_TargetDistortionTex) == 0 && _mat.GetInt(_TargetDissolveTex) == 0
                 && _mat.GetInt(_TargetSurfaceFade) == 0 && _mat.GetInt(_TargetHSVShift) == 0 && _mat.GetInt(_TargetFakeLight) == 0 && _mat.GetInt(_TargetParallax) == 0)
                 return code;
+            if (_mat.GetTexture(_Tex) == null)
+            {
+                code.Add("//MaskTex Skipped, Texture is null");
+                return code;
+            }
              
             code.Add("TEXTURE2D(" + _Tex + ");");
             return code;
@@ -285,6 +295,11 @@ namespace UniVFX.Editor
             if (_mat.GetInt(_TargetMainTex) == 0 && _mat.GetInt(_TargetBlendTex) == 0 && _mat.GetInt(_TargetGradation) == 0 && _mat.GetInt(_TargetDistortionTex) == 0 && _mat.GetInt(_TargetDissolveTex) == 0
                 && _mat.GetInt(_TargetSurfaceFade) == 0 && _mat.GetInt(_TargetHSVShift) == 0 && _mat.GetInt(_TargetFakeLight) == 0 && _mat.GetInt(_TargetParallax) == 0)
                 return code;
+            if (_mat.GetTexture(_Tex) == null)
+            {
+                code.Add("//MaskTex Skipped, Texture is null");
+                return code;
+            }
              
             code.Add("float2 uv_" + _Tex.Replace("_", ""));
             return code;
@@ -311,6 +326,14 @@ namespace UniVFX.Editor
             var transformW = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").w, _mat.GetVector(_UV + "Transform").w.ToString(), _isCanvas);
 
             code.Add("//MaskTex");
+
+            if (_mat.GetTexture(_Tex) == null)
+            {
+                code.Add("//MaskTex Skipped, Texture is null");
+                code.Add("");
+                return code;
+            }
+
             var uv = "o.uv_" + _Tex.Replace("_", "");
             code.Add(uv + " = " + uvName + ";");
             if(UVBend.IsActive(_mat) && UniVFXGUILayout._UVChannelOption[_mat.GetInt(_UV + "Transform_Index")] == "BendUV" && _mat.GetInt(UVBend._Polar) == 1)
@@ -324,8 +347,11 @@ namespace UniVFX.Editor
                 UVBend.ApplyBendCode(ref code, _mat, uv, _isCanvas);
             }
 
-            code.Add("float4 " + transform + " = float4(" + transformX + ", " + transformY + ", " + transformZ + ", " + transformW + ");");
-            code.Add(uv + " = (" + uv + " - float2(0.5, 0.5)) * " + transform + ".xy + float2(0.5, 0.5) + " + transform + ".zw;");
+            if(transformX != "1" || transformY != "1" || transformZ != "0" || transformW != "0")
+            {
+                code.Add("float4 " + transform + " = float4(" + transformX + ", " + transformY + ", " + transformZ + ", " + transformW + ");");
+                code.Add(uv + " = (" + uv + " - float2(0.5, 0.5)) * " + transform + ".xy + float2(0.5, 0.5) + " + transform + ".zw;");
+            }
 
             code.Add("");
             return code;
@@ -346,24 +372,36 @@ namespace UniVFX.Editor
             var tex = "tex_" + _Tex.Replace("_", "");
 
             code.Add("//MaskTex");
-            code.Add("float2 " + uv + " = i." + uv + ";");
-            if (UVBend.IsActive(_mat) && UniVFXGUILayout._UVChannelOption[_mat.GetInt(_UV + "Transform_Index")] == "BendUV" && _mat.GetInt(UVBend._Polar) == 1)
+            if (_mat.GetTexture(_Tex) == null)
             {
-                var transform = "st_" + _Tex.Replace("_", "");
-                var transformX = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").x, _mat.GetVector(_UV + "Transform").x.ToString(), _isCanvas);
-                var transformY = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").y, _mat.GetVector(_UV + "Transform").y.ToString(), _isCanvas);
-                var transformZ = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").z, _mat.GetVector(_UV + "Transform").z.ToString(), _isCanvas);
-                var transformW = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").w, _mat.GetVector(_UV + "Transform").w.ToString(), _isCanvas);
-
-                UVBend.ApplyBendPolarCode(ref code, uv);
-                UVBend.ApplyBendCode(ref code, _mat, uv, _isCanvas);
-
-                code.Add("float4 " + transform + " = float4(" + transformX + ", " + transformY + ", " + transformZ + ", " + transformW + ");");
-                code.Add(uv + " = (" + uv + " - float2(0.5, 0.5)) * " + transform + ".xy + float2(0.5, 0.5) + " + transform + ".zw;");
-
+                code.Add("half4 " + tex + " = half4(1,1,1,1);");
+                code.Add("//MaskTex Skipped, Texture is null");
             }
-            code.Add("half " + tex + " = SAMPLE_TEXTURE2D(" + _Tex + ", " + sampler + ", " + uv + ").x;");
-            code.Add(tex + " += " + offset + ";");
+            else
+            {
+                code.Add("float2 " + uv + " = i." + uv + ";");
+                if (UVBend.IsActive(_mat) && UniVFXGUILayout._UVChannelOption[_mat.GetInt(_UV + "Transform_Index")] == "BendUV" && _mat.GetInt(UVBend._Polar) == 1)
+                {
+                    var transform = "st_" + _Tex.Replace("_", "");
+                    var transformX = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").x, _mat.GetVector(_UV + "Transform").x.ToString(), _isCanvas);
+                    var transformY = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").y, _mat.GetVector(_UV + "Transform").y.ToString(), _isCanvas);
+                    var transformZ = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").z, _mat.GetVector(_UV + "Transform").z.ToString(), _isCanvas);
+                    var transformW = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").w, _mat.GetVector(_UV + "Transform").w.ToString(), _isCanvas);
+
+                    UVBend.ApplyBendPolarCode(ref code, uv);
+                    UVBend.ApplyBendCode(ref code, _mat, uv, _isCanvas);
+
+                    if(transformX != "1" || transformY != "1" || transformZ != "0" || transformW != "0")
+                    {
+                        code.Add("float4 " + transform + " = float4(" + transformX + ", " + transformY + ", " + transformZ + ", " + transformW + ");");
+                        code.Add(uv + " = (" + uv + " - float2(0.5, 0.5)) * " + transform + ".xy + float2(0.5, 0.5) + " + transform + ".zw;");
+                    }
+
+                }
+                code.Add("half " + tex + " = SAMPLE_TEXTURE2D(" + _Tex + ", " + sampler + ", " + uv + ").x;");
+            }
+            if(offset != "0")
+                code.Add(tex + " += " + offset + ";");
             if (_mat.GetInt(_Repeat) == 1)
             {
                 code.Add("half maskMinus = " + tex + " < 0 ? -1 : 0;");

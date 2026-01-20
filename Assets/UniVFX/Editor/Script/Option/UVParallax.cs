@@ -135,6 +135,14 @@ namespace UniVFX.Editor
         public override List<string> GetPropertyCode()
         {
             var code = new List<string>();
+            if (!IsActive())
+                return code;
+            var intensity = UniVFXGUILayout.VertexDataToCode(_mat.GetInt(_Intensity + "_Data"), _mat.GetFloat(_Intensity) + "", _isCanvas);
+            if(intensity == "0")
+            {
+                code.Add("//UV Parallax Skipped, Intensity is 0");
+                return code;
+            }
             code.Add("[NoScaleOffset]" + _Tex + "(\"" + _Tex.Replace("_", "") + "\", 2D) = \"white\" {}");
             return code;
         }
@@ -146,6 +154,14 @@ namespace UniVFX.Editor
         public override List<string> GetTextureCode()
         {
             var code = new List<string>();
+            if (!IsActive())
+                return code;
+            var intensity = UniVFXGUILayout.VertexDataToCode(_mat.GetInt(_Intensity + "_Data"), _mat.GetFloat(_Intensity) + "", _isCanvas);
+            if(intensity == "0")
+            {
+                code.Add("//UV Parallax Skipped, Intensity is 0");
+                return code;
+            }
             code.Add("TEXTURE2D(" + _Tex + ");");
             return code;
         }
@@ -175,6 +191,14 @@ namespace UniVFX.Editor
             var tex = "tex_" + _Tex.Replace("_", "");
 
             code.Add("//UVParallax");
+            if(intensity == "0")
+            {
+                code.Add("float2 " + _ResultValue + " = 0;");
+                code.Add("//UV Parallax Skipped, Intensity is 0");
+                code.Add("");
+                return code;
+            }
+            
             code.Add("float2 " + uv + " = i.texCoord0.xy;");
             code.Add("half4 " + tex + " = SAMPLE_TEXTURE2D(" + _Tex + ", SamplerState_Linear_Clamp, " + uv + ");");
             code.Add(tex + ".x -= 0.5;");
