@@ -199,7 +199,7 @@ namespace UniVFX.Editor
         {
             var code = new List<string>();
             var sampler = UniVFXGUILayout.GetSamplerName(_mat.GetInt(_UV + "Transform_Sampler"));
-            var color = UniVFXGUILayout.VertexColorDataToCode(_mat.GetInt(_Color + "_Data"), _mat.GetColor(_Color).ToString().Replace("RGBA", "half4"), _isCanvas);
+            var color = UniVFXGUILayout.VertexColorDataToCode(_mat.GetInt(_Color + "_Data"), _mat.GetColor(_Color).linear.ToString().Replace("RGBA", "half4"), _isCanvas);
             var colorMultiple = _mat.GetInt(_ColorMultiple) == 1;
             var alphaMultiple = _mat.GetInt(_AlphaMultiple) == 1;
             var uv = "uv_" + _Tex.Replace("_", "");

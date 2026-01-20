@@ -220,10 +220,10 @@ namespace UniVFX.Editor
             if (!IsActive())
                 return code;
 
-            var color00 = UniVFXGUILayout.VertexColorDataToCode(_mat.GetInt(_Color00 + "_Data"), _mat.GetColor(_Color00).ToString().Replace("RGBA", "half4"), _isCanvas);
-            var color01 = UniVFXGUILayout.VertexColorDataToCode(_mat.GetInt(_Color01 + "_Data"), _mat.GetColor(_Color01).ToString().Replace("RGBA", "half4"), _isCanvas);
-            var color10 = UniVFXGUILayout.VertexColorDataToCode(_mat.GetInt(_Color10 + "_Data"), _mat.GetColor(_Color10).ToString().Replace("RGBA", "half4"), _isCanvas);
-            var color11 = UniVFXGUILayout.VertexColorDataToCode(_mat.GetInt(_Color11 + "_Data"), _mat.GetColor(_Color11).ToString().Replace("RGBA", "half4"), _isCanvas);
+            var color00 = UniVFXGUILayout.VertexColorDataToCode(_mat.GetInt(_Color00 + "_Data"), _mat.GetColor(_Color00).linear.ToString().Replace("RGBA", "half4"), _isCanvas);
+            var color01 = UniVFXGUILayout.VertexColorDataToCode(_mat.GetInt(_Color01 + "_Data"), _mat.GetColor(_Color01).linear.ToString().Replace("RGBA", "half4"), _isCanvas);
+            var color10 = UniVFXGUILayout.VertexColorDataToCode(_mat.GetInt(_Color10 + "_Data"), _mat.GetColor(_Color10).linear.ToString().Replace("RGBA", "half4"), _isCanvas);
+            var color11 = UniVFXGUILayout.VertexColorDataToCode(_mat.GetInt(_Color11 + "_Data"), _mat.GetColor(_Color11).linear.ToString().Replace("RGBA", "half4"), _isCanvas);
 
             var blendMode = _mat.GetInt(_BlendMode);
             var uv = "uv_Gradation";

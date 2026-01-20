@@ -262,7 +262,7 @@ namespace UniVFX.Editor
                 return code;
             
             var sampler = UniVFXGUILayout.GetSamplerName(_mat.GetInt(_UV + "Transform_Sampler"));
-            var color = UniVFXGUILayout.VertexColorDataToCode(_mat.GetInt(_Color + "_Data"), _mat.GetColor(_Color).ToString().Replace("RGBA", "half4"), _isCanvas);
+            var color = UniVFXGUILayout.VertexColorDataToCode(_mat.GetInt(_Color + "_Data"), _mat.GetColor(_Color).linear.ToString().Replace("RGBA", "half4"), _isCanvas);
             var intensity = UniVFXGUILayout.VertexDataToCode(_mat.GetInt(_Intensity + "_Data"), _mat.GetFloat(_Intensity).ToString(), _isCanvas);
             var blendMode = _mat.GetInt(_BlendMode);
             var uv = "uv_" + _Tex.Replace("_", "");
