@@ -11,6 +11,7 @@ namespace UniVFX.Editor
     {
         ParticleSystem _ps;
         bool _viewVertexData = false;
+        static RefactOption _refactOption = (RefactOption)Enum.ToObject(typeof(RefactOption), -1);
         List<UniVFXOption> _options;
         Gradient _heatGradation;
         // MARK: HeatGradation
@@ -191,6 +192,7 @@ namespace UniVFX.Editor
 
                 GUILayout.Space(5);
                 EditorGUILayout.LabelField("最適化", EditorStyles.boldLabel);
+                _refactOption = (RefactOption)EditorGUILayout.EnumFlagsField("最適化設定", _refactOption);
                 if (GUILayout.Button("専用シェーダーに変換"))
                 {
                     ConvertUniqueShader(materialEditor);
@@ -337,7 +339,7 @@ namespace UniVFX.Editor
             // Properties定義をここに追加
             foreach (var option in _options)
             {
-                foreach (var code in option.GetPropertyCode())
+                foreach (var code in option.GetPropertyCode(_refactOption))
                 {
                     shaderCode += "        " + code + "\n";
                 }
@@ -385,7 +387,7 @@ namespace UniVFX.Editor
             // CBUFFER定義をここに追加
             foreach (var option in _options)
             {
-                foreach (var code in option.GetCBufferCode())
+                foreach (var code in option.GetCBufferCode(_refactOption))
                 {
                     shaderCode += "                " + code + "\n";
                 }
@@ -408,7 +410,7 @@ namespace UniVFX.Editor
             // Texture定義をここに追加
             foreach (var option in _options)
             {
-                foreach (var code in option.GetTextureCode())
+                foreach (var code in option.GetTextureCode(_refactOption))
                 {
                     shaderCode += "            " + code + "\n";
                 }
@@ -440,7 +442,7 @@ namespace UniVFX.Editor
             var v2fCount = 2;
             foreach (var option in _options)
             {
-                foreach (var code in option.GetUseV2fCode())
+                foreach (var code in option.GetUseV2fCode(_refactOption))
                 {
                     v2fCount++;
                     shaderCode += "                " + code + " : TEXCOORD" + v2fCount + ";\n";
@@ -510,7 +512,7 @@ namespace UniVFX.Editor
             shaderCode += "//早期計算\n";
             foreach (var option in _options)
             {
-                foreach (var code in option.GetVertexHeadCode())
+                foreach (var code in option.GetVertexHeadCode(_refactOption))
                 {
                     shaderCode += "                " + code + "\n";
                 }
@@ -520,7 +522,7 @@ namespace UniVFX.Editor
             shaderCode += "//メイン計算\n";
             foreach (var option in _options)
             {
-                foreach (var code in option.GetVertexCode())
+                foreach (var code in option.GetVertexCode(_refactOption))
                 {
                     shaderCode += "                " + code + "\n";
                 }
@@ -559,7 +561,7 @@ namespace UniVFX.Editor
             shaderCode += "//早期計算\n";
             foreach (var option in _options)
             {
-                foreach (var code in option.GetFragmentHeadCode())
+                foreach (var code in option.GetFragmentHeadCode(_refactOption))
                 {
                     shaderCode += "                " + code + "\n";
                 }
@@ -569,7 +571,7 @@ namespace UniVFX.Editor
             shaderCode += "//メイン計算\n";
             foreach (var option in _options)
             {
-                foreach (var code in option.GetFragmentCode())
+                foreach (var code in option.GetFragmentCode(_refactOption))
                 {
                     shaderCode += "                " + code + "\n";
                 }

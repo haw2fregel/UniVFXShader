@@ -142,26 +142,26 @@ namespace UniVFX.Editor
             UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _Color11, _isCanvas);
         }
 
-        public override List<string> GetPropertyCode()
+        public override List<string> GetPropertyCode(RefactOption refactOptions)
         {
             var code = new List<string>();
             if (!IsActive())
                 return code;
             return code;
         }
-        public override List<string> GetCBufferCode()
+        public override List<string> GetCBufferCode(RefactOption refactOption)
         {
             var code = new List<string>();
             if (!IsActive())
                 return code;
             return code;
         }
-        public override List<string> GetTextureCode()
+        public override List<string> GetTextureCode(RefactOption refactOption)
         {
             var code = new List<string>();
             return code;
         }
-        public override List<string> GetUseV2fCode()
+        public override List<string> GetUseV2fCode(RefactOption refactOption)
         {
             var code = new List<string>();
             if (!IsActive())
@@ -170,12 +170,12 @@ namespace UniVFX.Editor
             code.Add("float2 uv_Gradation");
             return code;
         }
-        public override List<string> GetVertexHeadCode()
+        public override List<string> GetVertexHeadCode(RefactOption refactOption)
         {
             var code = new List<string>();
             return code;
         }
-        public override List<string> GetVertexCode()
+        public override List<string> GetVertexCode(RefactOption refactOption)
         {
             var code = new List<string>();
             if (!IsActive())
@@ -199,7 +199,7 @@ namespace UniVFX.Editor
 
             if (UVBend.IsActive(_mat) && UniVFXGUILayout._UVChannelOption[_mat.GetInt(_UV + "Transform_Index")] == "BendUV")
             {
-                UVBend.ApplyBendCode(ref code, _mat, uv, _isCanvas);
+                UVBend.ApplyBendCode(ref code, _mat, uv, _isCanvas, refactOption);
             }
 
             if(transformX != "1" || transformY != "1" || transformZ != "0" || transformW != "0")
@@ -211,12 +211,12 @@ namespace UniVFX.Editor
             code.Add("");
             return code;
         }
-        public override List<string> GetFragmentHeadCode()
+        public override List<string> GetFragmentHeadCode(RefactOption refactOption)
         {
             var code = new List<string>();
             return code;
         }
-        public override List<string> GetFragmentCode()
+        public override List<string> GetFragmentCode(RefactOption refactOption)
         {
             var code = new List<string>();
             if (!IsActive())
@@ -242,7 +242,7 @@ namespace UniVFX.Editor
                 var transformW = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").w, _mat.GetVector(_UV + "Transform").w.ToString(), _isCanvas);
 
                 UVBend.ApplyBendPolarCode(ref code, uv);
-                UVBend.ApplyBendCode(ref code, _mat, uv, _isCanvas);
+                UVBend.ApplyBendCode(ref code, _mat, uv, _isCanvas, refactOption);
 
                 if(transformX != "1" || transformY != "1" || transformZ != "0" || transformW != "0")
                 {

@@ -217,42 +217,42 @@ namespace UniVFX.Editor
             UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _FadeOut, _isCanvas);
         }
 
-        public override List<string> GetPropertyCode()
+        public override List<string> GetPropertyCode(RefactOption refactOption)
         {
             var code = new List<string>();
             if (!IsActive())
                 return code;
             return code;
         }
-        public override List<string> GetCBufferCode()
+        public override List<string> GetCBufferCode(RefactOption refactOption)
         {
             var code = new List<string>();
             if (!IsActive())
                 return code;
             return code;
         }
-        public override List<string> GetTextureCode()
+        public override List<string> GetTextureCode(RefactOption refactOption)
         {
             var code = new List<string>();
             return code;
         }
-        public override List<string> GetUseV2fCode()
+        public override List<string> GetUseV2fCode(RefactOption refactOption)
         {
             var code = new List<string>();
 
             return code;
         }
-        public override List<string> GetVertexHeadCode()
+        public override List<string> GetVertexHeadCode(RefactOption refactOption)
         {
             var code = new List<string>();
             return code;
         }
-        public override List<string> GetVertexCode()
+        public override List<string> GetVertexCode(RefactOption refactOption)
         {
             var code = new List<string>();
             return code;
         }
-        public override List<string> GetFragmentHeadCode()
+        public override List<string> GetFragmentHeadCode(RefactOption refactOption)
         {
             var code = new List<string>();
             if (!IsActive())
@@ -307,7 +307,7 @@ namespace UniVFX.Editor
             code.Add("");
             return code;
         }
-        public override List<string> GetFragmentCode()
+        public override List<string> GetFragmentCode(RefactOption refactOption)
         {
             var code = new List<string>();
             if (!IsActive())

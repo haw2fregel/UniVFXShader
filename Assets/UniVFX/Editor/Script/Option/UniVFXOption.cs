@@ -69,14 +69,14 @@ namespace UniVFX.Editor
         public abstract void CollectUVChannel(ref List<List<string>> useUVChannelList);
         public abstract void VaridateCustomData();
 
-        public abstract List<string> GetPropertyCode();
-        public abstract List<string> GetCBufferCode();
-        public abstract List<string> GetTextureCode();
-        public abstract List<string> GetUseV2fCode();
-        public abstract List<string> GetVertexHeadCode();
-        public abstract List<string> GetVertexCode();
-        public abstract List<string> GetFragmentHeadCode();
-        public abstract List<string> GetFragmentCode();
+        public abstract List<string> GetPropertyCode(RefactOption refactOption);
+        public abstract List<string> GetCBufferCode(RefactOption refactOption);
+        public abstract List<string> GetTextureCode(RefactOption refactOption);
+        public abstract List<string> GetUseV2fCode(RefactOption refactOption);
+        public abstract List<string> GetVertexHeadCode(RefactOption refactOption);
+        public abstract List<string> GetVertexCode(RefactOption refactOption);
+        public abstract List<string> GetFragmentHeadCode(RefactOption refactOption);
+        public abstract List<string> GetFragmentCode(RefactOption refactOption);
         
 
     }

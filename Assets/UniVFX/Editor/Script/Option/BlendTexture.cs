@@ -123,49 +123,69 @@ namespace UniVFX.Editor
         }
 
 
-        public override List<string> GetPropertyCode()
+        public override List<string> GetPropertyCode(RefactOption refactOption)
         {
             var code = new List<string>();
             if (!IsActive())
                 return code;
 
             var intensity = UniVFXGUILayout.VertexDataToCode(_mat.GetInt(_Intensity + "_Data"), _mat.GetFloat(_Intensity).ToString(), _isCanvas);
-            if(intensity == "0")
+            if(intensity == "0" && refactOption.HasFlag(RefactOption.PropertiesToFixedValue))
             {
                 code.Add("//BlendTex Skipped, Intensity is 0");
                 return code;
             }
 
-            if (_mat.GetTexture(_Tex) == null)
+            if (_mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.SkipNullTextureCode))
             {
                 code.Add("//BlendTex Skipped, Texture is null");
                 return code;
             }
             
             code.Add("[NoScaleOffset]" + _Tex + "(\"" + _Tex.Replace("_", "") + "\", 2D) = \"white\" {}");
+
+            if(refactOption.HasFlag(RefactOption.PropertiesToFixedValue))
+                return code;
+
+            code.Add(_UV + "Transform(\"" + _UV.Replace("_", "") + "Transform\", Vector) = (0,0,1,1)");
+            if (_mat.GetInt(_Color + "_Data") == 0)
+                code.Add(_Color + "(\"" + _Color.Replace("_", "") + "\", Color) = (1,1,1,1)");
+            if(_mat.GetInt(_Intensity + "_Data") == 0)
+                code.Add(_Intensity + "(\"" + _Intensity.Replace("_", "") + "\", float) = 1");
+            
             return code;
         }
-        public override List<string> GetCBufferCode()
+        public override List<string> GetCBufferCode(RefactOption refactOption)
         {
             var code = new List<string>();
             if (!IsActive())
                 return code;
+            
+            if(refactOption.HasFlag(RefactOption.PropertiesToFixedValue))
+                return code;
+
+            code.Add("float4 " + _UV + "Transform;");
+            if (_mat.GetInt(_Color + "_Data") == 0)
+                code.Add("half4 " + _Color + ";");
+            if(_mat.GetInt(_Intensity + "_Data") == 0)
+                code.Add("half " + _Intensity + ";");
+            
             return code;
         }
-        public override List<string> GetTextureCode()
+        public override List<string> GetTextureCode(RefactOption refactOption)
         {
             var code = new List<string>();
             if (!IsActive())
                 return code;
 
             var intensity = UniVFXGUILayout.VertexDataToCode(_mat.GetInt(_Intensity + "_Data"), _mat.GetFloat(_Intensity).ToString(), _isCanvas);
-            if(intensity == "0")
+            if(intensity == "0" && refactOption.HasFlag(RefactOption.PropertiesToFixedValue))
             {
                 code.Add("//BlendTex Skipped, Intensity is 0");
                 return code;
             }
 
-            if (_mat.GetTexture(_Tex) == null)
+            if (_mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.SkipNullTextureCode))
             {
                 code.Add("//BlendTex Skipped, Texture is null");
                 return code;
@@ -174,7 +194,7 @@ namespace UniVFX.Editor
             code.Add("TEXTURE2D(" + _Tex + ");");
             return code;
         }
-        public override List<string> GetUseV2fCode()
+        public override List<string> GetUseV2fCode(RefactOption refactOption)
         {
             var code = new List<string>();
             if (!IsActive())
@@ -196,12 +216,12 @@ namespace UniVFX.Editor
             code.Add("float2 uv_" + _Tex.Replace("_", ""));
             return code;
         }
-        public override List<string> GetVertexHeadCode()
+        public override List<string> GetVertexHeadCode(RefactOption refactOption)
         {
             var code = new List<string>();
             return code;
         }
-        public override List<string> GetVertexCode()
+        public override List<string> GetVertexCode(RefactOption refactOption)
         {
             var code = new List<string>();
             if (!IsActive())
@@ -216,14 +236,14 @@ namespace UniVFX.Editor
 
             code.Add("//BlendTex");
             var intensity = UniVFXGUILayout.VertexDataToCode(_mat.GetInt(_Intensity + "_Data"), _mat.GetFloat(_Intensity).ToString(), _isCanvas);
-            if(intensity == "0")
+            if(intensity == "0" && refactOption.HasFlag(RefactOption.PropertiesToFixedValue))
             {
                 code.Add("//BlendTex Skipped, Intensity is 0");
                 code.Add("");
                 return code;
             }
 
-            if (_mat.GetTexture(_Tex) == null)
+            if (_mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.SkipNullTextureCode))
             {
                 code.Add("//BlendTex Skipped, Texture is null");
                 code.Add("");
@@ -240,7 +260,7 @@ namespace UniVFX.Editor
 
             if (UVBend.IsActive(_mat) && UniVFXGUILayout._UVChannelOption[_mat.GetInt(_UV + "Transform_Index")] == "BendUV")
             {
-                UVBend.ApplyBendCode(ref code, _mat, uv, _isCanvas);
+                UVBend.ApplyBendCode(ref code, _mat, uv, _isCanvas, refactOption);
             }
 
             if(transformX != "1" || transformY != "1" || transformZ != "0" || transformW != "0")
@@ -252,12 +272,12 @@ namespace UniVFX.Editor
             code.Add("");
             return code;
         }
-        public override List<string> GetFragmentHeadCode()
+        public override List<string> GetFragmentHeadCode(RefactOption refactOption)
         {
             var code = new List<string>();
             return code;
         }
-        public override List<string> GetFragmentCode()
+        public override List<string> GetFragmentCode(RefactOption refactOption)
         {
             var code = new List<string>();
             if (!IsActive())
@@ -295,7 +315,7 @@ namespace UniVFX.Editor
                     var transformW = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").w, _mat.GetVector(_UV + "Transform").w.ToString(), _isCanvas);
 
                     UVBend.ApplyBendPolarCode(ref code, uv);
-                    UVBend.ApplyBendCode(ref code, _mat, uv, _isCanvas);
+                    UVBend.ApplyBendCode(ref code, _mat, uv, _isCanvas, refactOption);
 
                     if(transformX != "1" || transformY != "1" || transformZ != "0" || transformW != "0")
                     {
