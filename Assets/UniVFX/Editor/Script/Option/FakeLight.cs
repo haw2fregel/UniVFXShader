@@ -155,35 +155,76 @@ namespace UniVFX.Editor
             if (!IsActive())
                 return code;
 
-            if (_mat.GetTexture(_Tex) == null)
+            var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
+            
+
+            if (isTextureNone)
             {
-                code.Add("//FakeLightTex Skipped, Texture is null");
-                return code;
+                code.Add("//FakeLight Skipped, Texture is null");
+            }else
+            {
+                code.Add("[NoScaleOffset]" + _Tex + "(\"" + _Tex.Replace("_", "") + "\", 2D) = \"white\" {}");
             }
 
-            code.Add("[NoScaleOffset]" + _Tex + "(\"" + _Tex.Replace("_", "") + "\", 2D) = \"white\" {}");
+            if(isFixedValue)
+            {
+                code.Add("//FakeLight Property Skipped, FixedValue");
+            }
+            else
+            {
+                if (_mat.GetInt(_LightColor + "_Data") == 0)
+                    code.Add("[HDR]" + _LightColor + "(\"" + _LightColor.Replace("_", "") + "\", Color) = (1,1,1,1)");
+                if (_mat.GetInt(_ShadowColor + "_Data") == 0)
+                    code.Add(_ShadowColor + "(\"" + _ShadowColor.Replace("_", "") + "\", Color) = (1,1,1,1)");
+                if(_mat.GetInt(_Intensity + "_Data") == 0)
+                    code.Add(_Intensity + "(\"" + _Intensity.Replace("_", "") + "\", float) = 1");
+                if(_mat.GetVector(_Param + "_Data") == new Vector4(0,0,0,0))
+                    code.Add(_Param + "(\"" + _Param.Replace("_", "") + "\", Vector) = (1,0,0,0)");
+            }
             
             return code;
         }
         public override List<string> GetCBufferCode(RefactOption refactOption)
         {
             var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            
+
+            if(isFixedValue)
+            {
+                code.Add("//FakeLight Property Skipped, FixedValue");
+            }
+            else
+            {
+                if (_mat.GetInt(_LightColor + "_Data") == 0)
+                    code.Add("half4 " + _LightColor + ";");
+                if (_mat.GetInt(_ShadowColor + "_Data") == 0)
+                    code.Add("half4 " + _ShadowColor + ";");
+                if(_mat.GetInt(_Intensity + "_Data") == 0)
+                    code.Add("half " + _Intensity + ";");
+                if(_mat.GetVector(_Param + "_Data") == new Vector4(0,0,0,0))
+                    code.Add("half4 " + _Param + ";");
+            }
             return code;
         }
         public override List<string> GetTextureCode(RefactOption refactOption)
         {
             var code = new List<string>();
 
-            if (!IsActive())
-                return code;
+            var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
 
-            if (_mat.GetTexture(_Tex) == null)
+            if (isTextureNone)
             {
-                code.Add("//FakeLightTex Skipped, Texture is null");
-                return code;
+                code.Add("//FakeLight Skipped, Texture is null");
             }
-
-            code.Add("TEXTURE2D(" + _Tex + ");");
+            else
+            {
+                code.Add("TEXTURE2D(" + _Tex + ");");
+            }
             
                 
             return code;
@@ -215,20 +256,20 @@ namespace UniVFX.Editor
             if (!IsActive())
                 return code;
 
-            var lightColor = UniVFXGUILayout.VertexColorDataToCode(_mat.GetInt(_LightColor + "_Data"), _mat.GetColor(_LightColor).linear.ToString().Replace("RGBA", "half4"), _isCanvas);
-            var shadowColor = UniVFXGUILayout.VertexColorDataToCode(_mat.GetInt(_ShadowColor + "_Data"), _mat.GetColor(_ShadowColor).ToString().Replace("RGBA", "half4"), _isCanvas);
-            
-            var intensity = UniVFXGUILayout.VertexDataToCode(_mat.GetInt(_Intensity + "_Data"), _mat.GetFloat(_Intensity).ToString(), _isCanvas);
+            var intensity = UniVFXGUILayout.VertexDataToFloatCode(_mat, _Intensity, _isCanvas, refactOption);
+            var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
+
+            var lightColor = UniVFXGUILayout.VertexDataToColorCode(_mat, _LightColor, false, _isCanvas, refactOption);
+            var shadowColor = UniVFXGUILayout.VertexDataToColorCode(_mat, _ShadowColor, true, _isCanvas, refactOption);
             
             var uv = "uv_" + _Tex.Replace("_", "");
             var tex = "tex_" + _Tex.Replace("_", "");
 
             var param = "param_" + _Tex.Replace("_", "");
-            var paramX = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").x, _mat.GetVector(_Param).x.ToString(), _isCanvas);
-            var paramY = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").y, _mat.GetVector(_Param).y.ToString(), _isCanvas);
-            var paramZ = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").z, _mat.GetVector(_Param).z.ToString(), _isCanvas);
-            var paramW = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").w, _mat.GetVector(_Param).w.ToString(), _isCanvas);
-
+            var paramX = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 0, _isCanvas, refactOption);
+            var paramY = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 1, _isCanvas, refactOption);
+            var paramZ = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 2, _isCanvas, refactOption);
+            var paramW = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 3, _isCanvas, refactOption);
                     
             code.Add("//FakeLight");
 
@@ -254,10 +295,10 @@ namespace UniVFX.Editor
 
             code.Add("float nDotL = -dot(TransformObjectToWorldDir(i.normal.xyz), normalize(fakeLightDir)) * 0.5 + 0.5;");
 
-            if (_mat.GetTexture(_Tex) == null)
+            if (isTextureNone)
             {
                 code.Add("half4 " + tex + " = nDotL.xxxx;");
-                code.Add("//DissolveTex Skipped, Texture is null");
+                code.Add("//FakeLight Skipped, Texture is null");
             }
             else
             {

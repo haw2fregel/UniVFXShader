@@ -1416,20 +1416,116 @@ namespace UniVFX.Editor
             return value;
         }
 
-        public static string VertexDataToCode(int vertexData, string prop, bool isCanvas)
+        public static string VertexDataToFloatCode(Material mat, string prop, bool isCanvas, RefactOption refactOption)
         {
+            var vertexData = mat.GetInt(prop + "_Data");
+            var property = prop;
+            var fixedValue = mat.GetFloat(prop).ToString();
+
             if (isCanvas)
-                return CanvasVertexDataToCode(vertexData, prop);
+            {
+                if (refactOption.HasFlag(RefactOption.PropertiesToFixedValue))
+                {
+                    return CanvasVertexDataToCode(vertexData, fixedValue);
+                }
+                else
+                {
+                    return CanvasVertexDataToCode(vertexData, property);
+                }
+            }
             else
-                return VertexDataToCode(vertexData, prop);
+            {
+                if (refactOption.HasFlag(RefactOption.PropertiesToFixedValue))
+                {
+                    return VertexDataToCode(vertexData, fixedValue);
+                }
+                else
+                {
+                    return VertexDataToCode(vertexData, property);
+                }
+            }
         }
 
-        public static string VertexColorDataToCode(int vertexColorData, string prop, bool isCanvas)
+        public static string VertexDataToVectorCode(Material mat, string prop, int index, bool isCanvas, RefactOption refactOption)
         {
+            var vertexData = 0;
+            var property = "";
+            var fixedValue = "";
+            switch (index)
+            {
+                case 0:
+                    vertexData = (int)mat.GetVector(prop + "_Data").x;
+                    property = prop + ".x";
+                    fixedValue = mat.GetVector(prop).x.ToString();
+                    break;
+                case 1:
+                    vertexData = (int)mat.GetVector(prop + "_Data").y;
+                    property = prop + ".y";
+                    fixedValue = mat.GetVector(prop).y.ToString();
+                    break;
+                case 2:
+                    vertexData = (int)mat.GetVector(prop + "_Data").z;
+                    property = prop + ".z";
+                    fixedValue = mat.GetVector(prop).z.ToString();
+                    break;
+                case 3:
+                    vertexData = (int)mat.GetVector(prop + "_Data").w;
+                    property = prop + ".w";
+                    fixedValue = mat.GetVector(prop).w.ToString();
+                    break;
+            }
             if (isCanvas)
-                return CanvasVertexColorDataToCode(vertexColorData, prop);
+            {
+                if (refactOption.HasFlag(RefactOption.PropertiesToFixedValue))
+                {
+                    return CanvasVertexDataToCode(vertexData, fixedValue);
+                }
+                else
+                {
+                    return CanvasVertexDataToCode(vertexData, property);
+                }
+            }
             else
-                return VertexColorDataToCode(vertexColorData, prop);
+            {
+                if (refactOption.HasFlag(RefactOption.PropertiesToFixedValue))
+                {
+                    return VertexDataToCode(vertexData, fixedValue);
+                }
+                else
+                {
+                    return VertexDataToCode(vertexData, property);
+                }
+            }
+        }
+
+        public static string VertexDataToColorCode(Material mat, string prop, bool isLinear, bool isCanvas, RefactOption refactOption)
+        {
+            var vertexData = mat.GetInt(prop + "_Data");
+            var property = prop;
+            var fixedValue = isLinear ? mat.GetColor(prop).linear.ToString().Replace("RGBA", "half4") : mat.GetColor(prop).ToString().Replace("RGBA", "half4");
+
+            if (isCanvas)
+            {
+                if (refactOption.HasFlag(RefactOption.PropertiesToFixedValue))
+                {
+                    return CanvasVertexColorDataToCode(vertexData, fixedValue);
+                }
+                else
+                {
+                    return CanvasVertexColorDataToCode(vertexData, property);
+                }
+            }
+            else
+            {
+                if (refactOption.HasFlag(RefactOption.PropertiesToFixedValue))
+                {
+                    return VertexColorDataToCode(vertexData, fixedValue);
+                }
+                else
+                {
+                    return VertexColorDataToCode(vertexData, property);
+                }
+            }
         }
 
         static string VertexDataToCode(int vertexData, string prop)

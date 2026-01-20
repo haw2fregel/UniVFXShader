@@ -145,13 +145,39 @@ namespace UniVFX.Editor
             if (!IsActive())
                 return code;
 
-            if (_mat.GetTexture(_Tex) == null)
+            var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
+            
+
+            if (isTextureNone)
             {
                 code.Add("//DissolveTex Skipped, Texture is null");
-                return code;
+            }else
+            {
+                code.Add("[NoScaleOffset]" + _Tex + "(\"" + _Tex.Replace("_", "") + "\", 2D) = \"white\" {}");
             }
-            
-            code.Add("[NoScaleOffset]" + _Tex + "(\"" + _Tex.Replace("_", "") + "\", 2D) = \"white\" {}");
+
+            if(isFixedValue)
+            {
+                code.Add("//DissolveTex Property Skipped, FixedValue");
+            }
+            else
+            {
+                if (_mat.GetInt(_Color + "_Data") == 0)
+                    code.Add("[HDR]" + _Color + "(\"" + _Color.Replace("_", "") + "\", Color) = (1,1,1,1)");
+                if(_mat.GetVector(_Param + "_Data") == new Vector4(0,0,0,0))
+                    code.Add(_Param + "(\"" + _Param.Replace("_", "") + "\", Vector) = (1,0,0,0)");
+                
+                if (isTextureNone)
+                {
+                    code.Add("//DissolveTex Transform Skipped, Texture is null");
+                }
+                else
+                {
+                    if(_mat.GetVector(_UV + "Transform_Data") == new Vector4(0,0,0,0))
+                        code.Add(_UV + "Transform(\"" + _UV.Replace("_", "") + "Transform\", Vector) = (0,0,1,1)");
+                }
+            }
             return code;
         }
         public override List<string> GetCBufferCode(RefactOption refactOption)
@@ -159,6 +185,31 @@ namespace UniVFX.Editor
             var code = new List<string>();
             if (!IsActive())
                 return code;
+
+            var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
+            
+
+            if(isFixedValue)
+            {
+                code.Add("//DissolveTex Property Skipped, FixedValue");
+            }
+            else
+            {
+                if (isTextureNone)
+                {
+                    code.Add("//DissolveTex Transform Skipped, Texture is null");
+                }else
+                {
+                    if(_mat.GetVector(_UV + "Transform_Data") == new Vector4(0,0,0,0))
+                        code.Add("float4 " + _UV + "Transform;");
+                }
+
+                if (_mat.GetInt(_Color + "_Data") == 0)
+                    code.Add("half4 " + _Color + ";");
+                if(_mat.GetVector(_Param + "_Data") == new Vector4(0,0,0,0))
+                    code.Add("half4 " + _Param + ";");
+            }
             return code;
         }
         public override List<string> GetTextureCode(RefactOption refactOption)
@@ -167,13 +218,16 @@ namespace UniVFX.Editor
             if (!IsActive())
                 return code;
 
-            if (_mat.GetTexture(_Tex) == null)
+            var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
+
+            if (isTextureNone)
             {
                 code.Add("//DissolveTex Skipped, Texture is null");
-                return code;
             }
-            
-            code.Add("TEXTURE2D(" + _Tex + ");");
+            else
+            {
+                code.Add("TEXTURE2D(" + _Tex + ");");
+            }
             return code;
         }
         public override List<string> GetUseV2fCode(RefactOption refactOption)
@@ -182,18 +236,21 @@ namespace UniVFX.Editor
             if (!IsActive())
                 return code;
 
+            var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
+
             if (!SurfaceFade.IsActive(_mat) || _mat.GetInt(SurfaceFade._TargetDissolve) == 0)
             {
                 code.Add("float4 param_" + _Tex.Replace("_", ""));
             }
 
-            if (_mat.GetTexture(_Tex) == null)
+            if (isTextureNone)
             {
                 code.Add("//DissolveTex Skipped, Texture is null");
-                return code;
             }
-            
-            code.Add("float2 uv_" + _Tex.Replace("_", ""));
+            else
+            {
+                code.Add("float2 uv_" + _Tex.Replace("_", ""));
+            }
             
             return code;
         }
@@ -207,16 +264,18 @@ namespace UniVFX.Editor
             var code = new List<string>();
             if (!IsActive())
                 return code;
+
+            var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
             
             var uvName = UniVFXGUILayout.GetVertUVName(_mat.GetInt(_UV + "Transform_Index"), _mat);
             var transform = "st_" + _Tex.Replace("_", "");
-            var transformX = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").x, _mat.GetVector(_UV + "Transform").x.ToString(), _isCanvas);
-            var transformY = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").y, _mat.GetVector(_UV + "Transform").y.ToString(), _isCanvas);
-            var transformZ = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").z, _mat.GetVector(_UV + "Transform").z.ToString(), _isCanvas);
-            var transformW = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").w, _mat.GetVector(_UV + "Transform").w.ToString(), _isCanvas);
+            var transformX = UniVFXGUILayout.VertexDataToVectorCode(_mat, _UV + "Transform", 0, _isCanvas, refactOption);
+            var transformY = UniVFXGUILayout.VertexDataToVectorCode(_mat, _UV + "Transform", 1, _isCanvas, refactOption);
+            var transformZ = UniVFXGUILayout.VertexDataToVectorCode(_mat, _UV + "Transform", 2, _isCanvas, refactOption);
+            var transformW = UniVFXGUILayout.VertexDataToVectorCode(_mat, _UV + "Transform", 3, _isCanvas, refactOption);
 
             code.Add("//Dissolve");
-            if (_mat.GetTexture(_Tex) == null)
+            if (isTextureNone)
             {
                 code.Add("//DissolveTex Skipped, Texture is null");
             }
@@ -246,10 +305,10 @@ namespace UniVFX.Editor
             if (!SurfaceFade.IsActive(_mat) || _mat.GetInt(SurfaceFade._TargetDissolve) == 0)
             {
                 var param = "param_" + _Tex.Replace("_", "");
-                var paramX = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").x, _mat.GetVector(_Param).x.ToString(), _isCanvas);
-                var paramY = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").y, _mat.GetVector(_Param).y.ToString(), _isCanvas);
-                var paramZ = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").z, _mat.GetVector(_Param).z.ToString(), _isCanvas);
-                var paramW = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").w, _mat.GetVector(_Param).w.ToString(), _isCanvas);
+                var paramX = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 0, _isCanvas, refactOption);
+                var paramY = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 1, _isCanvas, refactOption);
+                var paramZ = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 2, _isCanvas, refactOption);
+                var paramW = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 3, _isCanvas, refactOption);
 
                 if(paramY == "0" && paramZ == "0" && paramW == "0")
                 {
@@ -287,23 +346,24 @@ namespace UniVFX.Editor
             var code = new List<string>();
             if (!IsActive())
                 return code;
+
+            var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
             
             var sampler = UniVFXGUILayout.GetSamplerName(_mat.GetInt(_UV + "Transform_Sampler"));
-            var color = UniVFXGUILayout.VertexColorDataToCode(_mat.GetInt(_Color + "_Data"), _mat.GetColor(_Color).ToString().Replace("RGBA", "half4"), _isCanvas);
+            var color = UniVFXGUILayout.VertexDataToColorCode(_mat, _Color, false, _isCanvas, refactOption);
             var uv = "uv_" + _Tex.Replace("_", "");
             var tex = "tex_" + _Tex.Replace("_", "");
             var param = "param_" + _Tex.Replace("_", "");
-            var paramX = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").x, _mat.GetVector(_Param).x.ToString(), _isCanvas);
-            var paramY = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").y, _mat.GetVector(_Param).y.ToString(), _isCanvas);
-            var paramZ = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").z, _mat.GetVector(_Param).z.ToString(), _isCanvas);
-            var paramW = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").w, _mat.GetVector(_Param).w.ToString(), _isCanvas);
-
+            var paramX = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 0, _isCanvas, refactOption);
+            var paramY = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 1, _isCanvas, refactOption);
+            var paramZ = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 2, _isCanvas, refactOption);
+            var paramW = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 3, _isCanvas, refactOption);
             var useSmooth = paramY != "0" || paramZ != "0" || paramW != "0";
             var useEmissive = paramZ != "0" || paramW != "0";
             
 
             code.Add("//Dissolve");
-            if (_mat.GetTexture(_Tex) == null)
+            if (isTextureNone)
             {
                 code.Add("half4 " + tex + " = half4(1,1,1,1);");
                 code.Add("//DissolveTex Skipped, Texture is null");
@@ -314,10 +374,10 @@ namespace UniVFX.Editor
                 if (UVBend.IsActive(_mat) && UniVFXGUILayout._UVChannelOption[_mat.GetInt(_UV + "Transform_Index")] == "BendUV" && _mat.GetInt(UVBend._Polar) == 1)
                 {
                     var transform = "st_" + _Tex.Replace("_", "");
-                    var transformX = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").x, _mat.GetVector(_UV + "Transform").x.ToString(), _isCanvas);
-                    var transformY = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").y, _mat.GetVector(_UV + "Transform").y.ToString(), _isCanvas);
-                    var transformZ = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").z, _mat.GetVector(_UV + "Transform").z.ToString(), _isCanvas);
-                    var transformW = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_UV + "Transform_Data").w, _mat.GetVector(_UV + "Transform").w.ToString(), _isCanvas);
+                    var transformX = UniVFXGUILayout.VertexDataToVectorCode(_mat, _UV + "Transform", 0, _isCanvas, refactOption);
+                    var transformY = UniVFXGUILayout.VertexDataToVectorCode(_mat, _UV + "Transform", 1, _isCanvas, refactOption);
+                    var transformZ = UniVFXGUILayout.VertexDataToVectorCode(_mat, _UV + "Transform", 2, _isCanvas, refactOption);
+                    var transformW = UniVFXGUILayout.VertexDataToVectorCode(_mat, _UV + "Transform", 3, _isCanvas, refactOption);
 
                     UVBend.ApplyBendPolarCode(ref code, uv);
                     UVBend.ApplyBendCode(ref code, _mat, uv, _isCanvas, refactOption);

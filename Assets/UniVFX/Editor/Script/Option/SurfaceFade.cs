@@ -222,6 +222,27 @@ namespace UniVFX.Editor
             var code = new List<string>();
             if (!IsActive())
                 return code;
+
+            var isInvalid = _mat.GetFloat(_TargetBlendColor) == 0 && _mat.GetFloat(_TargetMainTex) == 0 && _mat.GetFloat(_TargetFinalAlpha) == 0 && _mat.GetFloat(_TargetFinalColor) == 0 && _mat.GetFloat(_TargetDistortion) == 0 && _mat.GetFloat(_TargetDissolve) == 0 && _mat.GetFloat(_TargetHSVShift) == 0;
+            var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+
+            if(isInvalid)
+            {
+                code.Add("//SurfaceFade Skipped, Target None");
+                return code;
+            }
+
+            if(isFixedValue)
+            {
+                code.Add("//SurfaceFade Property Skipped, FixedValue");
+            }
+            else
+            {
+                if(_mat.GetInt(_FadeIn + "_Data") == 0)
+                    code.Add(_FadeIn + "(\"" + _FadeIn.Replace("_", "") + "\", float) = 0");
+                if(_mat.GetInt(_FadeOut + "_Data") == 0)
+                    code.Add(_FadeOut + "(\"" + _FadeOut.Replace("_", "") + "\", float) = 0");
+            }
             return code;
         }
         public override List<string> GetCBufferCode(RefactOption refactOption)
@@ -229,6 +250,28 @@ namespace UniVFX.Editor
             var code = new List<string>();
             if (!IsActive())
                 return code;
+
+            var isInvalid = _mat.GetFloat(_TargetBlendColor) == 0 && _mat.GetFloat(_TargetMainTex) == 0 && _mat.GetFloat(_TargetFinalAlpha) == 0 && _mat.GetFloat(_TargetFinalColor) == 0 && _mat.GetFloat(_TargetDistortion) == 0 && _mat.GetFloat(_TargetDissolve) == 0 && _mat.GetFloat(_TargetHSVShift) == 0;
+            var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+
+            if(isInvalid)
+            {
+                code.Add("//SurfaceFade Skipped, Target None");
+                return code;
+            }
+
+            if(isFixedValue)
+            {
+                code.Add("//SurfaceFade Property Skipped, FixedValue");
+            }
+            else
+            {
+                if(_mat.GetInt(_FadeIn + "_Data") == 0)
+                    code.Add("half " + _FadeIn + ";");
+                if(_mat.GetInt(_FadeOut + "_Data") == 0)
+                    code.Add("half " + _FadeOut + ";");
+            }
+
             return code;
         }
         public override List<string> GetTextureCode(RefactOption refactOption)
@@ -258,15 +301,24 @@ namespace UniVFX.Editor
             if (!IsActive())
                 return code;
 
-            var fadeIn = UniVFXGUILayout.VertexDataToCode(_mat.GetInt(_FadeIn + "_Data"), _mat.GetFloat(_FadeIn).ToString(), _isCanvas);
-            var fadeOut = UniVFXGUILayout.VertexDataToCode(_mat.GetInt(_FadeOut + "_Data"), _mat.GetFloat(_FadeOut).ToString(), _isCanvas);
+            var isInvalid = _mat.GetFloat(_TargetBlendColor) == 0 && _mat.GetFloat(_TargetMainTex) == 0 && _mat.GetFloat(_TargetFinalAlpha) == 0 && _mat.GetFloat(_TargetFinalColor) == 0 && _mat.GetFloat(_TargetDistortion) == 0 && _mat.GetFloat(_TargetDissolve) == 0 && _mat.GetFloat(_TargetHSVShift) == 0;
+
+            var fadeIn = UniVFXGUILayout.VertexDataToFloatCode(_mat, _FadeIn, _isCanvas, refactOption);
+            var fadeOut = UniVFXGUILayout.VertexDataToFloatCode(_mat, _FadeOut, _isCanvas, refactOption);
 
             code.Add("//SurfaceFade");
+
+            if(isInvalid)
+            {
+                code.Add("//SurfaceFade Skipped, Target None");
+                return code;
+            }
+
             code.Add("half " + _ResultValue + " = 1;");
 
             if (_mat.GetInt(_Frenel) == 1)
             {
-                var pow = UniVFXGUILayout.VertexDataToCode(_mat.GetInt(_Pow + "_Data"), _mat.GetFloat(_Pow).ToString(), _isCanvas);
+                var pow = UniVFXGUILayout.VertexDataToFloatCode(_mat, _Pow, _isCanvas, refactOption);
                 code.Add("float rimFade = saturate(dot(i.normal, GetWorldSpaceNormalizeViewDir(i.worldPos)));");
                 code.Add("rimFade = pow(rimFade, " + pow + ");");
                 if (_mat.GetInt(_Reverce) == 1)

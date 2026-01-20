@@ -137,7 +137,7 @@ namespace UniVFX.Editor
             if (!IsActive())
                 return code;
 
-            var index = UniVFXGUILayout.VertexDataToCode(_mat.GetInt(_Index + "_Data"), _mat.GetFloat(_Index).ToString(), _isCanvas);
+            var index = UniVFXGUILayout.VertexDataToFloatCode(_mat, _Index, _isCanvas, refactOption);
             var row = _mat.GetInt(_Row).ToString();
             var column = _mat.GetInt(_Column).ToString();
             

@@ -120,11 +120,61 @@ namespace UniVFX.Editor
         public override List<string> GetPropertyCode(RefactOption refactOption)
         {
             var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            var isSurfaceFadeActive = SurfaceFade.IsActive(_mat) && _mat.GetInt(SurfaceFade._TargetHSVShift) == 1;
+            var paramX = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 0, _isCanvas, refactOption);
+            var paramY = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 1, _isCanvas, refactOption);
+            var paramZ = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 2, _isCanvas, refactOption);
+            var isInvalid = paramX == "0" && paramY == "0" && paramZ == "0" && !isSurfaceFadeActive && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+
+            if(isInvalid)
+            {
+                code.Add("//HSVShift Skipped, Intensity is 0");
+                return code;
+            }
+            
+            if(isFixedValue)
+            {
+                code.Add("//HSVShift Property Skipped, FixedValue");
+            }
+            else
+            {
+                if(_mat.GetVector(_Param + "_Data") == new Vector4(0,0,0,0))
+                    code.Add(_Param + "(\"" + _Param.Replace("_", "") + "\", Vector) = (1,0,0,0)");
+            }
             return code;
         }
         public override List<string> GetCBufferCode(RefactOption refactOption)
         {
             var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            var isSurfaceFadeActive = SurfaceFade.IsActive(_mat) && _mat.GetInt(SurfaceFade._TargetHSVShift) == 1;
+            var paramX = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 0, _isCanvas, refactOption);
+            var paramY = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 1, _isCanvas, refactOption);
+            var paramZ = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 2, _isCanvas, refactOption);
+            var isInvalid = paramX == "0" && paramY == "0" && paramZ == "0" && !isSurfaceFadeActive && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+
+            if(isInvalid)
+            {
+                code.Add("//HSVShift Skipped, Intensity is 0");
+                return code;
+            }
+
+            if(isFixedValue)
+            {
+                code.Add("//HSVShift Property Skipped, FixedValue");
+            }
+            else
+            {
+                if(_mat.GetVector(_Param + "_Data") == new Vector4(0,0,0,0))
+                    code.Add("half4 " + _Param + ";");
+            }
             return code;
         }
         public override List<string> GetTextureCode(RefactOption refactOption)
@@ -160,14 +210,16 @@ namespace UniVFX.Editor
 
 
             var param = "param_HSVShift";
-            var paramX = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").x, _mat.GetVector(_Param).x + "", _isCanvas);
-            var paramY = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").y, _mat.GetVector(_Param).y + "", _isCanvas);
-            var paramZ = UniVFXGUILayout.VertexDataToCode((int)_mat.GetVector(_Param + "_Data").z, _mat.GetVector(_Param).z + "", _isCanvas);
+            var isSurfaceFadeActive = SurfaceFade.IsActive(_mat) && _mat.GetInt(SurfaceFade._TargetHSVShift) == 1;
+            var paramX = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 0, _isCanvas, refactOption);
+            var paramY = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 1, _isCanvas, refactOption);
+            var paramZ = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 2, _isCanvas, refactOption);
+            var isInvalid = paramX == "0" && paramY == "0" && paramZ == "0" && !isSurfaceFadeActive && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
 
             code.Add("//HsvShift");
-            if(paramX == "0" && paramY == "0" && paramZ == "0")
+            if(isInvalid)
             {
-                code.Add("//HSV Shift Skipped, Intensity is 0");
+                code.Add("//HSVShift Skipped, Intensity is 0");
                 code.Add("");
                 return code;
             }

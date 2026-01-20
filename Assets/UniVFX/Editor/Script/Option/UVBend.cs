@@ -203,10 +203,10 @@ namespace UniVFX.Editor
         public static void ApplyBendCode(ref List<string> code, Material mat, string uvName, bool isCanvas, RefactOption refactOption)
         {
 
-            var paramX = UniVFXGUILayout.VertexDataToCode((int)mat.GetVector(_Param + "_Data").x, mat.GetVector(_Param).x + "", isCanvas);
-            var paramY = UniVFXGUILayout.VertexDataToCode((int)mat.GetVector(_Param + "_Data").y, mat.GetVector(_Param).y + "", isCanvas);
-            var paramZ = UniVFXGUILayout.VertexDataToCode((int)mat.GetVector(_Param + "_Data").z, mat.GetVector(_Param).z + "", isCanvas);
-            var paramW = UniVFXGUILayout.VertexDataToCode((int)mat.GetVector(_Param + "_Data").w, mat.GetVector(_Param).w + "", isCanvas);
+            var paramX = UniVFXGUILayout.VertexDataToVectorCode(mat, _Param, 0, isCanvas, refactOption);
+            var paramY = UniVFXGUILayout.VertexDataToVectorCode(mat, _Param, 1, isCanvas, refactOption);
+            var paramZ = UniVFXGUILayout.VertexDataToVectorCode(mat, _Param, 2, isCanvas, refactOption);
+            var paramW = UniVFXGUILayout.VertexDataToVectorCode(mat, _Param, 3, isCanvas, refactOption);
 
             if (paramZ == "0" && paramW == "0")
                 return ;

@@ -109,6 +109,19 @@ namespace UniVFX.Editor
             var code = new List<string>();
             if (!IsActive())
                 return code;
+            var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+
+            if(isFixedValue)
+            {
+                code.Add("//FaceColor Property Skipped, FixedValue");
+            }
+            else
+            {
+                if (_mat.GetInt(_FrontColor + "_Data") == 0)
+                    code.Add(_FrontColor + "(\"" + _FrontColor.Replace("_", "") + "\", Color) = (1,1,1,1)");
+                if (_mat.GetInt(_BackColor + "_Data") == 0)
+                    code.Add(_BackColor + "(\"" + _BackColor.Replace("_", "") + "\", Color) = (1,1,1,1)");
+            }
             return code;
         }
         public override List<string> GetCBufferCode(RefactOption refactOption)
@@ -116,6 +129,20 @@ namespace UniVFX.Editor
             var code = new List<string>();
             if (!IsActive())
                 return code;
+
+            var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+
+            if(isFixedValue)
+            {
+                code.Add("//FaceColor Property Skipped, FixedValue");
+            }
+            else
+            {
+                if (_mat.GetInt(_FrontColor + "_Data") == 0)
+                    code.Add("half4 " + _FrontColor + ";");
+                if (_mat.GetInt(_BackColor + "_Data") == 0)
+                    code.Add("half4 " + _BackColor + ";");
+            }
             return code;
         }
         public override List<string> GetTextureCode(RefactOption refactOption)
@@ -149,9 +176,8 @@ namespace UniVFX.Editor
             if (!IsActive())
                 return code;
 
-            var frontColor = UniVFXGUILayout.VertexColorDataToCode(_mat.GetInt(_FrontColor + "_Data"), _mat.GetColor(_FrontColor).linear.ToString().Replace("RGBA", "half4"), _isCanvas);
-            var backColor = UniVFXGUILayout.VertexColorDataToCode(_mat.GetInt(_BackColor + "_Data"), _mat.GetColor(_BackColor).linear.ToString().Replace("RGBA", "half4"), _isCanvas);
-            
+            var frontColor = UniVFXGUILayout.VertexDataToColorCode(_mat, _FrontColor, true, _isCanvas, refactOption);
+            var backColor = UniVFXGUILayout.VertexDataToColorCode(_mat, _BackColor, true, _isCanvas, refactOption);
 
             code.Add("col *= max(0, face) ? " + frontColor + " : " + backColor + ";");
             code.Add("");
