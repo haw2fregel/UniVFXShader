@@ -294,6 +294,17 @@ namespace UniVFX.Editor
         public override List<string> GetUseV2fCode(RefactOption refactOption)
         {
             var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            if(_isBRP)
+            {
+                code.Add("float2 surfaceFadeParam");
+                if(_TypeOption[_mat.GetInt(_Type)] == "SoftParticle")
+                {
+                    code.Add("float4 projPos");
+                }
+            }
 
             return code;
         }
@@ -305,6 +316,24 @@ namespace UniVFX.Editor
         public override List<string> GetVertexCode(RefactOption refactOption)
         {
             var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            if(_isBRP)
+            {
+                code.Add("//SurfaceFade");
+                code.Add("o.surfaceFadeParam = 0;");
+                if( _mat.GetInt(_Frenel) == 1)
+                {
+                    code.Add("half3 viewDir = normalize(ObjSpaceViewDir(v.vertex));");
+                    code.Add("o.surfaceFadeParam.x = dot(viewDir, v.normal.xyz);");
+                }
+                if(_TypeOption[_mat.GetInt(_Type)] == "SoftParticle")
+                {
+                    code.Add("o.projPos = ComputeScreenPos(UnityObjectToClipPos(v.vertex.xyz));");
+                    code.Add("COMPUTE_EYEDEPTH(o.surfaceFadeParam.y);");
+                }
+            }
             return code;
         }
         public override List<string> GetFragmentHeadCode(RefactOption refactOption)
@@ -333,7 +362,7 @@ namespace UniVFX.Editor
                 var pow = UniVFXGUILayout.VertexDataToFloatCode(_mat, _Pow, _isCanvas, refactOption);
                 if(_isBRP)
                 {
-                    code.Add("float rimFade = saturate(dot(normalize(mul(unity_ObjectToWorld, i.normal)), normalize(UnityWorldSpaceViewDir(i.worldPos))));");
+                    code.Add("float rimFade = i.surfaceFadeParam.x;");
                 }
                 else
                 {
@@ -365,8 +394,8 @@ namespace UniVFX.Editor
                 case "SoftParticle":
                     if(_isBRP)
                     {
-                        code.Add("half sceneDepth = LinearEyeDepth(tex2Dproj(_CameraDepthTexture, ComputeScreenPos(mul(unity_WorldToObject, i.worldPos))).r);");
-                        code.Add("float depthDiff = sceneDepth + mul(UNITY_MATRIX_V, i.worldPos).z;");
+                        code.Add("half sceneDepth = LinearEyeDepth(tex2Dproj(_CameraDepthTexture, i.projPos).r);");
+                        code.Add("float depthDiff = sceneDepth - i.positionCS.z;");
                     }
                     else
                     {

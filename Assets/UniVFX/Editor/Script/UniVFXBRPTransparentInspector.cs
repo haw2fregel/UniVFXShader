@@ -494,7 +494,7 @@ namespace UniVFX.Editor
             shaderCode += "\n";
 
             if (useUVChannelList[1].Count >= 1 || useUVChannelList[2].Count >= 1 || useUVChannelList[3].Count >= 1 || SurfaceFade.IsActive(material) || FakeLight.IsActive(material) || UVParallax.IsActive(material))
-                shaderCode += "                float3 worldPos = mul(unity_ObjectToWorld, v.vertex.xyz);\n";
+                shaderCode += "                float3 worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;\n";
             if (useUVChannelList[4].Count >= 1)
             {
                 shaderCode += "                float4 screenPos = ComputeScreenPos(UnityObjectToClipPos(v.vertex.xyz));\n";
@@ -552,8 +552,8 @@ namespace UniVFX.Editor
             shaderCode += "                half4 vertexColor = i.vertexColor;\n";
             if (UVParallax.IsActive(material))
             {
-                shaderCode += "                float4 tangentWS = float4(mul(unity_ObjectToWorld, i.tangent.xyz).xyz, i.tangent.w);\n";
-                shaderCode += "                float3 worldNormal = (mul(unity_ObjectToWorld, i.normal));\n";
+                shaderCode += "                float4 tangentWS = float4(UnityObjectToWorldNormal(i.tangent.xyz).xyz, i.tangent.w);\n";
+                shaderCode += "                float3 worldNormal = UnityObjectToWorldNormal(i.normal);\n";
                 shaderCode += "                float3 unnormalizedNormalWS = worldNormal;\n";
                 shaderCode += "                float renormFactor = 1.0 / length(unnormalizedNormalWS);\n";
                 shaderCode += "                worldNormal = normalize(unnormalizedNormalWS);\n";
