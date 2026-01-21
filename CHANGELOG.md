@@ -1,7 +1,7 @@
 # ChangeLog
 
 ## v1.1.0
-- [最適化機能の実装](https://github.com/haw2fregel/UniVFXShader/blob/v1.1.0/DOCUMENTATION.md#refact)
+- [最適化機能の実装](https://github.com/haw2fregel/UniVFXShader/blob/v1.1.0/DOCUMENTATION.md#%E6%9C%80%E9%81%A9%E5%8C%96)
 
 ## v1.0.3
 - TransparentShaderでBlendAlphaを変更できるようにする
