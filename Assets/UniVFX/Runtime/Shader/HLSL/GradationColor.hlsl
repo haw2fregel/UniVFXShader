@@ -6,9 +6,9 @@
         half4 gradationColor01 = GetVertexColorDataArray(_GradationColor01);\
         half4 gradationColor10 = GetVertexColorDataArray(_GradationColor10);\
         half4 gradationColor11 = GetVertexColorDataArray(_GradationColor11);\
-        half4 gradationColor0 = lerp(gradationColor00, gradationColor10, gradationRepeat.x);\
-        half4 gradationColor1 = lerp(gradationColor01, gradationColor11, gradationRepeat.x);\
-        half4 gradationColor = lerp(gradationColor0, gradationColor1, gradationRepeat.y);\
+        half4 gradationColor0 = lerp(gradationColor00, gradationColor10, uv.x);\
+        half4 gradationColor1 = lerp(gradationColor01, gradationColor11, uv.x);\
+        half4 gradationColor = lerp(gradationColor0, gradationColor1, uv.y);\
         gradationColor.a = _GradationSurfaceFade ? gradationColor.a * GetSurfaceFadeValue : gradationColor.a;\
         gradationColor.a = _GradationMask ? gradationColor.a * GetMaskTextureValue : gradationColor.a;\
         ColorMix(baseCol.rgb, baseCol.rgb, gradationColor.rgb, gradationColor.a, _GradationBlendMode);

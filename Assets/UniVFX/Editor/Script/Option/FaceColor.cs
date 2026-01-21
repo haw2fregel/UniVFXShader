@@ -7,9 +7,14 @@ namespace UniVFX.Editor
 {
     public class FaceColor : UniVFXOption
     {
+        static bool _viewGUI = false;
         const string _IsActive = "_FACECOLOR";
         const string _FrontColor = "_FrontFaceColor";
         const string _BackColor = "_BackFaceColor";
+
+        public FaceColor(bool isCanvas, bool isBRP) : base(isCanvas, isBRP)
+        {
+        }
 
         public override bool IsActive()
         {
@@ -65,8 +70,8 @@ namespace UniVFX.Editor
                                 using (new EditorGUI.IndentLevelScope())
                                 {
                                     GUI.color = new Color(1f, 1f, 1f, 1f);
-                                    UniVFXGUILayout.OptionColorField(ref _mat, _FrontColor, "FrontFace Color");
-                                    UniVFXGUILayout.OptionColorField(ref _mat, _BackColor, "BackFace Color");
+                                    UniVFXGUILayout.OptionColorField(ref _mat, _FrontColor, "FrontFace Color", _isCanvas);
+                                    UniVFXGUILayout.OptionColorField(ref _mat, _BackColor, "BackFace Color", _isCanvas);
                                 }
                             }
                         }
@@ -83,14 +88,100 @@ namespace UniVFX.Editor
 
         public override void CollectCustomColorData(ref List<List<string>> useCustomDataList)
         {
+            if (!IsActive())
+                return;
             useCustomDataList[_mat.GetInt(_FrontColor + "_Data")].Add("FrontFace Color");
             useCustomDataList[_mat.GetInt(_BackColor + "_Data")].Add("BackFace Color");
         }
 
+        public override void CollectUVChannel(ref List<List<string>> useUVChannelList)
+        {
+        }
+
         public override void VaridateCustomData()
         {
-            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _FrontColor);
-            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _BackColor);
+            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _FrontColor, _isCanvas);
+            UniVFXGUILayout.VaridateCustomColorDataInt(ref _mat, _BackColor, _isCanvas);
+        }
+
+        public override List<string> GetPropertyCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+            var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+
+            if(isFixedValue)
+            {
+                code.Add("//FaceColor Property Skipped, FixedValue");
+            }
+            else
+            {
+                if (_mat.GetInt(_FrontColor + "_Data") == 0)
+                    code.Add(_FrontColor + "(\"" + _FrontColor.Replace("_", "") + "\", Color) = (1,1,1,1)");
+                if (_mat.GetInt(_BackColor + "_Data") == 0)
+                    code.Add(_BackColor + "(\"" + _BackColor.Replace("_", "") + "\", Color) = (1,1,1,1)");
+            }
+            return code;
+        }
+        public override List<string> GetCBufferCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+
+            if(isFixedValue)
+            {
+                code.Add("//FaceColor Property Skipped, FixedValue");
+            }
+            else
+            {
+                if (_mat.GetInt(_FrontColor + "_Data") == 0)
+                    code.Add("half4 " + _FrontColor + ";");
+                if (_mat.GetInt(_BackColor + "_Data") == 0)
+                    code.Add("half4 " + _BackColor + ";");
+            }
+            return code;
+        }
+        public override List<string> GetTextureCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetUseV2fCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetVertexHeadCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetVertexCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetFragmentHeadCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetFragmentCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            var frontColor = UniVFXGUILayout.VertexDataToColorCode(_mat, _FrontColor, true, _isCanvas, refactOption);
+            var backColor = UniVFXGUILayout.VertexDataToColorCode(_mat, _BackColor, true, _isCanvas, refactOption);
+
+            code.Add("col *= max(0, face) ? " + frontColor + " : " + backColor + ";");
+            code.Add("");
+            return code;          
         }
 
     }

@@ -146,7 +146,7 @@ Shader "Shader Graphs/UniVFXBRPCanvas"
         [HideInInspector]_StencilReadMask ("Stencil Read Mask", Float) = 255
         [HideInInspector]_AlphaClip ("_AlphaClip", Float) = 0
         _SrcBlend ("_SrcBlend", Float) = 1
-        _DstBlend ("_DstBlend", Float) = 0
+        _DstBlend ("_DstBlend", Float) = 10
         [HideInInspector]_ColorMask ("ColorMask", Float) = 15
         [HideInInspector]_ClipRect ("ClipRect", Vector) = (0, 0, 0, 0)
         [HideInInspector]_UIMaskSoftnessX ("UIMaskSoftnessX", Float) = 1
@@ -1681,7 +1681,7 @@ Shader "Shader Graphs/UniVFXBRPCanvas"
                 half4 color = half4(surfaceDescription.BaseColor, alpha) ;
 
                 #if !defined(HAVE_VFX_MODIFICATION) && !defined(_DISABLE_COLOR_TINT)
-                    color *= unpacked.color;
+                    //color *= unpacked.color;
                 #endif
 
                 #ifdef UNITY_UI_CLIP_RECT
@@ -1703,6 +1703,6 @@ Shader "Shader Graphs/UniVFXBRPCanvas"
         }
     }
     CustomEditor "UnityEditor.ShaderGraph.GenericShaderGraphMaterialGUI"
-    CustomEditorForRenderPipeline "UniVFX.Editor.UniVFXCanvasInspector" ""
+    CustomEditorForRenderPipeline "UniVFX.Editor.UniVFXBRPCanvasInspector" ""
     FallBack "Hidden/Shader Graph/FallbackError"
 }

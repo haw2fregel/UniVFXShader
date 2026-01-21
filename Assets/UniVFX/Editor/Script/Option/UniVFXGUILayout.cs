@@ -10,7 +10,145 @@ namespace UniVFX.Editor
         public readonly static string[] _CanvasUVChannelOptionVert = { "TEXCOORD", "TEXCOORD1", "ScreenPosition", "RotateUV", "FripBookUV" };
         public readonly static string[] _UVChannelOption = { "TEXCOORD", "PositionZFace", "PositionYFace", "PositionXFace", "ScreenPosition", "ViewNormal", "RotateUV", "FripBookUV", "BendUV" };
         public readonly static string[] _UVChannelOptionVert = { "TEXCOORD", "PositionZFace", "PositionYFace", "PositionXFace", "ScreenPosition", "ViewNormal", "RotateUV", "FripBookUV" };
+        public static string GetVertUVName(int index, Material mat, bool isCanvas)
+        {
+            if(isCanvas)
+            {
+                return GetVertUVNameCanvas(index, mat);
+            }
+            else
+            {
+                return GetVertUVName(index, mat);
+            }
+        }
+        static string GetVertUVName(int index, Material mat)
+        {
+            switch (index)
+            {
+                case 0:
+                    return "texCoord0.xy";
+                case 1:
+                    return "worldPos.xy";
+                case 2:
+                    return "worldPos.zx";
+                case 3:
+                    return "worldPos.yz";
+                case 4:
+                    return "screenPos.xy";
+                case 5:
+                    return "viewNormal.xy";
+                case 6:
+                    if (mat.GetInt("_ROTATEUVENABLE") == 1)
+                    {
+                        return "rotateUV.xy";
+                    }
+                    else
+                    {
+                        return "texCoord0.xy";
+                    }
+                case 7:
+                    if (mat.GetInt("_FRIPBOOK") == 1)
+                    {
+                        return "fripBookUV.xy";
+                    }
+                    else
+                    {
+                        return "texCoord0.xy";
+                    }
+                case 8:
+                        return "texCoord0.xy";
+                default:
+                    return "uv";
+                }
+        }
+        static string GetVertUVNameCanvas(int index, Material mat)
+        {
+            switch (index)
+            {
+                case 0:
+                    return "texCoord0.xy";
+                case 1:
+                    return "texCoord1.xy";
+                case 2:
+                    return "screenPos.xy";
+                case 3:
+                    if (mat.GetInt("_ROTATEUVENABLE") == 1)
+                    {
+                        return "rotateUV.xy";
+                    }
+                    else
+                    {
+                        return "texCoord0.xy";
+                    }
+                case 4:
+                    if (mat.GetInt("_FRIPBOOK") == 1)
+                    {
+                        return "fripBookUV.xy";
+                    }
+                    else
+                    {
+                        return "texCoord0.xy";
+                    }
+                case 5:
+                    return "texCoord0.xy";
+                default:
+                    return "uv";
+                }
+        }
         public readonly static string[] _WrapMode = { "Clamp", "Repeat", "Mirror", "MirrorOnce" };
+        public static string GetSamplerName(int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    return "SamplerState_Linear_Clamp";
+                case 1:
+                    return "SamplerState_Linear_Repeat";
+                case 2:
+                    return "SamplerState_Linear_Mirror";
+                case 3:
+                    return "SamplerState_Linear_MirrorOnce";
+                default:
+                    return "SamplerState_Linear_Clamp";
+            }
+        }
+
+
+        public static void UVGUILayout(ref Material mat, ref bool viewGUI, string property, bool isCamvas)
+        {
+            if (isCamvas)
+            {
+                CanvasUVGUILayout(ref mat, ref viewGUI, property);
+            }
+            else
+            {
+                UVGUILayout(ref mat, ref viewGUI, property);
+            }
+        }
+
+        public static void UVGUILayoutVert(ref Material mat, ref bool viewGUI, string property, bool isCamvas)
+        {
+            if (isCamvas)
+            {
+                CanvasUVGUILayoutVert(ref mat, ref viewGUI, property);
+            }
+            else
+            {
+                UVGUILayoutVert(ref mat, ref viewGUI, property);
+            }
+        }
+
+        public static void UVGUILayoutClamp(ref Material mat, ref bool viewGUI, string property, bool isCamvas)
+        {
+            if (isCamvas)
+            {
+                CanvasUVGUILayoutClamp(ref mat, ref viewGUI, property);
+            }
+            else
+            {
+                UVGUILayoutClamp(ref mat, ref viewGUI, property);
+            }
+        }
 
         /// MARK: UVGUILayout
         /// <summary>
@@ -19,7 +157,7 @@ namespace UniVFX.Editor
         /// <param name="mat"></param>
         /// <param name="viewGUI"></param>
         /// <param name="property">uv name, "+Transform" "+Transform_Index" "+Transform_Sampler"</param>
-        public static void UVGUILayout(ref Material mat, ref bool viewGUI, string property)
+        static void UVGUILayout(ref Material mat, ref bool viewGUI, string property)
         {
             viewGUI = EditorGUILayout.Foldout(viewGUI, "UV");
             if (viewGUI)
@@ -82,7 +220,7 @@ namespace UniVFX.Editor
         /// <param name="mat"></param>
         /// <param name="viewGUI"></param>
         /// <param name="property">uv name, "+Transform" "+Transform_Index" "+Transform_Sampler"</param>
-        public static void CanvasUVGUILayout(ref Material mat, ref bool viewGUI, string property)
+        static void CanvasUVGUILayout(ref Material mat, ref bool viewGUI, string property)
         {
             viewGUI = EditorGUILayout.Foldout(viewGUI, "UV");
             if (viewGUI)
@@ -146,7 +284,7 @@ namespace UniVFX.Editor
         /// <param name="mat"></param>
         /// <param name="viewGUI"></param>
         /// <param name="property">uv name, "+Transform" "+Transform_Index" "+Transform_Sampler"</param>
-        public static void UVGUILayoutVert(ref Material mat, ref bool viewGUI, string property)
+        static void UVGUILayoutVert(ref Material mat, ref bool viewGUI, string property)
         {
             viewGUI = EditorGUILayout.Foldout(viewGUI, "UV");
             if (viewGUI)
@@ -199,7 +337,7 @@ namespace UniVFX.Editor
         /// <param name="mat"></param>
         /// <param name="viewGUI"></param>
         /// <param name="property">uv name, "+Transform" "+Transform_Index" "+Transform_Sampler"</param>
-        public static void CanvasUVGUILayoutVert(ref Material mat, ref bool viewGUI, string property)
+        static void CanvasUVGUILayoutVert(ref Material mat, ref bool viewGUI, string property)
         {
             viewGUI = EditorGUILayout.Foldout(viewGUI, "UV");
             if (viewGUI)
@@ -251,7 +389,7 @@ namespace UniVFX.Editor
         /// <param name="mat"></param>
         /// <param name="viewGUI"></param>
         /// <param name="property">uv name, "+Transform" "+Transform_Index"</param>
-        public static void UVGUILayoutClamp(ref Material mat, ref bool viewGUI, string property)
+        static void UVGUILayoutClamp(ref Material mat, ref bool viewGUI, string property)
         {
             viewGUI = EditorGUILayout.Foldout(viewGUI, "UV");
             if (viewGUI)
@@ -314,7 +452,7 @@ namespace UniVFX.Editor
         /// <param name="mat"></param>
         /// <param name="viewGUI"></param>
         /// <param name="property">uv name, "+Transform" "+Transform_Index"</param>
-        public static void CanvasUVGUILayoutClamp(ref Material mat, ref bool viewGUI, string property)
+        static void CanvasUVGUILayoutClamp(ref Material mat, ref bool viewGUI, string property)
         {
             viewGUI = EditorGUILayout.Foldout(viewGUI, "UV");
             if (viewGUI)
@@ -370,6 +508,19 @@ namespace UniVFX.Editor
             }
         }
 
+
+        public static void OptionFloatField(ref Material mat, string property, string label, int index, bool isCanvas)
+        {
+            if (isCanvas)
+            {
+                CanvasOptionFloatField(ref mat, property, label, index);
+            }
+            else
+            {
+                OptionFloatField(ref mat, property, label, index);
+            }
+        }
+
         /// MARK: OptionFloatField
         /// <summary>
         /// Vector４プロパティ
@@ -379,7 +530,7 @@ namespace UniVFX.Editor
         /// <param name="property">vector4 name, "+_Data"</param>
         /// <param name="label">display name</param>
         /// <param name="index">0~3 vector index</param>
-        public static void OptionFloatField(ref Material mat, string property, string label, int index)
+        static void OptionFloatField(ref Material mat, string property, string label, int index)
         {
             using (new EditorGUILayout.HorizontalScope())
             {
@@ -436,7 +587,7 @@ namespace UniVFX.Editor
         /// <param name="property">vector4 name, "+_Data"</param>
         /// <param name="label">display name</param>
         /// <param name="index">0~3 vector index</param>
-        public static void CanvasOptionFloatField(ref Material mat, string property, string label, int index)
+        static void CanvasOptionFloatField(ref Material mat, string property, string label, int index)
         {
             using (new EditorGUILayout.HorizontalScope())
             {
@@ -539,6 +690,18 @@ namespace UniVFX.Editor
         }
 
 
+        public static int OptionIntSlider(ref Material mat, string property, string label, int min, int max, bool isCanvas)
+        {
+            if (isCanvas)
+            {
+                return CanvasOptionIntSlider(ref mat, property, label, min, max);
+            }
+            else
+            {
+                return OptionIntSlider(ref mat, property, label, min, max);
+            }
+        }
+
         /// MARK: OptionIntSlider
         /// <summary>
         /// Intプロパティの編集
@@ -549,7 +712,7 @@ namespace UniVFX.Editor
         /// <param name="min">slider min</param>
         /// <param name="max">slider max</param>
         /// <returns></returns>
-        public static int OptionIntSlider(ref Material mat, string property, string label, int min, int max)
+        static int OptionIntSlider(ref Material mat, string property, string label, int min, int max)
         {
             using (new EditorGUILayout.HorizontalScope())
             {
@@ -583,7 +746,7 @@ namespace UniVFX.Editor
         /// <param name="min">slider min</param>
         /// <param name="max">slider max</param>
         /// <returns></returns>
-        public static int CanvasOptionIntSlider(ref Material mat, string property, string label, int min, int max)
+        static int CanvasOptionIntSlider(ref Material mat, string property, string label, int min, int max)
         {
             using (new EditorGUILayout.HorizontalScope())
             {
@@ -618,7 +781,20 @@ namespace UniVFX.Editor
         /// <param name="min">slider min</param>
         /// <param name="max">slider max</param>
         /// <returns></returns>
-        public static int OptionIntSlider(ref Material mat, string property, string label, int index, int min, int max)
+        
+        public static int OptionIntSlider(ref Material mat, string property, string label, int index, int min, int max, bool isCanvas)
+        {
+            if (isCanvas)
+            {
+                return CanvasOptionIntSlider(ref mat, property, label, index, min, max);
+            }
+            else
+            {
+                return OptionIntSlider(ref mat, property, label, index, min, max);
+            }
+        }
+
+        static int OptionIntSlider(ref Material mat, string property, string label, int index, int min, int max)
         {
             using (new EditorGUILayout.HorizontalScope())
             {
@@ -691,7 +867,7 @@ namespace UniVFX.Editor
         /// <param name="min">slider min</param>
         /// <param name="max">slider max</param>
         /// <returns></returns>
-        public static int CanvasOptionIntSlider(ref Material mat, string property, string label, int index, int min, int max)
+        static int CanvasOptionIntSlider(ref Material mat, string property, string label, int index, int min, int max)
         {
             using (new EditorGUILayout.HorizontalScope())
             {
@@ -779,6 +955,18 @@ namespace UniVFX.Editor
             }
         }
 
+        public static void OptionSlider(ref Material mat, string property, string label, float min, float max, bool isCanvas)
+        {
+            if (isCanvas)
+            {
+                CanvasOptionSlider(ref mat, property, label, min, max);
+            }
+            else
+            {
+                OptionSlider(ref mat, property, label, min, max);
+            }
+        }
+
         /// MARK: OptionSlider
         /// <summary>
         /// floatプロパティの編集
@@ -788,7 +976,7 @@ namespace UniVFX.Editor
         /// <param name="label">display name</param>
         /// <param name="min">slider min</param>
         /// <param name="max">slider max</param>
-        public static void OptionSlider(ref Material mat, string property, string label, float min, float max)
+        static void OptionSlider(ref Material mat, string property, string label, float min, float max)
         {
             using (new EditorGUILayout.HorizontalScope())
             {
@@ -818,7 +1006,7 @@ namespace UniVFX.Editor
         /// <param name="label">display name</param>
         /// <param name="min">slider min</param>
         /// <param name="max">slider max</param>
-        public static void CanvasOptionSlider(ref Material mat, string property, string label, float min, float max)
+        static void CanvasOptionSlider(ref Material mat, string property, string label, float min, float max)
         {
             using (new EditorGUILayout.HorizontalScope())
             {
@@ -839,6 +1027,18 @@ namespace UniVFX.Editor
             }
         }
 
+        public static void OptionSlider(ref Material mat, string property, string label, int index, float min, float max, bool isCanvas)
+        {
+            if (isCanvas)
+            {
+                CanvasOptionSlider(ref mat, property, label, index, min, max);
+            }
+            else
+            {
+                OptionSlider(ref mat, property, label, index, min, max);
+            }
+        }
+
         /// MARK: OptionSlider
         /// <summary>
         /// Vector４プロパティ
@@ -850,7 +1050,7 @@ namespace UniVFX.Editor
         /// <param name="index">0~3 vector index</param>
         /// <param name="min">slider min</param>
         /// <param name="max">slider max</param>
-        public static void OptionSlider(ref Material mat, string property, string label, int index, float min, float max)
+        static void OptionSlider(ref Material mat, string property, string label, int index, float min, float max)
         {
             using (new EditorGUILayout.HorizontalScope())
             {
@@ -909,7 +1109,7 @@ namespace UniVFX.Editor
         /// <param name="index">0~3 vector index</param>
         /// <param name="min">slider min</param>
         /// <param name="max">slider max</param>
-        public static void CanvasOptionSlider(ref Material mat, string property, string label, int index, float min, float max)
+        static void CanvasOptionSlider(ref Material mat, string property, string label, int index, float min, float max)
         {
             using (new EditorGUILayout.HorizontalScope())
             {
@@ -957,6 +1157,18 @@ namespace UniVFX.Editor
             }
         }
 
+        public static void OptionColorField(ref Material mat, string property, string label, bool isCanvas)
+        {
+            if (isCanvas)
+            {
+                CanvasOptionColorField(ref mat, property, label);
+            }
+            else
+            {
+                OptionColorField(ref mat, property, label);
+            }
+        }
+
         /// MARK: OptionColorField
         /// <summary>
         /// Colorプロパティの編集
@@ -964,7 +1176,7 @@ namespace UniVFX.Editor
         /// <param name="mat"></param>
         /// <param name="property">color name, "+_Data"</param>
         /// <param name="label">display name</param>
-        public static void OptionColorField(ref Material mat, string property, string label)
+        static void OptionColorField(ref Material mat, string property, string label)
         {
             using (new EditorGUILayout.HorizontalScope())
             {
@@ -992,7 +1204,7 @@ namespace UniVFX.Editor
         /// <param name="mat"></param>
         /// <param name="property">color name, "+_Data"</param>
         /// <param name="label">display name</param>
-        public static void CanvasOptionColorField(ref Material mat, string property, string label)
+        static void CanvasOptionColorField(ref Material mat, string property, string label)
         {
             using (new EditorGUILayout.HorizontalScope())
             {
@@ -1121,6 +1333,30 @@ namespace UniVFX.Editor
             }
         }
 
+        public static Vector4 VaridateCustomDataVector(ref Material mat, string property, bool isCamvas)
+        {
+            if (isCamvas)
+                return VaridateCanvasCustomDataVector(ref mat, property);
+            else
+                return VaridateCustomDataVector(ref mat, property);
+        }
+
+        public static int VaridateCustomDataInt(ref Material mat, string property, bool isCamvas)
+        {
+            if (isCamvas)
+                return VaridateCanvasCustomDataInt(ref mat, property);
+            else
+                return VaridateCustomDataInt(ref mat, property);
+        }
+
+        public static int VaridateCustomColorDataInt(ref Material mat, string property, bool isCamvas)
+        {
+            if (isCamvas)
+                return VaridateCanvasCustomColorDataInt(ref mat, property);
+            else
+                return VaridateCustomColorDataInt(ref mat, property);
+        }
+
         /// MARK: VaridateVertexDataVector
         /// <summary>
         /// プロパティがEnumの範囲内かチェック
@@ -1129,7 +1365,7 @@ namespace UniVFX.Editor
         /// <param name="mat"></param>
         /// <param name="property"></param>
         /// <returns></returns>
-        public static Vector4 VaridateCustomDataVector(ref Material mat, string property)
+        static Vector4 VaridateCustomDataVector(ref Material mat, string property)
         {
             var value = mat.GetVector(property + "_Data");
             var length = Enum.GetValues(typeof(VertexData)).Length;
@@ -1165,7 +1401,7 @@ namespace UniVFX.Editor
         /// <param name="mat"></param>
         /// <param name="property"></param>
         /// <returns></returns>
-        public static int VaridateCustomDataInt(ref Material mat, string property)
+        static int VaridateCustomDataInt(ref Material mat, string property)
         {
             var value = mat.GetInt(property + "_Data");
             var length = Enum.GetValues(typeof(VertexData)).Length;
@@ -1186,7 +1422,7 @@ namespace UniVFX.Editor
         /// <param name="mat"></param>
         /// <param name="property"></param>
         /// <returns></returns>
-        public static int VaridateCustomColorDataInt(ref Material mat, string property)
+        static int VaridateCustomColorDataInt(ref Material mat, string property)
         {
             var value = mat.GetInt(property + "_Data");
             var length = Enum.GetValues(typeof(VertexColorData)).Length;
@@ -1207,7 +1443,7 @@ namespace UniVFX.Editor
         /// <param name="mat"></param>
         /// <param name="property"></param>
         /// <returns></returns>
-        public static Vector4 VaridateCanvasCustomDataVector(ref Material mat, string property)
+        static Vector4 VaridateCanvasCustomDataVector(ref Material mat, string property)
         {
             var value = mat.GetVector(property + "_Data");
             var length = Enum.GetValues(typeof(CanvasVertexData)).Length;
@@ -1244,7 +1480,7 @@ namespace UniVFX.Editor
         /// <param name="mat"></param>
         /// <param name="property"></param>
         /// <returns></returns>
-        public static int VaridateCanvasCustomDataInt(ref Material mat, string property)
+        static int VaridateCanvasCustomDataInt(ref Material mat, string property)
         {
             var value = mat.GetInt(property + "_Data");
             var length = Enum.GetValues(typeof(CanvasVertexData)).Length;
@@ -1265,7 +1501,7 @@ namespace UniVFX.Editor
         /// <param name="mat"></param>
         /// <param name="property"></param>
         /// <returns></returns>
-        public static int VaridateCanvasCustomColorDataInt(ref Material mat, string property)
+        static int VaridateCanvasCustomColorDataInt(ref Material mat, string property)
         {
             var value = mat.GetInt(property + "_Data");
             var length = Enum.GetValues(typeof(CanvasVertexColorData)).Length;
@@ -1298,6 +1534,263 @@ namespace UniVFX.Editor
             mat.SetInt(property, value);
             return value;
         }
+
+        public static string VertexDataToFloatCode(Material mat, string prop, bool isCanvas, RefactOption refactOption)
+        {
+            var vertexData = mat.GetInt(prop + "_Data");
+            var property = prop;
+            var fixedValue = mat.GetFloat(prop).ToString();
+
+            if (isCanvas)
+            {
+                if (refactOption.HasFlag(RefactOption.PropertiesToFixedValue))
+                {
+                    return CanvasVertexDataToCode(vertexData, fixedValue);
+                }
+                else
+                {
+                    return CanvasVertexDataToCode(vertexData, property);
+                }
+            }
+            else
+            {
+                if (refactOption.HasFlag(RefactOption.PropertiesToFixedValue))
+                {
+                    return VertexDataToCode(vertexData, fixedValue);
+                }
+                else
+                {
+                    return VertexDataToCode(vertexData, property);
+                }
+            }
+        }
+
+        public static string VertexDataToVectorCode(Material mat, string prop, int index, bool isCanvas, RefactOption refactOption)
+        {
+            var vertexData = 0;
+            var property = "";
+            var fixedValue = "";
+            switch (index)
+            {
+                case 0:
+                    vertexData = (int)mat.GetVector(prop + "_Data").x;
+                    property = prop + ".x";
+                    fixedValue = mat.GetVector(prop).x.ToString();
+                    break;
+                case 1:
+                    vertexData = (int)mat.GetVector(prop + "_Data").y;
+                    property = prop + ".y";
+                    fixedValue = mat.GetVector(prop).y.ToString();
+                    break;
+                case 2:
+                    vertexData = (int)mat.GetVector(prop + "_Data").z;
+                    property = prop + ".z";
+                    fixedValue = mat.GetVector(prop).z.ToString();
+                    break;
+                case 3:
+                    vertexData = (int)mat.GetVector(prop + "_Data").w;
+                    property = prop + ".w";
+                    fixedValue = mat.GetVector(prop).w.ToString();
+                    break;
+            }
+            if (isCanvas)
+            {
+                if (refactOption.HasFlag(RefactOption.PropertiesToFixedValue))
+                {
+                    return CanvasVertexDataToCode(vertexData, fixedValue);
+                }
+                else
+                {
+                    return CanvasVertexDataToCode(vertexData, property);
+                }
+            }
+            else
+            {
+                if (refactOption.HasFlag(RefactOption.PropertiesToFixedValue))
+                {
+                    return VertexDataToCode(vertexData, fixedValue);
+                }
+                else
+                {
+                    return VertexDataToCode(vertexData, property);
+                }
+            }
+        }
+
+        public static string VertexDataToColorCode(Material mat, string prop, bool isLinear, bool isCanvas, RefactOption refactOption)
+        {
+            var vertexData = mat.GetInt(prop + "_Data");
+            var property = prop;
+            var fixedValue = isLinear ? mat.GetColor(prop).linear.ToString().Replace("RGBA", "half4") : mat.GetColor(prop).ToString().Replace("RGBA", "half4");
+
+            if (isCanvas)
+            {
+                if (refactOption.HasFlag(RefactOption.PropertiesToFixedValue))
+                {
+                    return CanvasVertexColorDataToCode(vertexData, fixedValue);
+                }
+                else
+                {
+                    return CanvasVertexColorDataToCode(vertexData, property);
+                }
+            }
+            else
+            {
+                if (refactOption.HasFlag(RefactOption.PropertiesToFixedValue))
+                {
+                    return VertexColorDataToCode(vertexData, fixedValue);
+                }
+                else
+                {
+                    return VertexColorDataToCode(vertexData, property);
+                }
+            }
+        }
+
+        static string VertexDataToCode(int vertexData, string prop)
+        {
+            switch (vertexData)
+            {
+                case (int)VertexData.Input:
+                    return prop;
+                case (int)VertexData.TEXCOORD1X:
+                    return "texCoord1.x";
+                case (int)VertexData.TEXCOORD1Y:
+                    return "texCoord1.y";
+                case (int)VertexData.TEXCOORD1Z:
+                    return "texCoord1.z";
+                case (int)VertexData.TEXCOORD1W:
+                    return "texCoord1.w";
+                case (int)VertexData.TEXCOORD2X:
+                    return "texCoord2.x";
+                case (int)VertexData.TEXCOORD2Y:
+                    return "texCoord2.y";
+                case (int)VertexData.TEXCOORD2Z:
+                    return "texCoord2.z";
+                case (int)VertexData.TEXCOORD2W:
+                    return "texCoord2.w";
+                case (int)VertexData.VertexColorR:
+                    return "vertexColor.r";
+                case (int)VertexData.VertexColorG:
+                    return "vertexColor.g";
+                case (int)VertexData.VertexColorB:
+                    return "vertexColor.b";
+                case (int)VertexData.VertexColorA:
+                    return "vertexColor.a";
+                case (int)VertexData.TimeX:
+                    return "time.x";
+                case (int)VertexData.TimeY:
+                    return "time.y";
+                case (int)VertexData.TimeZ:
+                    return "time.z";
+                case (int)VertexData.TimeW:
+                    return "time.w";
+                case (int)VertexData.MinusTimeX:
+                    return "-time.x";
+                case (int)VertexData.MinusTimeY:
+                    return "-time.y";
+                case (int)VertexData.MinusTimeZ:
+                    return "-time.z";
+                case (int)VertexData.MinusTimeW:
+                    return "-time.w";
+                case (int)VertexData.TimeMapX:
+                    return "timeMap.x";
+                case (int)VertexData.TimeMapY:
+                    return "timeMap.y";
+                case (int)VertexData.TimeMapZ:
+                    return "timeMap.z";
+                case (int)VertexData.TimeMapW:
+                    return "timeMap.w";
+                default:
+                    return prop;
+            }
+        }
+
+        static string CanvasVertexDataToCode(int vertexData, string prop)
+        {
+            switch (vertexData)
+            {
+                case (int)CanvasVertexData.Input:
+                    return prop;
+                case (int)CanvasVertexData.TEXCOORD2X:
+                    return "texCoord1.x";
+                case (int)CanvasVertexData.TEXCOORD2Y:
+                    return "texCoord1.y";
+                case (int)CanvasVertexData.TEXCOORD3X:
+                    return "texCoord3.x";
+                case (int)CanvasVertexData.TEXCOORD3Y:
+                    return "texCoord3.y";
+                case (int)CanvasVertexData.VertexColorR:
+                    return "vertexColor.r";
+                case (int)CanvasVertexData.VertexColorG:
+                    return "vertexColor.g";
+                case (int)CanvasVertexData.VertexColorB:
+                    return "vertexColor.b";
+                case (int)CanvasVertexData.VertexColorA:
+                    return "vertexColor.a";
+                case (int)CanvasVertexData.TimeX:
+                    return "time.x";
+                case (int)CanvasVertexData.TimeY:
+                    return "time.y";
+                case (int)CanvasVertexData.TimeZ:
+                    return "time.z";
+                case (int)CanvasVertexData.TimeW:
+                    return "time.w";
+                case (int)CanvasVertexData.MinusTimeX:
+                    return "-time.x";
+                case (int)CanvasVertexData.MinusTimeY:
+                    return "-time.y";
+                case (int)CanvasVertexData.MinusTimeZ:
+                    return "-time.z";
+                case (int)CanvasVertexData.MinusTimeW:
+                    return "-time.w";
+                case (int)CanvasVertexData.TimeMapX:
+                    return "timeMap.x";
+                case (int)CanvasVertexData.TimeMapY:
+                    return "timeMap.y";
+                case (int)CanvasVertexData.TimeMapZ:
+                    return "timeMap.z";
+                case (int)CanvasVertexData.TimeMapW:
+                    return "timeMap.w";
+                default:
+                    return prop;
+            }
+        }
+
+        static string VertexColorDataToCode(int vertexColorData, string prop)
+        {
+            switch (vertexColorData)
+            {
+                case (int)VertexColorData.Input:
+                    return prop;
+                case (int)VertexColorData.TEXCOORD1:
+                    return "texCoord1";
+                case (int)VertexColorData.TEXCOORD2:
+                    return "texCoord2";
+                case (int)VertexColorData.VertexColor:
+                    return "vertexColor";
+                default:
+                    return prop;
+            }
+        }
+
+        static string CanvasVertexColorDataToCode(int vertexColorData, string prop)
+        {
+            switch (vertexColorData)
+            {
+                case (int)CanvasVertexColorData.Input:
+                    return prop;
+                case (int)CanvasVertexColorData.TEXCOORD2:
+                    return "texCoord2";
+                case (int)CanvasVertexColorData.TEXCOORD3:
+                    return "texCoord3";
+                case (int)CanvasVertexColorData.VertexColor:
+                    return "vertexColor";
+                default:
+                    return prop;
+            }
+        }
+
 
     }
 }

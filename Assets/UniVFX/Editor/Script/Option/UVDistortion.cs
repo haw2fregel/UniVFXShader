@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEditor;
 
@@ -7,14 +7,22 @@ namespace UniVFX.Editor
 {
     public class UVDistortion : UniVFXOption
     {
+        static bool _viewGUI = false;
+        static bool _viewUVGUI = false;
+        static bool _viewTargetGUI = false;
         protected const string _IsActive = "_DISTORTIONENABLE";
         protected const string _Tex = "_DistortionTex";
         protected const string _UV = "_DistortionUV";
         protected const string _Intensity = "_DistortionIntensity";
-        protected const string _TargetMainTex = "_MainUVDistortion";
-        protected const string _TargetBlendTex = "_BlendUVDistortion";
-        protected const string _TargetDissolveTex = "_DissolveUVDistortion";
-        protected const string _TargetGradation = "_GradationUVDistortion";
+        public const string _TargetMainTex = "_MainUVDistortion";
+        public const string _TargetBlendTex = "_BlendUVDistortion";
+        public const string _TargetDissolveTex = "_DissolveUVDistortion";
+        public const string _TargetGradation = "_GradationUVDistortion";
+        public const string _ResultValue = "distortionResult";
+
+        public UVDistortion(bool isCanvas, bool isBRP) : base(isCanvas, isBRP)
+        {
+        }
 
         public override bool IsActive()
         {
@@ -72,8 +80,8 @@ namespace UniVFX.Editor
                                 {
                                     GUI.color = new Color(1f, 1f, 1f, 1f);
                                     UniVFXGUILayout.OptionTextureField(ref _mat, _Tex, "Texture");
-                                    UniVFXGUILayout.OptionSlider(ref _mat, _Intensity, "Intensity", -1, 1);
-                                    UniVFXGUILayout.UVGUILayout(ref _mat, ref _viewUVGUI, _UV);
+                                    UniVFXGUILayout.OptionSlider(ref _mat, _Intensity, "Intensity", -1, 1, _isCanvas);
+                                    UniVFXGUILayout.UVGUILayout(ref _mat, ref _viewUVGUI, _UV, _isCanvas);
                                     _viewTargetGUI = EditorGUILayout.Foldout(_viewTargetGUI, "Target");
                                     if (_viewTargetGUI)
                                     {
@@ -134,6 +142,8 @@ namespace UniVFX.Editor
 
         public override void CollectCustomData(ref List<List<string>> useCustomDataList)
         {
+            if (!IsActive())
+                return;
             useCustomDataList[(int)_mat.GetVector(_UV + "Transform_Data").x].Add("DistortionUV Tile X");
             useCustomDataList[(int)_mat.GetVector(_UV + "Transform_Data").y].Add("DistortionUV Tile Y");
             useCustomDataList[(int)_mat.GetVector(_UV + "Transform_Data").z].Add("DistortionUV Offset X");
@@ -146,11 +156,308 @@ namespace UniVFX.Editor
 
         }
 
+        public override void CollectUVChannel(ref List<List<string>> useUVChannelList)
+        {
+            if (!IsActive())
+                return;
+            useUVChannelList[_mat.GetInt(_UV + "Transform_Index")].Add(_Tex);
+        }
+
         public override void VaridateCustomData()
         {
-            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _Intensity);
-            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _UV + "Transform");
+            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _Intensity, _isCanvas);
+            UniVFXGUILayout.VaridateCustomDataVector(ref _mat, _UV + "Transform", _isCanvas);
             UniVFXGUILayout.VaridateArrayIndex(ref _mat, _UV + "Transform_Index", UniVFXGUILayout._UVChannelOption);
+        }
+
+        public override List<string> GetPropertyCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+             
+            var intensity = UniVFXGUILayout.VertexDataToFloatCode(_mat, _Intensity, _isCanvas, refactOption);
+            var isTargetNone = _mat.GetInt(_TargetMainTex) == 0 && _mat.GetInt(_TargetBlendTex) == 0 && _mat.GetInt(_TargetDissolveTex) == 0 && _mat.GetInt(_TargetGradation) == 0;
+            var isInvalid = intensity == "0" && isTargetNone && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
+            
+
+            if(isInvalid)
+            {
+                code.Add("//DistortionTex Skipped, Intensity is 0");
+                return code;
+            }
+
+            if (isTextureNone)
+            {
+                code.Add("//DistortionTex Skipped, Texture is null");
+            }else
+            {
+                code.Add("[NoScaleOffset]" + _Tex + "(\"" + _Tex.Replace("_", "") + "\", 2D) = \"grey\" {}");
+            }
+
+            if(isFixedValue)
+            {
+                code.Add("//DistortionTex Property Skipped, FixedValue");
+            }
+            else
+            {
+                if(_mat.GetInt(_Intensity + "_Data") == 0)
+                    code.Add(_Intensity + "(\"" + _Intensity.Replace("_", "") + "\", float) = 1");
+                
+                if (isTextureNone)
+                {
+                    code.Add("//DistortionTex Transform Skipped, Texture is null");
+                }
+                else
+                {
+                    var transformData = _mat.GetVector(_UV + "Transform_Data");
+                    if(transformData.x == 0 || transformData.y == 0 || transformData.z == 0 || transformData.w == 0)
+                        code.Add(_UV + "Transform(\"" + _UV.Replace("_", "") + "Transform\", Vector) = (0,0,1,1)");
+                }
+            }
+
+            return code;
+        }
+        public override List<string> GetCBufferCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            var intensity = UniVFXGUILayout.VertexDataToFloatCode(_mat, _Intensity, _isCanvas, refactOption);
+            var isTargetNone = _mat.GetInt(_TargetMainTex) == 0 && _mat.GetInt(_TargetBlendTex) == 0 && _mat.GetInt(_TargetDissolveTex) == 0 && _mat.GetInt(_TargetGradation) == 0;
+            var isInvalid = intensity == "0" && isTargetNone && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
+            
+
+            if(isInvalid)
+            {
+                code.Add("//DistortionTex Skipped, Intensity is 0");
+                return code;
+            }
+
+            if(isFixedValue)
+            {
+                code.Add("//DistortionTex Property Skipped, FixedValue");
+            }
+            else
+            {
+                if (isTextureNone)
+                {
+                    code.Add("//DistortionTex Transform Skipped, Texture is null");
+                }
+                else
+                {
+                    var transformData = _mat.GetVector(_UV + "Transform_Data");
+                    if(transformData.x == 0 || transformData.y == 0 || transformData.z == 0 || transformData.w == 0)
+                        code.Add("float4 " + _UV + "Transform;");
+                }
+
+                if(_mat.GetInt(_Intensity + "_Data") == 0)
+                    code.Add("half " + _Intensity + ";");
+            }
+
+            return code;
+        }
+        public override List<string> GetTextureCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+            
+            var intensity = UniVFXGUILayout.VertexDataToFloatCode(_mat, _Intensity, _isCanvas, refactOption);
+            var isTargetNone = _mat.GetInt(_TargetMainTex) == 0 && _mat.GetInt(_TargetBlendTex) == 0 && _mat.GetInt(_TargetDissolveTex) == 0 && _mat.GetInt(_TargetGradation) == 0;
+            var isInvalid = intensity == "0" && isTargetNone && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
+
+            if(isInvalid)
+            {
+                code.Add("//DistortionTex Skipped, Intensity is 0");
+                return code;
+            }
+
+            if (isTextureNone)
+            {
+                code.Add("//DistortionTex Skipped, Texture is null");
+            }
+            else
+            {
+                if(_isBRP)
+                {
+                    code.Add("Texture2D " + _Tex + ";");
+                }else
+                {
+                    code.Add("TEXTURE2D(" + _Tex + ");");
+                }
+            }
+
+            return code;
+        }
+        public override List<string> GetUseV2fCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            var intensity = UniVFXGUILayout.VertexDataToFloatCode(_mat, _Intensity, _isCanvas, refactOption);
+            var isTargetNone = _mat.GetInt(_TargetMainTex) == 0 && _mat.GetInt(_TargetBlendTex) == 0 && _mat.GetInt(_TargetDissolveTex) == 0 && _mat.GetInt(_TargetGradation) == 0;
+            var isInvalid = intensity == "0" && isTargetNone && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
+
+            if(isInvalid)
+            {
+                code.Add("//DistortionTex Skipped, Intensity is 0");
+                return code;
+            }
+
+            if (isTextureNone)
+            {
+                code.Add("//DistortionTex Skipped, Texture is null");
+            }
+            else
+            {
+                code.Add("float2 uv_" + _Tex.Replace("_", ""));
+            }
+
+            return code;
+        }
+        public override List<string> GetVertexHeadCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetVertexCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            var intensity = UniVFXGUILayout.VertexDataToFloatCode(_mat, _Intensity, _isCanvas, refactOption);
+            var isTargetNone = _mat.GetInt(_TargetMainTex) == 0 && _mat.GetInt(_TargetBlendTex) == 0 && _mat.GetInt(_TargetDissolveTex) == 0 && _mat.GetInt(_TargetGradation) == 0;
+            var isInvalid = intensity == "0" && isTargetNone && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
+
+            var uvName = UniVFXGUILayout.GetVertUVName(_mat.GetInt(_UV + "Transform_Index"), _mat, _isCanvas);
+            var transform = "st_" + _Tex.Replace("_", "");
+            var transformX = UniVFXGUILayout.VertexDataToVectorCode(_mat, _UV + "Transform", 0, _isCanvas, refactOption);
+            var transformY = UniVFXGUILayout.VertexDataToVectorCode(_mat, _UV + "Transform", 1, _isCanvas, refactOption);
+            var transformZ = UniVFXGUILayout.VertexDataToVectorCode(_mat, _UV + "Transform", 2, _isCanvas, refactOption);
+            var transformW = UniVFXGUILayout.VertexDataToVectorCode(_mat, _UV + "Transform", 3, _isCanvas, refactOption);
+
+            code.Add("//Distortion");
+
+            if(isInvalid)
+            {
+                code.Add("//DistortionTex Skipped, Intensity is 0");
+                return code;
+            }
+
+            if (isTextureNone)
+            {
+                code.Add("//DistortionTex Skipped, Texture is null");
+            }
+            else
+            {
+                var uv = "o.uv_" + _Tex.Replace("_", "");
+                code.Add(uv + " = " + uvName + ";");
+                
+                if(UVBend.IsActive(_mat) && UniVFXGUILayout._UVChannelOption[_mat.GetInt(_UV + "Transform_Index")] == "BendUV" && _mat.GetInt(UVBend._Polar) == 1)
+                {
+                    code.Add("");
+                    return code;
+                }
+
+                if (UVBend.IsActive(_mat) && UniVFXGUILayout._UVChannelOption[_mat.GetInt(_UV + "Transform_Index")] == "BendUV")
+                {
+                    UVBend.ApplyBendCode(ref code, _mat, uv, _isCanvas, refactOption);
+                }
+
+                if(transformX != "1" || transformY != "1" || transformZ != "0" || transformW != "0")
+                {
+                    code.Add("float4 " + transform + " = float4(" + transformX + ", " + transformY + ", " + transformZ + ", " + transformW + ");");
+                    code.Add(uv + " = (" + uv + " - float2(0.5, 0.5)) * " + transform + ".xy + float2(0.5, 0.5) + " + transform + ".zw;");
+                }
+            }
+
+            code.Add("");
+            return code;
+        }
+        public override List<string> GetFragmentHeadCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            var intensity = UniVFXGUILayout.VertexDataToFloatCode(_mat, _Intensity, _isCanvas, refactOption);
+            var isTargetNone = _mat.GetInt(_TargetMainTex) == 0 && _mat.GetInt(_TargetBlendTex) == 0 && _mat.GetInt(_TargetDissolveTex) == 0 && _mat.GetInt(_TargetGradation) == 0;
+            var isInvalid = intensity == "0" && isTargetNone && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
+            
+            var sampler = UniVFXGUILayout.GetSamplerName(_mat.GetInt(_UV + "Transform_Sampler"));
+            var uv = "uv_" + _Tex.Replace("_", "");
+            var tex = "tex_" + _Tex.Replace("_", "");
+
+            code.Add("//Distortion");
+            if(isInvalid)
+            {
+                code.Add("float2 " + _ResultValue + " = 0;");
+                code.Add("//DistortionTex Skipped, Intensity is 0");
+                return code;
+            }
+
+            if (isTextureNone)
+            {
+                code.Add("half4 " + tex + " = half4(0.2,0.2,0.2,0.2);");
+                code.Add("//DistortionTex Skipped, Texture is null");
+            }
+            else
+            {
+                code.Add("float2 " + uv + " = i." + uv + ";");
+                if (UVBend.IsActive(_mat) && UniVFXGUILayout._UVChannelOption[_mat.GetInt(_UV + "Transform_Index")] == "BendUV" && _mat.GetInt(UVBend._Polar) == 1)
+                {
+                    var transform = "st_" + _Tex.Replace("_", "");
+                    var transformX = UniVFXGUILayout.VertexDataToVectorCode(_mat, _UV + "Transform", 0, _isCanvas, refactOption);
+                    var transformY = UniVFXGUILayout.VertexDataToVectorCode(_mat, _UV + "Transform", 1, _isCanvas, refactOption);
+                    var transformZ = UniVFXGUILayout.VertexDataToVectorCode(_mat, _UV + "Transform", 2, _isCanvas, refactOption);
+                    var transformW = UniVFXGUILayout.VertexDataToVectorCode(_mat, _UV + "Transform", 3, _isCanvas, refactOption);
+
+                    UVBend.ApplyBendPolarCode(ref code, uv);
+                    UVBend.ApplyBendCode(ref code, _mat, uv, _isCanvas, refactOption);
+
+                    if(transformX != "1" || transformY != "1" || transformZ != "0" || transformW != "0")
+                    {
+                        code.Add("float4 " + transform + " = float4(" + transformX + ", " + transformY + ", " + transformZ + ", " + transformW + ");");
+                        code.Add(uv + " = (" + uv + " - float2(0.5, 0.5)) * " + transform + ".xy + float2(0.5, 0.5) + " + transform + ".zw;");
+                    }
+
+                }
+                if(_isBRP)
+                {
+                    code.Add("half4 " + tex + " = " + _Tex + ".Sample(" + sampler + ", " + uv + ");");
+                }
+                else
+                {
+                    code.Add("half4 " + tex + " = SAMPLE_TEXTURE2D(" + _Tex + ", " + sampler + ", " + uv + ");");
+                }
+            }
+            code.Add(tex + ".xy -= float2(0.5, 0.5);");
+            if (intensity != "1")
+                code.Add(tex + ".xy *= " + intensity + ";");
+            if (MaskTexture.IsActive(_mat) && _mat.GetInt(MaskTexture._TargetDistortionTex) == 1)
+                code.Add(tex + ".xy *= " + MaskTexture._ResultValue + ";");
+            if (SurfaceFade.IsActive(_mat) && _mat.GetInt(SurfaceFade._TargetDistortion) == 1)
+                code.Add(tex + ".xy *= 1 - " + SurfaceFade._ResultValue + ";");
+            code.Add("float2 " + _ResultValue + " = " + tex + ".xy;");
+            code.Add("");
+            return code;
+        }
+        public override List<string> GetFragmentCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            return code;
         }
 
 

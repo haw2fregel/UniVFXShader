@@ -7,6 +7,8 @@ namespace UniVFX.Editor
 {
     public class SurfaceFade : UniVFXOption
     {
+        static bool _viewGUI = false;
+        static bool _viewTargetGUI = false;
         const string _IsActive = "_SURFACEFADE";
         const string _Frenel = "_Frenel";
         const string _Pow = "_FrenelPow";
@@ -16,14 +18,19 @@ namespace UniVFX.Editor
         const string _Type = "_SurfaceFadeType";
         readonly static string[] _TypeOption = { "Screen Z", "Height", "SoftParticle", "Off" };
 
-        const string _TargetFinalColor = "_FinalColorSurfaceFade";
-        const string _TargetFinalAlpha = "_FinalAlphaSurfaceFade";
-        const string _TargetMainTex = "_MainTexSurfaceFade";
-        const string _TargetBlendColor = "_BlendColorSurfaceFade";
-        const string _TargetBlendTex = "_BlendTexSurfaceFade";
-        const string _TargetHSVShift = "_HSVShiftSurfaceFade";
-        const string _TargetDistortion = "_DistortionSurfaceFade";
-        const string _TargetDissolve = "_DissolveSurfaceFade";
+        public const string _TargetFinalColor = "_FinalColorSurfaceFade";
+        public const string _TargetFinalAlpha = "_FinalAlphaSurfaceFade";
+        public const string _TargetMainTex = "_MainTexSurfaceFade";
+        public const string _TargetBlendColor = "_BlendColorSurfaceFade";
+        public const string _TargetBlendTex = "_BlendTexSurfaceFade";
+        public const string _TargetHSVShift = "_HSVShiftSurfaceFade";
+        public const string _TargetDistortion = "_DistortionSurfaceFade";
+        public const string _TargetDissolve = "_DissolveSurfaceFade";
+        public const string _ResultValue = "surfaceFadeResult";
+
+        public SurfaceFade(bool isCanvas, bool isBRP) : base(isCanvas, isBRP)
+        {
+        }
 
         public override bool IsActive()
         {
@@ -96,15 +103,15 @@ namespace UniVFX.Editor
                                     var frenel = UniVFXGUILayout.OptionBoolField(ref _mat, _Frenel, "Frenel");
                                     if(frenel)
                                     {
-                                        UniVFXGUILayout.OptionSlider(ref _mat, _Pow, "Power", 0.001f, 50);
+                                        UniVFXGUILayout.OptionSlider(ref _mat, _Pow, "Power", 0.001f, 50, _isCanvas);
                                         UniVFXGUILayout.OptionBoolField(ref _mat, _Reverce, "Reverce");
                                     }
 
                                     var type = UniVFXGUILayout.OptionPopupField(ref _mat, _Type, "Position Fade Type", _TypeOption);
                                     if (type < 3)
                                     {
-                                        UniVFXGUILayout.OptionSlider(ref _mat, _FadeIn, "FadeIn", -10, 10);
-                                        UniVFXGUILayout.OptionSlider(ref _mat, _FadeOut, "FadeOut", -10, 10);
+                                        UniVFXGUILayout.OptionSlider(ref _mat, _FadeIn, "FadeIn", -10, 10, _isCanvas);
+                                        UniVFXGUILayout.OptionSlider(ref _mat, _FadeOut, "FadeOut", -10, 10, _isCanvas);
                                     }
 
                                     
@@ -185,6 +192,8 @@ namespace UniVFX.Editor
 
         public override void CollectCustomData(ref List<List<string>> useCustomDataList)
         {
+            if (!IsActive())
+                return;
             useCustomDataList[_mat.GetInt(_Pow + "_Data")].Add("Frenel Power");
             useCustomDataList[_mat.GetInt(_FadeIn + "_Data")].Add("Surface FadeIn");
             useCustomDataList[_mat.GetInt(_FadeOut + "_Data")].Add("Surface FadeOut");
@@ -195,13 +204,241 @@ namespace UniVFX.Editor
 
         }
 
-        public override void VaridateCustomData()
+        public override void CollectUVChannel(ref List<List<string>> useUVChannelList)
         {
-            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _Pow);
-            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _FadeIn);
-            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _FadeOut);
         }
 
+        public override void VaridateCustomData()
+        {
+            if (!IsActive())
+                return;
+            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _Pow, _isCanvas);
+            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _FadeIn, _isCanvas);
+            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _FadeOut, _isCanvas);
+        }
+
+        public override List<string> GetPropertyCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            var isInvalid = _mat.GetFloat(_TargetBlendColor) == 0 && _mat.GetFloat(_TargetMainTex) == 0 && _mat.GetFloat(_TargetFinalAlpha) == 0 && _mat.GetFloat(_TargetFinalColor) == 0 && _mat.GetFloat(_TargetDistortion) == 0 && _mat.GetFloat(_TargetDissolve) == 0 && _mat.GetFloat(_TargetHSVShift) == 0;
+            var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+
+            if(isInvalid)
+            {
+                code.Add("//SurfaceFade Skipped, Target None");
+                return code;
+            }
+
+            if(isFixedValue)
+            {
+                code.Add("//SurfaceFade Property Skipped, FixedValue");
+            }
+            else
+            {
+                if(_mat.GetInt(_FadeIn + "_Data") == 0)
+                    code.Add(_FadeIn + "(\"" + _FadeIn.Replace("_", "") + "\", float) = 0");
+                if(_mat.GetInt(_FadeOut + "_Data") == 0)
+                    code.Add(_FadeOut + "(\"" + _FadeOut.Replace("_", "") + "\", float) = 0");
+                if(_mat.GetInt(_Pow + "_Data") == 0 && _mat.GetInt(_Frenel) == 1)
+                    code.Add(_Pow + "(\"" + _Pow.Replace("_", "") + "\", float) = 0");
+            }
+            return code;
+        }
+        public override List<string> GetCBufferCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            var isInvalid = _mat.GetFloat(_TargetBlendColor) == 0 && _mat.GetFloat(_TargetMainTex) == 0 && _mat.GetFloat(_TargetFinalAlpha) == 0 && _mat.GetFloat(_TargetFinalColor) == 0 && _mat.GetFloat(_TargetDistortion) == 0 && _mat.GetFloat(_TargetDissolve) == 0 && _mat.GetFloat(_TargetHSVShift) == 0;
+            var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+
+            if(isInvalid)
+            {
+                code.Add("//SurfaceFade Skipped, Target None");
+                return code;
+            }
+
+            if(isFixedValue)
+            {
+                code.Add("//SurfaceFade Property Skipped, FixedValue");
+            }
+            else
+            {
+                if(_mat.GetInt(_FadeIn + "_Data") == 0)
+                    code.Add("half " + _FadeIn + ";");
+                if(_mat.GetInt(_FadeOut + "_Data") == 0)
+                    code.Add("half " + _FadeOut + ";");
+                if(_mat.GetInt(_Pow + "_Data") == 0 && _mat.GetInt(_Frenel) == 1)
+                    code.Add("half " + _Pow + ";");
+            }
+
+            return code;
+        }
+        public override List<string> GetTextureCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            if (_TypeOption[_mat.GetInt(_Type)] == "SoftParticle")
+            {
+                if(_isBRP)
+                    code.Add("sampler2D _CameraDepthTexture;");
+            }
+            return code;
+        }
+        public override List<string> GetUseV2fCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            if(_isBRP)
+            {
+                code.Add("float2 surfaceFadeParam");
+                if(_TypeOption[_mat.GetInt(_Type)] == "SoftParticle")
+                {
+                    code.Add("float4 projPos");
+                }
+            }
+
+            return code;
+        }
+        public override List<string> GetVertexHeadCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetVertexCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            if(_isBRP)
+            {
+                code.Add("//SurfaceFade");
+                code.Add("o.surfaceFadeParam = 0;");
+                if( _mat.GetInt(_Frenel) == 1)
+                {
+                    code.Add("half3 viewDir = normalize(ObjSpaceViewDir(v.vertex));");
+                    code.Add("o.surfaceFadeParam.x = dot(viewDir, v.normal.xyz);");
+                }
+                if(_TypeOption[_mat.GetInt(_Type)] == "SoftParticle")
+                {
+                    code.Add("o.projPos = ComputeScreenPos(UnityObjectToClipPos(v.vertex.xyz));");
+                    code.Add("COMPUTE_EYEDEPTH(o.surfaceFadeParam.y);");
+                }
+            }
+            return code;
+        }
+        public override List<string> GetFragmentHeadCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            var isInvalid = _mat.GetFloat(_TargetBlendColor) == 0 && _mat.GetFloat(_TargetMainTex) == 0 && _mat.GetFloat(_TargetFinalAlpha) == 0 && _mat.GetFloat(_TargetFinalColor) == 0 && _mat.GetFloat(_TargetDistortion) == 0 && _mat.GetFloat(_TargetDissolve) == 0 && _mat.GetFloat(_TargetHSVShift) == 0;
+
+            var fadeIn = UniVFXGUILayout.VertexDataToFloatCode(_mat, _FadeIn, _isCanvas, refactOption);
+            var fadeOut = UniVFXGUILayout.VertexDataToFloatCode(_mat, _FadeOut, _isCanvas, refactOption);
+
+            code.Add("//SurfaceFade");
+
+            if(isInvalid)
+            {
+                code.Add("//SurfaceFade Skipped, Target None");
+                return code;
+            }
+
+            code.Add("half " + _ResultValue + " = 1;");
+
+            if (_mat.GetInt(_Frenel) == 1)
+            {
+                var pow = UniVFXGUILayout.VertexDataToFloatCode(_mat, _Pow, _isCanvas, refactOption);
+                if(_isBRP)
+                {
+                    code.Add("float rimFade = i.surfaceFadeParam.x;");
+                }
+                else
+                {
+                    code.Add("float rimFade = saturate(dot(TransformObjectToWorldDir(i.normal), GetWorldSpaceNormalizeViewDir(i.worldPos)));");
+                }
+                
+                code.Add("rimFade = pow(rimFade, " + pow + ");");
+                if (_mat.GetInt(_Reverce) == 1)
+                    code.Add("rimFade = 1 - rimFade;");
+                code.Add(_ResultValue + " = rimFade;");
+            }
+            
+            switch (_TypeOption[_mat.GetInt(_Type)])
+            {
+                case "Screen Z":
+                    if(_isBRP)
+                    {
+                        code.Add(_ResultValue + " *= smoothstep(" + fadeOut + ", " + fadeIn + ", -mul(UNITY_MATRIX_V, i.worldPos).z);");
+                    }
+                    else
+                    {
+                        code.Add(_ResultValue + " *= smoothstep(" + fadeOut + ", " + fadeIn + ", -TransformWorldToView(i.worldPos).z);");
+                    }
+                    
+                    break;
+                case "Height":
+                    code.Add(_ResultValue + " *= smoothstep(" + fadeOut + ", " + fadeIn + ", i.worldPos.y);");
+                    break;
+                case "SoftParticle":
+                    if(_isBRP)
+                    {
+                        code.Add("half sceneDepth = LinearEyeDepth(tex2Dproj(_CameraDepthTexture, i.projPos).r);");
+                        code.Add("float depthDiff = sceneDepth - i.positionCS.z;");
+                    }
+                    else
+                    {
+                        code.Add("float2 pixelPosition = 0;");
+                        code.Add("#if UNITY_UV_STARTS_AT_TOP");
+                        code.Add("    pixelPosition = float2(i.positionCS.x, (_ProjectionParams.x < 0) ? (_ScaledScreenParams.y - i.positionCS.y) : i.positionCS.y);");
+                        code.Add("#else");
+                        code.Add("    pixelPosition = float2(i.positionCS.x, (_ProjectionParams.x > 0) ? (_ScaledScreenParams.y - i.positionCS.y) : i.positionCS.y);");
+                        code.Add("#endif");
+                        code.Add("float2 ndcPosition = pixelPosition.xy / _ScaledScreenParams.xy;");
+                        code.Add("ndcPosition.y = 1.0f - ndcPosition.y;");
+                        code.Add("float sceneDepth = Linear01Depth(SampleSceneDepth(ndcPosition), _ZBufferParams) * (_ProjectionParams.z - _ProjectionParams.y);");
+                        code.Add("float depthDiff = sceneDepth + TransformWorldToView(i.worldPos).z;");
+                    }
+                    code.Add(_ResultValue + " *= smoothstep(" + fadeOut + ", " + fadeIn + ", depthDiff);");
+                    break;
+                case "Off":
+                    break;
+                default:
+                    break;
+            }
+
+            if (MaskTexture.IsActive(_mat) && _mat.GetInt(MaskTexture._TargetSurfaceFade) == 1)
+                code.Add(_ResultValue + "= 1 - (1 - " + _ResultValue + ") * " + MaskTexture._ResultValue + ";");
+
+            code.Add("");
+            return code;
+        }
+        public override List<string> GetFragmentCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            code.Add("//SurfaceFade");
+            if (_mat.GetInt(_TargetFinalColor) == 1)
+                code.Add("col.rgb *= " + _ResultValue + ";");
+            if (_mat.GetInt(_TargetFinalAlpha) == 1)
+                code.Add("col.a *= " + _ResultValue + ";");
+            
+            return code;
+        }
+       
     }
 
 }

@@ -7,17 +7,29 @@ namespace UniVFX.Editor
 {
     public class SurfaceOptionTransparent : UniVFXOption
     {
-        const string _ColorMultiplAlpha = "_ColorMultiplAlpha";
-        const string _SrcBlend = "_SrcBlend";
-        const string _SrcBlendAlpha = "_SrcBlendAlpha";
-        const string _DstBlend = "_DstBlend";
-        const string _DstBlendAlpha = "_DstBlendAlpha";
-        const string _ZTest = "_ZTest";
-        const string _Cull = "_Cull";
+        static bool _viewGUI = false;
+        public const string _ColorMultiplAlpha = "_ColorMultiplAlpha";
+        public const string _SrcBlend = "_SrcBlend";
+        public const string _SrcBlendAlpha = "_SrcBlendAlpha";
+        public const string _DstBlend = "_DstBlend";
+        public const string _DstBlendAlpha = "_DstBlendAlpha";
+        public const string _ZTest = "_ZTest";
+        public const string _Cull = "_Cull";
 
-        readonly static string[] _BlendMode = { "Zero", "One", "DstColor", "SrcColor", "OneMinusDstColor", "SrcAlpha", "OneMinusSrcColor", "DstAlpha", "OneMinusDstAlpha", "SrcAlphaSaturate", "OneMinusSrcAlpha" };
-        readonly static string[] _ZTestMode = { "Disabled", "Never", "Less", "Equal", "LessEqual", "Greater", "NotEqual", "GreaterEqual", "Always"};
-        readonly static string[] _CullMode = { "Off", "Front", "Back"};
+        public const string BRP_SrcBlend = "_BUILTIN_SrcBlend";
+        public const string BRP_DstBlend = "_BUILTIN_DstBlend";
+        public const string BRP_SrcBlendAlpha = "_BUILTIN_SrcBlendAlpha";
+        public const string BRP_DstBlendAlpha = "_BUILTIN_DstBlendAlpha";
+        public const string BRP_ZTest = "_BUILTIN_ZTest";
+        public const string BRP_Cull = "_BUILTIN_CullMode";
+
+        public readonly static string[] _BlendMode = { "Zero", "One", "DstColor", "SrcColor", "OneMinusDstColor", "SrcAlpha", "OneMinusSrcColor", "DstAlpha", "OneMinusDstAlpha", "SrcAlphaSaturate", "OneMinusSrcAlpha" };
+        public readonly static string[] _ZTestMode = { "Off", "Never", "Less", "Equal", "LEqual", "Greater", "NotEqual", "GEqual", "Always"};
+        public readonly static string[] _CullMode = { "Off", "Front", "Back"};
+
+        public SurfaceOptionTransparent(bool isCanvas, bool isBRP) : base(isCanvas, isBRP)
+        {
+        }
 
 
         public override bool IsActive()
@@ -58,15 +70,15 @@ namespace UniVFX.Editor
                             {
                                 GUI.color = new Color(1f, 1f, 1f, 1f);
                                 UniVFXGUILayout.OptionBoolField(ref _mat, _ColorMultiplAlpha, "Color Multiple Alpha");
-                                UniVFXGUILayout.OptionPopupField(ref _mat, _SrcBlend, "Src Blend", _BlendMode);
-                                UniVFXGUILayout.OptionPopupField(ref _mat, _DstBlend, "Dst Blend", _BlendMode);
+                                UniVFXGUILayout.OptionPopupField(ref _mat, _isBRP ? BRP_SrcBlend : _SrcBlend, "Src Blend", _BlendMode);
+                                UniVFXGUILayout.OptionPopupField(ref _mat, _isBRP ? BRP_DstBlend : _DstBlend, "Dst Blend", _BlendMode);
                                 if(_mat.HasProperty(_SrcBlendAlpha) && _mat.HasProperty(_DstBlendAlpha))
                                 {
-                                    UniVFXGUILayout.OptionPopupField(ref _mat, _SrcBlendAlpha, "Src Blend Alpha", _BlendMode);
-                                    UniVFXGUILayout.OptionPopupField(ref _mat, _DstBlendAlpha, "Dst Blend Alpha", _BlendMode);
+                                    UniVFXGUILayout.OptionPopupField(ref _mat, _isBRP ? BRP_SrcBlendAlpha : _SrcBlendAlpha, "Src Blend Alpha", _BlendMode);
+                                    UniVFXGUILayout.OptionPopupField(ref _mat, _isBRP ? BRP_DstBlendAlpha : _DstBlendAlpha, "Dst Blend Alpha", _BlendMode);
                                 }
-                                UniVFXGUILayout.OptionPopupField(ref _mat, _ZTest, "ZTest", _ZTestMode);
-                                UniVFXGUILayout.OptionPopupField(ref _mat, _Cull, "Cull", _CullMode);
+                                UniVFXGUILayout.OptionPopupField(ref _mat, _isBRP ? BRP_ZTest : _ZTest, "ZTest", _ZTestMode);
+                                UniVFXGUILayout.OptionPopupField(ref _mat, _isBRP ? BRP_Cull : _Cull, "Cull", _CullMode);
                             }
                         }
                     }
@@ -83,8 +95,53 @@ namespace UniVFX.Editor
         {
         }
 
+        public override void CollectUVChannel(ref List<List<string>> useUVChannelList)
+        {
+        }
+
         public override void VaridateCustomData()
         {
+        }
+
+        public override List<string> GetPropertyCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetCBufferCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetTextureCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetUseV2fCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetVertexHeadCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetVertexCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetFragmentHeadCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetFragmentCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            return code;
         }
     }
 }

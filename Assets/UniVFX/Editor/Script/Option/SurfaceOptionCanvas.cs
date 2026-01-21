@@ -7,15 +7,19 @@ namespace UniVFX.Editor
 {
     public class SurfaceOptionCanvas : UniVFXOption
     {
-        const string _SrcBlend = "_SrcBlend";
-        const string _DstBlend = "_DstBlend";
-        const string _AlphaClipActive = "_ALPHATEST_ON";
-        const string _AlphaClip = "_AlphaClip";
+        static bool _viewGUI = false;
+        public const string _SrcBlend = "_SrcBlend";
+        public const string _SrcBlendAlpha = "_SrcBlendAlpha";
+        public const string _DstBlend = "_DstBlend";
+        public const string _DstBlendAlpha = "_DstBlendAlpha";
+        public const string _AlphaClipActive = "_ALPHATEST_ON";
+        public const string _AlphaClip = "_AlphaClip";
 
 
-        readonly static string[] _BlendMode = { "Zero", "One", "DstColor", "SrcColor", "OneMinusDstColor", "SrcAlpha", "OneMinusSrcColor", "DstAlpha", "OneMinusDstAlpha", "SrcAlphaSaturate", "OneMinusSrcAlpha" };
-
-
+        public readonly static string[] _BlendMode = { "Zero", "One", "DstColor", "SrcColor", "OneMinusDstColor", "SrcAlpha", "OneMinusSrcColor", "DstAlpha", "OneMinusDstAlpha", "SrcAlphaSaturate", "OneMinusSrcAlpha" };
+        public SurfaceOptionCanvas(bool isCanvas, bool isBRP) : base(isCanvas, isBRP)
+        {
+        }
         public override bool IsActive()
         {
             return true;
@@ -55,6 +59,11 @@ namespace UniVFX.Editor
                                 GUI.color = new Color(1f, 1f, 1f, 1f);
                                 UniVFXGUILayout.OptionPopupField(ref _mat, _SrcBlend, "Src Blend", _BlendMode);
                                 UniVFXGUILayout.OptionPopupField(ref _mat, _DstBlend, "Dst Blend", _BlendMode);
+                                if(_mat.HasProperty(_SrcBlendAlpha) && _mat.HasProperty(_DstBlendAlpha))
+                                {
+                                    UniVFXGUILayout.OptionPopupField(ref _mat, _SrcBlendAlpha, "Src Blend Alpha", _BlendMode);
+                                    UniVFXGUILayout.OptionPopupField(ref _mat, _DstBlendAlpha, "Dst Blend Alpha", _BlendMode);
+                                }
                                 UniVFXGUILayout.OptionKeywordField(ref _mat, _AlphaClipActive, "Alpha Clip");
                                 UniVFXGUILayout.Slider(ref _mat, _AlphaClip, "Alpha Clip", 0.001f, 1);
                             }
@@ -73,8 +82,53 @@ namespace UniVFX.Editor
         {
         }
 
+        public override void CollectUVChannel(ref List<List<string>> useUVChannelList)
+        {
+        }
+
         public override void VaridateCustomData()
         {
+        }
+
+        public override List<string> GetPropertyCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetCBufferCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetTextureCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetUseV2fCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetVertexHeadCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetVertexCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetFragmentHeadCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetFragmentCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            return code;
         }
     }
 }

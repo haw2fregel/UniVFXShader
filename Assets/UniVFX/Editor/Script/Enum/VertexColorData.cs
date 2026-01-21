@@ -3,8 +3,9 @@
     public enum VertexColorData
     {
         Input,
-        TEXCOORD1, 
+        TEXCOORD1,
         TEXCOORD2,
         VertexColor
     }
+
 }

@@ -3,7 +3,7 @@
     public enum VertexData
     {
         Input,
-        TEXCOORD1X, 
+        TEXCOORD1X,
         TEXCOORD1Y,
         TEXCOORD1Z,
         TEXCOORD1W,
@@ -28,4 +28,6 @@
         TimeMapZ,
         TimeMapW
     }
+    
+
 }

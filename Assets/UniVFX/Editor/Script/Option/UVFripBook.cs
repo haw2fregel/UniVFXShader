@@ -7,10 +7,15 @@ namespace UniVFX.Editor
 {
     public class UVFripBook : UniVFXOption
     {
+        static bool _viewGUI = false;
         protected const string _IsActive = "_FRIPBOOK";
         protected const string _Row = "_FripBookRow";
         protected const string _Column = "_FripBookColumn";
         protected const string _Index = "_FripBookIndex";
+
+        public UVFripBook(bool isCanvas, bool isBRP) : base(isCanvas, isBRP)
+        {
+        }
 
 
         public override bool IsActive()
@@ -69,7 +74,7 @@ namespace UniVFX.Editor
                                     GUI.color = new Color(1f, 1f, 1f, 1f);
                                     var row = UniVFXGUILayout.IntSlider(ref _mat, _Row, "Row", 1, 8);
                                     var column = UniVFXGUILayout.IntSlider(ref _mat, _Column, "Column", 1, 8);
-                                    UniVFXGUILayout.OptionIntSlider(ref _mat, _Index, "Index", 0, row * column - 1);
+                                    UniVFXGUILayout.OptionIntSlider(ref _mat, _Index, "Index", 0, row * column - 1, _isCanvas);
                                 }
                             }
                         }
@@ -81,6 +86,8 @@ namespace UniVFX.Editor
         
         public override void CollectCustomData(ref List<List<string>> useCustomDataList)
         {
+            if (!IsActive())
+                return;
             useCustomDataList[(int)_mat.GetInt(_Index + "_Data")].Add("FripBook Row");
         }
 
@@ -89,10 +96,133 @@ namespace UniVFX.Editor
 
         }
 
+        public override void CollectUVChannel(ref List<List<string>> useUVChannelList)
+        {
+        }
+
 
         public override void VaridateCustomData()
         {
-            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _Index);
+            UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _Index, _isCanvas);
+        }
+
+        public override List<string> GetPropertyCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            var row = _mat.GetInt(_Row).ToString();
+            var column = _mat.GetInt(_Column).ToString();
+            var isInvalid = row == "1" && column == "1";
+            var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+
+            if(isInvalid)
+            {
+                code.Add("//FripBook Skipped, Row and Column are 1");
+                return code;
+            }
+
+            if(isFixedValue)
+            {
+                code.Add("//FripBook Property Skipped, FixedValue");
+            }
+            else
+            {
+                if(_mat.GetInt(_Index + "_Data") == 0)
+                    code.Add(_Index + "(\"" + _Index.Replace("_", "") + "\", float) = 1");
+            }
+
+
+            return code;
+        }
+        public override List<string> GetCBufferCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            var row = _mat.GetInt(_Row).ToString();
+            var column = _mat.GetInt(_Column).ToString();
+            var isInvalid = row == "1" && column == "1";
+            var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+
+            if(isInvalid)
+            {
+                code.Add("//FripBook Skipped, Row and Column are 1");
+                return code;
+            }
+
+            if(isFixedValue)
+            {
+                code.Add("//FripBook Property Skipped, FixedValue");
+            }
+            else
+            {
+                if(_mat.GetInt(_Index + "_Data") == 0)
+                    code.Add("half " + _Index + ";");
+            }
+
+            return code;
+        }
+        public override List<string> GetTextureCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetUseV2fCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetVertexHeadCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            var index = UniVFXGUILayout.VertexDataToFloatCode(_mat, _Index, _isCanvas, refactOption);
+            var row = _mat.GetInt(_Row).ToString();
+            var column = _mat.GetInt(_Column).ToString();
+            var isInvalid = row == "1" && column == "1";
+            
+            var uv = "fripBookUV";
+
+            code.Add("//FripBookUV");
+            if(isInvalid)
+            {
+                code.Add("float2 " + uv + " = texCoord0.xy;");
+                code.Add("//FripBook Skipped, Row and Column are 1");
+                code.Add("");
+                return code;
+            }
+
+            code.Add("float2 " + uv + " = 0;");
+            code.Add("float invRow = 1.0 / (float)" + row + ";");
+            code.Add("float invColumn = 1.0 / (float)" + column + ";");
+            code.Add("int indexColumn = " + index + " / _FripBookRow;");
+            code.Add("int indexRow = " + index + " % _FripBookRow;");
+            code.Add("float2 fripbook_tiling = float2(invRow, invColumn);");
+            code.Add("float2 fripbook_offset = float2(indexRow * invRow, indexColumn * invColumn);");
+            code.Add(uv + " = (texCoord0.xy * fripbook_tiling) + fripbook_offset;");
+            code.Add("");
+            return code;
+        }
+        
+        public override List<string> GetVertexCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetFragmentHeadCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            return code;
+        }
+        public override List<string> GetFragmentCode(RefactOption refactOption)
+        {
+            var code = new List<string>();
+            return code;
         }
 
 

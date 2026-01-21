@@ -5,10 +5,15 @@ namespace UniVFX.Editor
 {
     public abstract class UniVFXOption
     {
-        protected bool _viewGUI = false;
-        protected bool _viewUVGUI = false;
-        protected bool _viewTargetGUI = false;
+        protected bool _isCanvas = false;
+        protected bool _isBRP = false;
         protected Material _mat;
+
+        public UniVFXOption(bool isCanvas, bool isBRP)
+        {
+            _isCanvas = isCanvas;
+            _isBRP = isBRP;
+        }
 
         /// <summary>
         /// 対象マテリアルをセット
@@ -61,7 +66,18 @@ namespace UniVFX.Editor
         /// <param name="useCustomDataList"></param>
         public abstract void CollectCustomColorData(ref List<List<string>> useCustomDataList);
 
+        public abstract void CollectUVChannel(ref List<List<string>> useUVChannelList);
         public abstract void VaridateCustomData();
+
+        public abstract List<string> GetPropertyCode(RefactOption refactOption);
+        public abstract List<string> GetCBufferCode(RefactOption refactOption);
+        public abstract List<string> GetTextureCode(RefactOption refactOption);
+        public abstract List<string> GetUseV2fCode(RefactOption refactOption);
+        public abstract List<string> GetVertexHeadCode(RefactOption refactOption);
+        public abstract List<string> GetVertexCode(RefactOption refactOption);
+        public abstract List<string> GetFragmentHeadCode(RefactOption refactOption);
+        public abstract List<string> GetFragmentCode(RefactOption refactOption);
+        
 
     }
 }
