@@ -179,7 +179,13 @@ namespace UniVFX.Editor
             }
             else
             {
-                code.Add("TEXTURE2D(" + _Tex + ");");
+                if(_isBRP)
+                {
+                    code.Add("Texture2D " + _Tex + ";");
+                }else
+                {
+                    code.Add("TEXTURE2D(" + _Tex + ");");
+                }
             }
             
             
@@ -306,7 +312,15 @@ namespace UniVFX.Editor
                     code.Add(uv + " += " + UVDistortion._ResultValue + ";");
                 if (UVParallax.IsActive(_mat) && _mat.GetInt(UVParallax._TargetMainTex) == 1)
                     code.Add(uv + " += " + UVParallax._ResultValue + ";");
-                code.Add("half4 " + tex + " = SAMPLE_TEXTURE2D(" + _Tex + ", " + sampler + ", " + uv + ");");
+
+                if(_isBRP)
+                {
+                    code.Add("half4 " + tex + " = " + _Tex + ".Sample(" + sampler + ", " + uv + ");");
+                }
+                else
+                {
+                    code.Add("half4 " + tex + " = SAMPLE_TEXTURE2D(" + _Tex + ", " + sampler + ", " + uv + ");");
+                }
             }
             if (MaskTexture.IsActive(_mat) && _mat.GetInt(MaskTexture._TargetMainTex) == 1)
                 code.Add(tex + " *= " + MaskTexture._ResultValue + ";");

@@ -246,7 +246,13 @@ namespace UniVFX.Editor
             }
             else
             {
-                code.Add("TEXTURE2D(" + _Tex + ");");
+                if(_isBRP)
+                {
+                    code.Add("Texture2D " + _Tex + ";");
+                }else
+                {
+                    code.Add("TEXTURE2D(" + _Tex + ");");
+                }
             }
             
             
@@ -309,7 +315,15 @@ namespace UniVFX.Editor
                     code.Add("float4 " + transform + " = float4(" + transformX + ", " + transformY + ", " + transformZ + ", " + transformW + ");");
                     code.Add(uv + " = (" + uv + " - float2(0.5, 0.5)) * " + transform + ".xy + float2(0.5, 0.5) + " + transform + ".zw;");
                 }
-                code.Add("half4 " + tex + " = SAMPLE_TEXTURE2D_LOD(" + _Tex + ", " + sampler + ", " + uv + ", 0);");
+
+                if(_isBRP)
+                {
+                    code.Add("half4 " + tex + " = " + _Tex + ".Sample(SamplerState_Linear_Clamp, " + uv + ");");
+                }
+                else
+                {
+                    code.Add("half4 " + tex + " = SAMPLE_TEXTURE2D(" + _Tex + ", SamplerState_Linear_Clamp, " + uv + ");");
+                }
             }
             code.Add("float3 biNormal = cross(normalize(v.normal), normalize(v.tangent.xyz));");
             code.Add("float3 normalTangent = " + tex + ".xyz * 2.0 - 1.0;");

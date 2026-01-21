@@ -11,6 +11,8 @@ namespace UniVFX.Editor
         public const string _ColorMultiplAlpha = "_ColorMultiplAlpha";
         public const string _SrcBlend = "_BUILTIN_SrcBlend";
         public const string _DstBlend = "_BUILTIN_DstBlend";
+        public const string _SrcBlendAlpha = "_BUILTIN_SrcBlendAlpha";
+        public const string _DstBlendAlpha = "_BUILTIN_DstBlendAlpha";
         public const string _ZTest = "_BUILTIN_ZTest";
         public const string _Cull = "_BUILTIN_CullMode";
 
@@ -63,6 +65,11 @@ namespace UniVFX.Editor
                                 UniVFXGUILayout.OptionBoolField(ref _mat, _ColorMultiplAlpha, "Color Multiple Alpha");
                                 UniVFXGUILayout.OptionPopupField(ref _mat, _SrcBlend, "Src Blend", _BlendMode);
                                 UniVFXGUILayout.OptionPopupField(ref _mat, _DstBlend, "Dst Blend", _BlendMode);
+                                if(_mat.HasProperty(_SrcBlendAlpha) && _mat.HasProperty(_DstBlendAlpha))
+                                {
+                                    UniVFXGUILayout.OptionPopupField(ref _mat, _SrcBlendAlpha, "Src Blend Alpha", _BlendMode);
+                                    UniVFXGUILayout.OptionPopupField(ref _mat, _DstBlendAlpha, "Dst Blend Alpha", _BlendMode);
+                                }
                                 UniVFXGUILayout.OptionPopupField(ref _mat, _ZTest, "ZTest", _ZTestMode);
                                 UniVFXGUILayout.OptionPopupField(ref _mat, _Cull, "Cull", _CullMode);
                             }

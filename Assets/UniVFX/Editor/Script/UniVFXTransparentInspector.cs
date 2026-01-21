@@ -563,7 +563,7 @@ namespace UniVFX.Editor
                 shaderCode += "                float3 unnormalizedNormalWS = worldNormal;\n";
                 shaderCode += "                float renormFactor = 1.0 / length(unnormalizedNormalWS);\n";
                 shaderCode += "                worldNormal = normalize(unnormalizedNormalWS);\n";
-                shaderCode += "                float crossSign = (tangentWS.w > 0.0 ? 1.0 : -1.0)* GetOddNegativeScale();\n";
+                shaderCode += "                float crossSign = (tangentWS.w > 0.0 ? 1.0 : -1.0);\n";
                 shaderCode += "                float3 bitang = crossSign * cross(worldNormal, tangentWS.xyz);\n";
                 shaderCode += "                float3 worldSpaceNormal = renormFactor * worldNormal;\n";
                 shaderCode += "                float3 worldSpaceTangent = renormFactor * tangentWS.xyz;\n";

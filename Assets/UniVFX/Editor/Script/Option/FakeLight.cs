@@ -225,7 +225,13 @@ namespace UniVFX.Editor
             }
             else
             {
-                code.Add("TEXTURE2D(" + _Tex + ");");
+                if(_isBRP)
+                {
+                    code.Add("Texture2D " + _Tex + ";");
+                }else
+                {
+                    code.Add("TEXTURE2D(" + _Tex + ");");
+                }
             }
             
                 

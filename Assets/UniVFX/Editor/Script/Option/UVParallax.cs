@@ -226,7 +226,13 @@ namespace UniVFX.Editor
             }
             else
             {
-                code.Add("TEXTURE2D(" + _Tex + ");");
+                if(_isBRP)
+                {
+                    code.Add("Texture2D " + _Tex + ";");
+                }else
+                {
+                    code.Add("TEXTURE2D(" + _Tex + ");");
+                }
             }
 
             return code;
@@ -277,7 +283,15 @@ namespace UniVFX.Editor
             else
             {
                 code.Add("float2 " + uv + " = i.texCoord0.xy;");
-                code.Add("half4 " + tex + " = SAMPLE_TEXTURE2D(" + _Tex + ", SamplerState_Linear_Clamp, " + uv + ");");
+
+                if(_isBRP)
+                {
+                    code.Add("half4 " + tex + " = " + _Tex + ".Sample(SamplerState_Linear_Clamp, " + uv + ");");
+                }
+                else
+                {
+                    code.Add("half4 " + tex + " = SAMPLE_TEXTURE2D(" + _Tex + ", SamplerState_Linear_Clamp, " + uv + ");");
+                }
             }
             code.Add(tex + ".x -= 0.5;");
             code.Add("float2 parallax = tangentSpaceViewDirection.xy * " + tex + ".x * " + intensity + " / tangentSpaceViewDirection.z;");

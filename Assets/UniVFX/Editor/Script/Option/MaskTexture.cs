@@ -358,7 +358,13 @@ namespace UniVFX.Editor
             }
             else
             {
-                code.Add("TEXTURE2D(" + _Tex + ");");
+                if(_isBRP)
+                {
+                    code.Add("Texture2D " + _Tex + ";");
+                }else
+                {
+                    code.Add("TEXTURE2D(" + _Tex + ");");
+                }
             }
 
             return code;
@@ -501,7 +507,14 @@ namespace UniVFX.Editor
                     }
 
                 }
-                code.Add("half " + tex + " = SAMPLE_TEXTURE2D(" + _Tex + ", " + sampler + ", " + uv + ").x;");
+                if(_isBRP)
+                {
+                    code.Add("half4 " + tex + " = " + _Tex + ".Sample(" + sampler + ", " + uv + ");");
+                }
+                else
+                {
+                    code.Add("half4 " + tex + " = SAMPLE_TEXTURE2D(" + _Tex + ", " + sampler + ", " + uv + ");");
+                }
             }
             if(offset != "0")
                 code.Add(tex + " += " + offset + ";");
