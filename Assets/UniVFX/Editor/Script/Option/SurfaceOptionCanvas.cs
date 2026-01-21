@@ -8,13 +8,15 @@ namespace UniVFX.Editor
     public class SurfaceOptionCanvas : UniVFXOption
     {
         static bool _viewGUI = false;
-        const string _SrcBlend = "_SrcBlend";
-        const string _DstBlend = "_DstBlend";
-        const string _AlphaClipActive = "_ALPHATEST_ON";
-        const string _AlphaClip = "_AlphaClip";
+        public const string _SrcBlend = "_SrcBlend";
+        public const string _SrcBlendAlpha = "_SrcBlendAlpha";
+        public const string _DstBlend = "_DstBlend";
+        public const string _DstBlendAlpha = "_DstBlendAlpha";
+        public const string _AlphaClipActive = "_ALPHATEST_ON";
+        public const string _AlphaClip = "_AlphaClip";
 
 
-        readonly static string[] _BlendMode = { "Zero", "One", "DstColor", "SrcColor", "OneMinusDstColor", "SrcAlpha", "OneMinusSrcColor", "DstAlpha", "OneMinusDstAlpha", "SrcAlphaSaturate", "OneMinusSrcAlpha" };
+        public readonly static string[] _BlendMode = { "Zero", "One", "DstColor", "SrcColor", "OneMinusDstColor", "SrcAlpha", "OneMinusSrcColor", "DstAlpha", "OneMinusDstAlpha", "SrcAlphaSaturate", "OneMinusSrcAlpha" };
         public SurfaceOptionCanvas(bool isCanvas, bool isBRP) : base(isCanvas, isBRP)
         {
         }
@@ -57,6 +59,11 @@ namespace UniVFX.Editor
                                 GUI.color = new Color(1f, 1f, 1f, 1f);
                                 UniVFXGUILayout.OptionPopupField(ref _mat, _SrcBlend, "Src Blend", _BlendMode);
                                 UniVFXGUILayout.OptionPopupField(ref _mat, _DstBlend, "Dst Blend", _BlendMode);
+                                if(_mat.HasProperty(_SrcBlendAlpha) && _mat.HasProperty(_DstBlendAlpha))
+                                {
+                                    UniVFXGUILayout.OptionPopupField(ref _mat, _SrcBlendAlpha, "Src Blend Alpha", _BlendMode);
+                                    UniVFXGUILayout.OptionPopupField(ref _mat, _DstBlendAlpha, "Dst Blend Alpha", _BlendMode);
+                                }
                                 UniVFXGUILayout.OptionKeywordField(ref _mat, _AlphaClipActive, "Alpha Clip");
                                 UniVFXGUILayout.Slider(ref _mat, _AlphaClip, "Alpha Clip", 0.001f, 1);
                             }
