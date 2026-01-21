@@ -141,7 +141,8 @@ namespace UniVFX.Editor
             }
             else
             {
-                if(_mat.GetVector(_Param + "_Data") == new Vector4(0,0,0,0))
+                var paramData = _mat.GetVector(_Param + "_Data");
+                if(paramData.x == 0 || paramData.y == 0 || paramData.z == 0)
                     code.Add(_Param + "(\"" + _Param.Replace("_", "") + "\", Vector) = (1,0,0,0)");
             }
             return code;
@@ -170,7 +171,8 @@ namespace UniVFX.Editor
             }
             else
             {
-                if(_mat.GetVector(_Param + "_Data") == new Vector4(0,0,0,0))
+                var paramData = _mat.GetVector(_Param + "_Data");
+                if(paramData.x == 0 || paramData.y == 0 || paramData.z == 0)
                     code.Add("half4 " + _Param + ";");
             }
             return code;

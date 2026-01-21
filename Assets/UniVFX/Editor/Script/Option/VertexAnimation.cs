@@ -157,7 +157,8 @@ namespace UniVFX.Editor
             }
             else
             {
-                if(_mat.GetVector(_Param + "_Data") == new Vector4(0,0,0,0))
+                var paramData = _mat.GetVector(_Param + "_Data");
+                if(paramData.x == 0 || paramData.y == 0 || paramData.z == 0 || paramData.w == 0)
                     code.Add(_Param + "(\"" + _Param.Replace("_", "") + "\", Vector) = (1,0,0,0)");
                 
                 if (isTextureNone)
@@ -166,7 +167,8 @@ namespace UniVFX.Editor
                 }
                 else
                 {
-                    if(_mat.GetVector(_UV + "Transform_Data") == new Vector4(0,0,0,0))
+                    var transformData = _mat.GetVector(_UV + "Transform_Data");
+                    if(transformData.x == 0 || transformData.y == 0 || transformData.z == 0 || transformData.w == 0)
                         code.Add(_UV + "Transform(\"" + _UV.Replace("_", "") + "Transform\", Vector) = (0,0,1,1)");
                 }
             }
@@ -200,7 +202,8 @@ namespace UniVFX.Editor
             }
             else
             {
-                if(_mat.GetVector(_Param + "_Data") == new Vector4(0,0,0,0))
+                var paramData = _mat.GetVector(_Param + "_Data");
+                if(paramData.x == 0 || paramData.y == 0 || paramData.z == 0 || paramData.w == 0)
                     code.Add("half4 " + _Param + ";");
                 
                 if (isTextureNone)
@@ -209,7 +212,8 @@ namespace UniVFX.Editor
                 }
                 else
                 {
-                    if(_mat.GetVector(_UV + "Transform_Data") == new Vector4(0,0,0,0))
+                    var transformData = _mat.GetVector(_UV + "Transform_Data");
+                    if(transformData.x == 0 || transformData.y == 0 || transformData.z == 0 || transformData.w == 0)
                         code.Add("float4 " + _UV + "Transform;");
                 }
             }

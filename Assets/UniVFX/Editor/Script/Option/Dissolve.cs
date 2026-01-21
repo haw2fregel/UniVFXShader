@@ -165,7 +165,8 @@ namespace UniVFX.Editor
             {
                 if (_mat.GetInt(_Color + "_Data") == 0)
                     code.Add("[HDR]" + _Color + "(\"" + _Color.Replace("_", "") + "\", Color) = (1,1,1,1)");
-                if(_mat.GetVector(_Param + "_Data") == new Vector4(0,0,0,0))
+                var paramData = _mat.GetVector(_Param + "_Data");
+                if(paramData.x == 0 || paramData.y == 0 || paramData.z == 0 || paramData.w == 0)
                     code.Add(_Param + "(\"" + _Param.Replace("_", "") + "\", Vector) = (1,0,0,0)");
                 
                 if (isTextureNone)
@@ -174,7 +175,8 @@ namespace UniVFX.Editor
                 }
                 else
                 {
-                    if(_mat.GetVector(_UV + "Transform_Data") == new Vector4(0,0,0,0))
+                    var transformData = _mat.GetVector(_UV + "Transform_Data");
+                    if(transformData.x == 0 || transformData.y == 0 || transformData.z == 0 || transformData.w == 0)
                         code.Add(_UV + "Transform(\"" + _UV.Replace("_", "") + "Transform\", Vector) = (0,0,1,1)");
                 }
             }
@@ -201,13 +203,15 @@ namespace UniVFX.Editor
                     code.Add("//DissolveTex Transform Skipped, Texture is null");
                 }else
                 {
-                    if(_mat.GetVector(_UV + "Transform_Data") == new Vector4(0,0,0,0))
+                    var transformData = _mat.GetVector(_UV + "Transform_Data");
+                    if(transformData.x == 0 || transformData.y == 0 || transformData.z == 0 || transformData.w == 0)
                         code.Add("float4 " + _UV + "Transform;");
                 }
 
                 if (_mat.GetInt(_Color + "_Data") == 0)
                     code.Add("half4 " + _Color + ";");
-                if(_mat.GetVector(_Param + "_Data") == new Vector4(0,0,0,0))
+                var paramData = _mat.GetVector(_Param + "_Data");
+                if(paramData.x == 0 || paramData.y == 0 || paramData.z == 0 || paramData.w == 0)
                     code.Add("half4 " + _Param + ";");
             }
             return code;
@@ -275,6 +279,37 @@ namespace UniVFX.Editor
             var transformW = UniVFXGUILayout.VertexDataToVectorCode(_mat, _UV + "Transform", 3, _isCanvas, refactOption);
 
             code.Add("//Dissolve");
+
+            if (!SurfaceFade.IsActive(_mat) || _mat.GetInt(SurfaceFade._TargetDissolve) == 0)
+            {
+                var param = "param_" + _Tex.Replace("_", "");
+                var paramX = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 0, _isCanvas, refactOption);
+                var paramY = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 1, _isCanvas, refactOption);
+                var paramZ = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 2, _isCanvas, refactOption);
+                var paramW = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 3, _isCanvas, refactOption);
+
+                if(paramY == "0" && paramZ == "0" && paramW == "0")
+                {
+                    code.Add("half dissolveAlpha = 1 -  " + paramX + ";");
+                    code.Add("dissolveAlpha = dissolveAlpha + dissolveAlpha * (1 - dissolveAlpha);");
+                    code.Add("o." + param + " = float4(dissolveAlpha, 0, 0, 0);");
+                    code.Add("//Dissolve Skipped, Smooth and Emissive are 0");
+                }else
+                {
+                    code.Add("float4 " + param + " = float4(" + paramX + ", " + paramY + ", " + paramZ + ", " + paramW + ");");
+                    code.Add("half dissolveEmissive = " + param + ".z + " + param + ".w;");
+                    code.Add("half dissolveSmooth = max(0.0001, " + param + ".y);");
+                    code.Add("half dissolveAlpha = 1 -  " + param + ".x;");
+                    code.Add("half dissolveAlphaMin = dissolveAlpha - (dissolveSmooth + dissolveEmissive);");
+                    code.Add("dissolveAlpha = dissolveAlphaMin + dissolveAlpha * (1 - dissolveAlphaMin);");
+                    code.Add("dissolveSmooth += dissolveAlpha;");
+                    code.Add("half dissolveEmissiveWidth = dissolveSmooth + " + param + ".z;");
+                    code.Add("half dissolveEmissiveSmooth = dissolveEmissiveWidth + max(0.0001, " + param + ".w);");
+                    code.Add("o." + param + " = float4(dissolveAlpha, dissolveSmooth, dissolveEmissiveWidth, dissolveEmissiveSmooth);");
+                }
+            }
+
+
             if (isTextureNone)
             {
                 code.Add("//DissolveTex Skipped, Texture is null");
@@ -301,36 +336,6 @@ namespace UniVFX.Editor
                 }
             }
 
-
-            if (!SurfaceFade.IsActive(_mat) || _mat.GetInt(SurfaceFade._TargetDissolve) == 0)
-            {
-                var param = "param_" + _Tex.Replace("_", "");
-                var paramX = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 0, _isCanvas, refactOption);
-                var paramY = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 1, _isCanvas, refactOption);
-                var paramZ = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 2, _isCanvas, refactOption);
-                var paramW = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 3, _isCanvas, refactOption);
-
-                if(paramY == "0" && paramZ == "0" && paramW == "0")
-                {
-                    code.Add("half dissolveAlpha = 1 -  " + paramX + ";");
-                    code.Add("dissolveAlpha = dissolveAlpha + dissolveAlpha * (1 - dissolveAlpha);");
-                    code.Add("o." + param + " = float4(dissolveAlpha, 0, 0, 0);");
-                    code.Add("//Dissolve Skipped, Smooth and Emissive are 0");
-                    code.Add("");
-                    return code;
-                }
-
-                code.Add("float4 " + param + " = float4(" + paramX + ", " + paramY + ", " + paramZ + ", " + paramW + ");");
-                code.Add("half dissolveEmissive = " + param + ".z + " + param + ".w;");
-                code.Add("half dissolveSmooth = max(0.0001, " + param + ".y);");
-                code.Add("half dissolveAlpha = 1 -  " + param + ".x;");
-                code.Add("half dissolveAlphaMin = dissolveAlpha - (dissolveSmooth + dissolveEmissive);");
-                code.Add("dissolveAlpha = dissolveAlphaMin + dissolveAlpha * (1 - dissolveAlphaMin);");
-                code.Add("dissolveSmooth += dissolveAlpha;");
-                code.Add("half dissolveEmissiveWidth = dissolveSmooth + " + param + ".z;");
-                code.Add("half dissolveEmissiveSmooth = dissolveEmissiveWidth + max(0.0001, " + param + ".w);");
-                code.Add("o." + param + " = float4(dissolveAlpha, dissolveSmooth, dissolveEmissiveWidth, dissolveEmissiveSmooth);");
-            }
             
             code.Add("");
             return code;

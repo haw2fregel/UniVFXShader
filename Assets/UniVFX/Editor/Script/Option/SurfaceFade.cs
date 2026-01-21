@@ -323,7 +323,7 @@ namespace UniVFX.Editor
             if (_mat.GetInt(_Frenel) == 1)
             {
                 var pow = UniVFXGUILayout.VertexDataToFloatCode(_mat, _Pow, _isCanvas, refactOption);
-                code.Add("float rimFade = saturate(dot(i.normal, GetWorldSpaceNormalizeViewDir(i.worldPos)));");
+                code.Add("float rimFade = saturate(dot(TransformObjectToWorldDir(i.normal), GetWorldSpaceNormalizeViewDir(i.worldPos)));");
                 code.Add("rimFade = pow(rimFade, " + pow + ");");
                 if (_mat.GetInt(_Reverce) == 1)
                     code.Add("rimFade = 1 - rimFade;");

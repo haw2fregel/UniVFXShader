@@ -165,7 +165,8 @@ namespace UniVFX.Editor
                     code.Add(_Color10 + "(\"" + _Color10.Replace("_", "") + "\", Color) = (1,1,1,1)");
                 if (_mat.GetInt(_Color11 + "_Data") == 0)
                     code.Add(_Color11 + "(\"" + _Color11.Replace("_", "") + "\", Color) = (1,1,1,1)");
-                if(_mat.GetVector(_UV + "Transform_Data") == new Vector4(0,0,0,0))
+                var transformData = _mat.GetVector(_UV + "Transform_Data");
+                if(transformData.x == 0 || transformData.y == 0 || transformData.z == 0 || transformData.w == 0)
                     code.Add(_UV + "Transform(\"" + _UV.Replace("_", "") + "Transform\", Vector) = (0,0,1,1)");
             }
             return code;
@@ -185,7 +186,8 @@ namespace UniVFX.Editor
             }
             else
             {
-                if(_mat.GetVector(_UV + "Transform_Data") == new Vector4(0,0,0,0))
+                var transformData = _mat.GetVector(_UV + "Transform_Data");
+                if(transformData.x == 0 || transformData.y == 0 || transformData.z == 0 || transformData.w == 0)
                     code.Add("float4 " + _UV + "Transform;");
                 if (_mat.GetInt(_Color00 + "_Data") == 0)
                     code.Add("half4 " + _Color00 + ";");

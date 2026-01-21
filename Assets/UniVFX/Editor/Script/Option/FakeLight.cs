@@ -179,7 +179,8 @@ namespace UniVFX.Editor
                     code.Add(_ShadowColor + "(\"" + _ShadowColor.Replace("_", "") + "\", Color) = (1,1,1,1)");
                 if(_mat.GetInt(_Intensity + "_Data") == 0)
                     code.Add(_Intensity + "(\"" + _Intensity.Replace("_", "") + "\", float) = 1");
-                if(_mat.GetVector(_Param + "_Data") == new Vector4(0,0,0,0))
+                var paramData = _mat.GetVector(_Param + "_Data");
+                if(paramData.x == 0 || paramData.y == 0 || paramData.z == 0 || paramData.w == 0)
                     code.Add(_Param + "(\"" + _Param.Replace("_", "") + "\", Vector) = (1,0,0,0)");
             }
             
@@ -206,7 +207,8 @@ namespace UniVFX.Editor
                     code.Add("half4 " + _ShadowColor + ";");
                 if(_mat.GetInt(_Intensity + "_Data") == 0)
                     code.Add("half " + _Intensity + ";");
-                if(_mat.GetVector(_Param + "_Data") == new Vector4(0,0,0,0))
+                var paramData = _mat.GetVector(_Param + "_Data");
+                if(paramData.x == 0 || paramData.y == 0 || paramData.z == 0 || paramData.w == 0)
                     code.Add("half4 " + _Param + ";");
             }
             return code;

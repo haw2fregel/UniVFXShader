@@ -212,7 +212,8 @@ namespace UniVFX.Editor
                 }
                 else
                 {
-                    if(_mat.GetVector(_UV + "Transform_Data") == new Vector4(0,0,0,0))
+                    var transformData = _mat.GetVector(_UV + "Transform_Data");
+                    if(transformData.x == 0 || transformData.y == 0 || transformData.z == 0 || transformData.w == 0)
                         code.Add(_UV + "Transform(\"" + _UV.Replace("_", "") + "Transform\", Vector) = (0,0,1,1)");
                 }
             }
@@ -250,7 +251,8 @@ namespace UniVFX.Editor
                 }
                 else
                 {
-                    if(_mat.GetVector(_UV + "Transform_Data") == new Vector4(0,0,0,0))
+                    var transformData = _mat.GetVector(_UV + "Transform_Data");
+                    if(transformData.x == 0 || transformData.y == 0 || transformData.z == 0 || transformData.w == 0)
                         code.Add("float4 " + _UV + "Transform;");
                 }
 

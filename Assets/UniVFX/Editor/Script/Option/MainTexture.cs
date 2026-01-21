@@ -127,7 +127,8 @@ namespace UniVFX.Editor
                 }
                 else
                 {
-                    if(_mat.GetVector(_UV + "Transform_Data") == new Vector4(0,0,0,0))
+                    var transformData = _mat.GetVector(_UV + "Transform_Data");
+                    if(transformData.x == 0 || transformData.y == 0 || transformData.z == 0 || transformData.w == 0)
                         code.Add(_UV + "Transform(\"" + _UV.Replace("_", "") + "Transform\", Vector) = (0,0,1,1)");
                 }
             }
@@ -153,7 +154,8 @@ namespace UniVFX.Editor
                     code.Add("//MainTex Transform Skipped, Texture is null");
                 }else
                 {
-                    if(_mat.GetVector(_UV + "Transform_Data") == new Vector4(0,0,0,0))
+                    var transformData = _mat.GetVector(_UV + "Transform_Data");
+                    if(transformData.x == 0 || transformData.y == 0 || transformData.z == 0 || transformData.w == 0)
                         code.Add("float4 " + _UV + "Transform;");
                 }
 
@@ -307,9 +309,9 @@ namespace UniVFX.Editor
                 code.Add("half4 " + tex + " = SAMPLE_TEXTURE2D(" + _Tex + ", " + sampler + ", " + uv + ");");
             }
             if (MaskTexture.IsActive(_mat) && _mat.GetInt(MaskTexture._TargetMainTex) == 1)
-                code.Add(tex + ".a *= " + MaskTexture._ResultValue + ";");
+                code.Add(tex + " *= " + MaskTexture._ResultValue + ";");
             if (SurfaceFade.IsActive(_mat) && _mat.GetInt(SurfaceFade._TargetMainTex) == 1)
-                code.Add(tex + ".a *= " + SurfaceFade._ResultValue + ";");
+                code.Add(tex + " *= " + SurfaceFade._ResultValue + ";");
             if (colorMultiple && color != "half4(1.000, 1.000, 1.000, 1.000)")
                 code.Add(tex + ".rgb *= " + color + ".rgb;");
             if (alphaMultiple && color != "half4(1.000, 1.000, 1.000, 1.000)")

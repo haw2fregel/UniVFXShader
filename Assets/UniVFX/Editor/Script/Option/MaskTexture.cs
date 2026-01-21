@@ -254,7 +254,7 @@ namespace UniVFX.Editor
                 return code;
 
             var isInvalid = _mat.GetFloat(_TargetBlendTex) == 0 && _mat.GetFloat(_TargetGradation) == 0 && _mat.GetFloat(_TargetDistortionTex) == 0 && _mat.GetFloat(_TargetDissolveTex) == 0
-                && _mat.GetFloat(_TargetSurfaceFade) == 0 && _mat.GetFloat(_TargetHSVShift) == 0 && _mat.GetFloat(_TargetFakeLight) == 0 && _mat.GetFloat(_TargetParallax) == 0;
+                && _mat.GetFloat(_TargetSurfaceFade) == 0 && _mat.GetFloat(_TargetHSVShift) == 0 && _mat.GetFloat(_TargetFakeLight) == 0 && _mat.GetFloat(_TargetParallax) == 0 && _mat.GetFloat(_TargetMainTex) == 0;
             var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
             var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
             
@@ -288,7 +288,8 @@ namespace UniVFX.Editor
                 }
                 else
                 {
-                    if(_mat.GetVector(_UV + "Transform_Data") == new Vector4(0,0,0,0))
+                    var transformData = _mat.GetVector(_UV + "Transform_Data");
+                    if(transformData.x == 0 || transformData.y == 0 || transformData.z == 0 || transformData.w == 0)
                         code.Add(_UV + "Transform(\"" + _UV.Replace("_", "") + "Transform\", Vector) = (0,0,1,1)");
                 }
             }
@@ -302,7 +303,7 @@ namespace UniVFX.Editor
                 return code;
 
             var isInvalid = _mat.GetFloat(_TargetBlendTex) == 0 && _mat.GetFloat(_TargetGradation) == 0 && _mat.GetFloat(_TargetDistortionTex) == 0 && _mat.GetFloat(_TargetDissolveTex) == 0
-                && _mat.GetFloat(_TargetSurfaceFade) == 0 && _mat.GetFloat(_TargetHSVShift) == 0 && _mat.GetFloat(_TargetFakeLight) == 0 && _mat.GetFloat(_TargetParallax) == 0;
+                && _mat.GetFloat(_TargetSurfaceFade) == 0 && _mat.GetFloat(_TargetHSVShift) == 0 && _mat.GetFloat(_TargetFakeLight) == 0 && _mat.GetFloat(_TargetParallax) == 0 && _mat.GetFloat(_TargetMainTex) == 0;
             var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
             var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
             
@@ -323,7 +324,8 @@ namespace UniVFX.Editor
                     code.Add("//MaskTex Transform Skipped, Texture is null");
                 }else
                 {
-                    if(_mat.GetVector(_UV + "Transform_Data") == new Vector4(0,0,0,0))
+                    var transformData = _mat.GetVector(_UV + "Transform_Data");
+                    if(transformData.x == 0 || transformData.y == 0 || transformData.z == 0 || transformData.w == 0)
                         code.Add("float4 " + _UV + "Transform;");
                 }
 
@@ -340,7 +342,7 @@ namespace UniVFX.Editor
                 return code;
 
             var isInvalid = _mat.GetFloat(_TargetBlendTex) == 0 && _mat.GetFloat(_TargetGradation) == 0 && _mat.GetFloat(_TargetDistortionTex) == 0 && _mat.GetFloat(_TargetDissolveTex) == 0
-                && _mat.GetFloat(_TargetSurfaceFade) == 0 && _mat.GetFloat(_TargetHSVShift) == 0 && _mat.GetFloat(_TargetFakeLight) == 0 && _mat.GetFloat(_TargetParallax) == 0;
+                && _mat.GetFloat(_TargetSurfaceFade) == 0 && _mat.GetFloat(_TargetHSVShift) == 0 && _mat.GetFloat(_TargetFakeLight) == 0 && _mat.GetFloat(_TargetParallax) == 0 && _mat.GetFloat(_TargetMainTex) == 0;
             var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
 
 
@@ -368,7 +370,7 @@ namespace UniVFX.Editor
                 return code;
             
             var isInvalid = _mat.GetFloat(_TargetBlendTex) == 0 && _mat.GetFloat(_TargetGradation) == 0 && _mat.GetFloat(_TargetDistortionTex) == 0 && _mat.GetFloat(_TargetDissolveTex) == 0
-                && _mat.GetFloat(_TargetSurfaceFade) == 0 && _mat.GetFloat(_TargetHSVShift) == 0 && _mat.GetFloat(_TargetFakeLight) == 0 && _mat.GetFloat(_TargetParallax) == 0;
+                && _mat.GetFloat(_TargetSurfaceFade) == 0 && _mat.GetFloat(_TargetHSVShift) == 0 && _mat.GetFloat(_TargetFakeLight) == 0 && _mat.GetFloat(_TargetParallax) == 0 && _mat.GetFloat(_TargetMainTex) == 0;
             var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
 
             if(isInvalid)
@@ -400,7 +402,7 @@ namespace UniVFX.Editor
                 return code;
 
             var isInvalid = _mat.GetFloat(_TargetBlendTex) == 0 && _mat.GetFloat(_TargetGradation) == 0 && _mat.GetFloat(_TargetDistortionTex) == 0 && _mat.GetFloat(_TargetDissolveTex) == 0
-                && _mat.GetFloat(_TargetSurfaceFade) == 0 && _mat.GetFloat(_TargetHSVShift) == 0 && _mat.GetFloat(_TargetFakeLight) == 0 && _mat.GetFloat(_TargetParallax) == 0;
+                && _mat.GetFloat(_TargetSurfaceFade) == 0 && _mat.GetFloat(_TargetHSVShift) == 0 && _mat.GetFloat(_TargetFakeLight) == 0 && _mat.GetFloat(_TargetParallax) == 0 && _mat.GetFloat(_TargetMainTex) == 0;
             var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
 
             var uvName = UniVFXGUILayout.GetVertUVName(_mat.GetInt(_UV + "Transform_Index"), _mat);
@@ -455,7 +457,7 @@ namespace UniVFX.Editor
                 return code;
 
             var isInvalid = _mat.GetFloat(_TargetBlendTex) == 0 && _mat.GetFloat(_TargetGradation) == 0 && _mat.GetFloat(_TargetDistortionTex) == 0 && _mat.GetFloat(_TargetDissolveTex) == 0
-                && _mat.GetFloat(_TargetSurfaceFade) == 0 && _mat.GetFloat(_TargetHSVShift) == 0 && _mat.GetFloat(_TargetFakeLight) == 0 && _mat.GetFloat(_TargetParallax) == 0;
+                && _mat.GetFloat(_TargetSurfaceFade) == 0 && _mat.GetFloat(_TargetHSVShift) == 0 && _mat.GetFloat(_TargetFakeLight) == 0 && _mat.GetFloat(_TargetParallax) == 0 && _mat.GetFloat(_TargetMainTex) == 0;
             var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
              
             var sampler = UniVFXGUILayout.GetSamplerName(_mat.GetInt(_UV + "Transform_Sampler"));
