@@ -162,11 +162,59 @@ namespace UniVFX.Editor
         public override List<string> GetPropertyCode(RefactOption refactOption)
         {
             var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            var paramZ = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 2, _isCanvas, refactOption);
+            var paramW = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 3, _isCanvas, refactOption);
+            var isInvalid = paramZ == "0" && paramW == "0" && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+
+            if(isInvalid)
+            {
+                code.Add("//UVBend Skipped, Intensity is 0");
+                return code;
+            }
+
+            if(isFixedValue)
+            {
+                code.Add("//UVBend Property Skipped, FixedValue");
+            }
+            else
+            {
+                if(_mat.GetVector(_Param + "_Data") == new Vector4(0,0,0,0))
+                    code.Add(_Param + "(\"" + _Param.Replace("_", "") + "\", Vector) = (1,0,0,0)");
+            }
+            
             return code;
         }
         public override List<string> GetCBufferCode(RefactOption refactOption)
         {
             var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            var paramZ = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 2, _isCanvas, refactOption);
+            var paramW = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 3, _isCanvas, refactOption);
+            var isInvalid = paramZ == "0" && paramW == "0" && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            
+            if(isInvalid)
+            {
+                code.Add("//UVBend Skipped, Intensity is 0");
+                return code;
+            }
+
+            if(isFixedValue)
+            {
+                code.Add("//UVBend Property Skipped, FixedValue");
+            }
+            else
+            {
+                if(_mat.GetVector(_Param + "_Data") == new Vector4(0,0,0,0))
+                    code.Add("half4 " + _Param + ";");
+            }
+
             return code;
         }
         public override List<string> GetTextureCode(RefactOption refactOption)
@@ -207,8 +255,9 @@ namespace UniVFX.Editor
             var paramY = UniVFXGUILayout.VertexDataToVectorCode(mat, _Param, 1, isCanvas, refactOption);
             var paramZ = UniVFXGUILayout.VertexDataToVectorCode(mat, _Param, 2, isCanvas, refactOption);
             var paramW = UniVFXGUILayout.VertexDataToVectorCode(mat, _Param, 3, isCanvas, refactOption);
+            var isInvalid = paramZ == "0" && paramW == "0" && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
 
-            if (paramZ == "0" && paramW == "0")
+            if (isInvalid)
                 return ;
 
             code.Add(uvName + " += float2(abs(" + uvName + ".y - " + paramX + ") * " + paramZ + ", abs(" + uvName + ".x - " + paramY + ") * " + paramW + ");");

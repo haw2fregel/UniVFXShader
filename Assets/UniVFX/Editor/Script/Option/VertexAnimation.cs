@@ -132,19 +132,45 @@ namespace UniVFX.Editor
             var paramY = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 1, _isCanvas, refactOption);
             var paramZ = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 2, _isCanvas, refactOption);
             var paramW = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 3, _isCanvas, refactOption);
-            if((paramX == "0" && paramY == "0" && paramZ == "0") || paramW == "0")
+            var isIntensityLess = (paramX == "0" && paramY == "0" && paramZ == "0") || paramW == "0";
+            var isInvalid = isIntensityLess && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
+
+            if(isInvalid)
             {
                 code.Add("//VertexAnimation Skipped, Intensity is 0");
                 return code;
             }
 
-            if (_mat.GetTexture(_Tex) == null)
+            if (isTextureNone)
             {
-                code.Add("//VertexAnimationTex Skipped, Texture is null");
-                return code;
+                code.Add("//VertexAnimation Skipped, Texture is null");
+            }else
+            {
+                code.Add("[NoScaleOffset]" + _Tex + "(\"" + _Tex.Replace("_", "") + "\", 2D) = \"grey\" {}");
             }
-            
-            code.Add("[NoScaleOffset]" + _Tex + "(\"" + _Tex.Replace("_", "") + "\", 2D) = \"white\" {}");
+
+            if(isFixedValue)
+            {
+                code.Add("//VertexAnimation Property Skipped, FixedValue");
+            }
+            else
+            {
+                if(_mat.GetVector(_Param + "_Data") == new Vector4(0,0,0,0))
+                    code.Add(_Param + "(\"" + _Param.Replace("_", "") + "\", Vector) = (1,0,0,0)");
+                
+                if (isTextureNone)
+                {
+                    code.Add("//VertexAnimation Transform Skipped, Texture is null");
+                }
+                else
+                {
+                    if(_mat.GetVector(_UV + "Transform_Data") == new Vector4(0,0,0,0))
+                        code.Add(_UV + "Transform(\"" + _UV.Replace("_", "") + "Transform\", Vector) = (0,0,1,1)");
+                }
+            }
+
             return code;
         }
         public override List<string> GetCBufferCode(RefactOption refactOption)
@@ -152,6 +178,42 @@ namespace UniVFX.Editor
             var code = new List<string>();
             if (!IsActive())
                 return code;
+
+            var paramX = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 0, _isCanvas, refactOption);
+            var paramY = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 1, _isCanvas, refactOption);
+            var paramZ = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 2, _isCanvas, refactOption);
+            var paramW = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 3, _isCanvas, refactOption);
+            var isIntensityLess = (paramX == "0" && paramY == "0" && paramZ == "0") || paramW == "0";
+            var isInvalid = isIntensityLess && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
+
+            if(isInvalid)
+            {
+                code.Add("//VertexAnimation Skipped, Intensity is 0");
+                return code;
+            }
+
+            if(isFixedValue)
+            {
+                code.Add("//VertexAnimation Property Skipped, FixedValue");
+            }
+            else
+            {
+                if(_mat.GetVector(_Param + "_Data") == new Vector4(0,0,0,0))
+                    code.Add("half4 " + _Param + ";");
+                
+                if (isTextureNone)
+                {
+                    code.Add("//VertexAnimation Transform Skipped, Texture is null");
+                }
+                else
+                {
+                    if(_mat.GetVector(_UV + "Transform_Data") == new Vector4(0,0,0,0))
+                        code.Add("float4 " + _UV + "Transform;");
+                }
+            }
+
             return code;
         }
         public override List<string> GetTextureCode(RefactOption refactOption)
@@ -164,18 +226,26 @@ namespace UniVFX.Editor
             var paramY = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 1, _isCanvas, refactOption);
             var paramZ = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 2, _isCanvas, refactOption);
             var paramW = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 3, _isCanvas, refactOption);
-            if((paramX == "0" && paramY == "0" && paramZ == "0") || paramW == "0")
+            var isIntensityLess = (paramX == "0" && paramY == "0" && paramZ == "0") || paramW == "0";
+            var isInvalid = isIntensityLess && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
+
+            if(isInvalid)
             {
                 code.Add("//VertexAnimation Skipped, Intensity is 0");
                 return code;
             }
-            if (_mat.GetTexture(_Tex) == null)
+
+            if (isTextureNone)
             {
                 code.Add("//VertexAnimationTex Skipped, Texture is null");
-                return code;
+            }
+            else
+            {
+                code.Add("TEXTURE2D(" + _Tex + ");");
             }
             
-            code.Add("TEXTURE2D(" + _Tex + ");");
+            
             return code;
         }
         public override List<string> GetUseV2fCode(RefactOption refactOption)
@@ -193,6 +263,14 @@ namespace UniVFX.Editor
             var code = new List<string>();
             if (!IsActive())
                 return code;
+
+            var paramX = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 0, _isCanvas, refactOption);
+            var paramY = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 1, _isCanvas, refactOption);
+            var paramZ = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 2, _isCanvas, refactOption);
+            var paramW = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 3, _isCanvas, refactOption);
+            var isIntensityLess = (paramX == "0" && paramY == "0" && paramZ == "0") || paramW == "0";
+            var isInvalid = isIntensityLess && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
             
             var sampler = UniVFXGUILayout.GetSamplerName(_mat.GetInt(_UV + "Transform_Sampler"));
 
@@ -204,29 +282,23 @@ namespace UniVFX.Editor
             var transformW = UniVFXGUILayout.VertexDataToVectorCode(_mat, _UV + "Transform", 3, _isCanvas, refactOption);
 
             var param = "param_" + _Tex.Replace("_", "");
-            var paramX = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 0, _isCanvas, refactOption);
-            var paramY = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 1, _isCanvas, refactOption);
-            var paramZ = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 2, _isCanvas, refactOption);
-            var paramW = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 3, _isCanvas, refactOption);
-
             var uv = "uv_" + _Tex.Replace("_", "");
             var tex = "tex_" + _Tex.Replace("_", "");
 
             code.Add("//VertexAnimation");
-            if((paramX == "0" && paramY == "0" && paramZ == "0") || paramW == "0")
+            if(isInvalid)
             {
                 code.Add("//VertexAnimation Skipped, Intensity is 0");
-                code.Add("");
                 return code;
             }
-            if (_mat.GetTexture(_Tex) == null)
+
+            if (isTextureNone)
             {
                 code.Add("float4 " + tex + " = float4(0.5,0.5,0.5,0.5);");
                 code.Add("//VertexAnimationTex Skipped, Texture is null");
             }
             else
             {
-                code.Add("float4 " + transform + " = float4(" + transformX + ", " + transformY + ", " + transformZ + ", " + transformW + ");");
                 code.Add("float2 " + uv + " = " + uvName + ";");
                 if(transformX != "1" || transformY != "1" || transformZ != "0" || transformW != "0")
                 {
@@ -239,7 +311,7 @@ namespace UniVFX.Editor
             code.Add("float3 normalTangent = " + tex + ".xyz * 2.0 - 1.0;");
             code.Add("float4 " + param + " = float4(" + paramX + ", " + paramY + ", " + paramZ + ", " + paramW + ");");
             code.Add("normalTangent *= " + param + ".xyz * " + param + ".w;");
-            code.Add("v.vertex.xyz += v.tangent * normalTangent.x + biNormal * normalTangent.y + v.normal * normalTangent.z;");
+            code.Add("v.vertex.xyz += v.tangent.xyz * normalTangent.x + biNormal.xyz * normalTangent.y + v.normal.xyz * normalTangent.z;");
             code.Add("");
 
             return code;

@@ -468,6 +468,7 @@ namespace UniVFX.Editor
 
             if(isInvalid)
             {
+                code.Add("half " + _ResultValue + " = 1;");
                 code.Add("//MaskTex Skipped, Target None");
                 return code;
             }

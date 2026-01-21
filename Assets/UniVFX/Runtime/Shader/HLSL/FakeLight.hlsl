@@ -8,7 +8,7 @@
         half4 shadowColor = GetVertexColorDataArray(_FakeShadowColor); \
         if (_FakeLightType == 0)\
         {\
-            fakeLightDir = worldPos - (boundsCenter + fakeLightParam.xyz); \
+            fakeLightDir = fakeLightParam.xyz; \
             attan = 1; \
         }else if (_FakeLightType == 1)\
         {\
@@ -34,7 +34,7 @@
         half4 shadowColor = GetVertexColorDataArray(_FakeShadowColor); \
         if (_FakeLightType == 0)\
         {\
-            fakeLightDir = worldPos - (boundsCenter + fakeLightParam.xyz); \
+            fakeLightDir = fakeLightParam.xyz; \
             attan = 1; \
         }else if (_FakeLightType == 1)\
         {\

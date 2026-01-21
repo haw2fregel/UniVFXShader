@@ -130,9 +130,7 @@ namespace UniVFX.Editor
                 return code;
 
             var intensity = UniVFXGUILayout.VertexDataToFloatCode(_mat, _Intensity, _isCanvas, refactOption);
-            var isMaskActive = MaskTexture.IsActive(_mat) && _mat.GetInt(MaskTexture._TargetBlendTex) == 1;
-            var isSurfaceFadeActive = SurfaceFade.IsActive(_mat) && _mat.GetInt(SurfaceFade._TargetBlendTex) == 1;
-            var isInvalid = intensity == "0" && !isMaskActive && !isSurfaceFadeActive && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isInvalid = intensity == "0" && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
             var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
             var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
             
@@ -182,9 +180,7 @@ namespace UniVFX.Editor
                 return code;
 
             var intensity = UniVFXGUILayout.VertexDataToFloatCode(_mat, _Intensity, _isCanvas, refactOption);
-            var isMaskActive = MaskTexture.IsActive(_mat) && _mat.GetInt(MaskTexture._TargetBlendTex) == 1;
-            var isSurfaceFadeActive = SurfaceFade.IsActive(_mat) && _mat.GetInt(SurfaceFade._TargetBlendTex) == 1;
-            var isInvalid = intensity == "0" && !isMaskActive && !isSurfaceFadeActive && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isInvalid = intensity == "0" && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
             var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
             var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
             
@@ -225,9 +221,7 @@ namespace UniVFX.Editor
                 return code;
 
             var intensity = UniVFXGUILayout.VertexDataToFloatCode(_mat, _Intensity, _isCanvas, refactOption);
-            var isMaskActive = MaskTexture.IsActive(_mat) && _mat.GetInt(MaskTexture._TargetBlendTex) == 1;
-            var isSurfaceFadeActive = SurfaceFade.IsActive(_mat) && _mat.GetInt(SurfaceFade._TargetBlendTex) == 1;
-            var isInvalid = intensity == "0" && !isMaskActive && !isSurfaceFadeActive && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isInvalid = intensity == "0" && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
             var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
 
             if(isInvalid)
@@ -255,9 +249,7 @@ namespace UniVFX.Editor
                 return code;
 
             var intensity = UniVFXGUILayout.VertexDataToFloatCode(_mat, _Intensity, _isCanvas, refactOption);
-            var isMaskActive = MaskTexture.IsActive(_mat) && _mat.GetInt(MaskTexture._TargetBlendTex) == 1;
-            var isSurfaceFadeActive = SurfaceFade.IsActive(_mat) && _mat.GetInt(SurfaceFade._TargetBlendTex) == 1;
-            var isInvalid = intensity == "0" && !isMaskActive && !isSurfaceFadeActive && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isInvalid = intensity == "0" && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
             var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
 
             if(isInvalid)
@@ -290,9 +282,7 @@ namespace UniVFX.Editor
                 return code;
 
             var intensity = UniVFXGUILayout.VertexDataToFloatCode(_mat, _Intensity, _isCanvas, refactOption);
-            var isMaskActive = MaskTexture.IsActive(_mat) && _mat.GetInt(MaskTexture._TargetBlendTex) == 1;
-            var isSurfaceFadeActive = SurfaceFade.IsActive(_mat) && _mat.GetInt(SurfaceFade._TargetBlendTex) == 1;
-            var isInvalid = intensity == "0" && !isMaskActive && !isSurfaceFadeActive && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isInvalid = intensity == "0" && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
             var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
 
             var uvName = UniVFXGUILayout.GetVertUVName(_mat.GetInt(_UV + "Transform_Index"), _mat);
@@ -353,9 +343,7 @@ namespace UniVFX.Editor
                 return code;
 
             var intensity = UniVFXGUILayout.VertexDataToFloatCode(_mat, _Intensity, _isCanvas, refactOption);
-            var isMaskActive = MaskTexture.IsActive(_mat) && _mat.GetInt(MaskTexture._TargetBlendTex) == 1;
-            var isSurfaceFadeActive = SurfaceFade.IsActive(_mat) && _mat.GetInt(SurfaceFade._TargetBlendTex) == 1;
-            var isInvalid = intensity == "0" && !isMaskActive && !isSurfaceFadeActive && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isInvalid = intensity == "0" && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
             var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
             
             var sampler = UniVFXGUILayout.GetSamplerName(_mat.GetInt(_UV + "Transform_Sampler"));
@@ -408,9 +396,9 @@ namespace UniVFX.Editor
                 code.Add(tex + " *= " + color + ";");
             if(intensity != "1")
                 code.Add(tex + ".a *= " + intensity + ";");
-            if (isMaskActive)
+            if (MaskTexture.IsActive(_mat) && _mat.GetInt(MaskTexture._TargetBlendTex) == 1)
                 code.Add(tex + ".a *= " + MaskTexture._ResultValue + ";");
-            if (isSurfaceFadeActive)
+            if (SurfaceFade.IsActive(_mat) && _mat.GetInt(SurfaceFade._TargetBlendTex) == 1)
                 code.Add(tex + ".a *= " + SurfaceFade._ResultValue + ";");
             switch (_BlendModeOption[blendMode])
             {

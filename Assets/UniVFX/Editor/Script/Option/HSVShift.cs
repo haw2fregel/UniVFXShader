@@ -123,11 +123,10 @@ namespace UniVFX.Editor
             if (!IsActive())
                 return code;
 
-            var isSurfaceFadeActive = SurfaceFade.IsActive(_mat) && _mat.GetInt(SurfaceFade._TargetHSVShift) == 1;
             var paramX = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 0, _isCanvas, refactOption);
             var paramY = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 1, _isCanvas, refactOption);
             var paramZ = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 2, _isCanvas, refactOption);
-            var isInvalid = paramX == "0" && paramY == "0" && paramZ == "0" && !isSurfaceFadeActive && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isInvalid = paramX == "0" && paramY == "0" && paramZ == "0" && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
             var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
 
             if(isInvalid)
@@ -153,11 +152,10 @@ namespace UniVFX.Editor
             if (!IsActive())
                 return code;
 
-            var isSurfaceFadeActive = SurfaceFade.IsActive(_mat) && _mat.GetInt(SurfaceFade._TargetHSVShift) == 1;
             var paramX = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 0, _isCanvas, refactOption);
             var paramY = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 1, _isCanvas, refactOption);
             var paramZ = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 2, _isCanvas, refactOption);
-            var isInvalid = paramX == "0" && paramY == "0" && paramZ == "0" && !isSurfaceFadeActive && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isInvalid = paramX == "0" && paramY == "0" && paramZ == "0" && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
             var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
 
             if(isInvalid)
@@ -210,11 +208,10 @@ namespace UniVFX.Editor
 
 
             var param = "param_HSVShift";
-            var isSurfaceFadeActive = SurfaceFade.IsActive(_mat) && _mat.GetInt(SurfaceFade._TargetHSVShift) == 1;
             var paramX = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 0, _isCanvas, refactOption);
             var paramY = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 1, _isCanvas, refactOption);
             var paramZ = UniVFXGUILayout.VertexDataToVectorCode(_mat, _Param, 2, _isCanvas, refactOption);
-            var isInvalid = paramX == "0" && paramY == "0" && paramZ == "0" && !isSurfaceFadeActive && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isInvalid = paramX == "0" && paramY == "0" && paramZ == "0" && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
 
             code.Add("//HsvShift");
             if(isInvalid)

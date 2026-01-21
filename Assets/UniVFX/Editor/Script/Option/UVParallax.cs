@@ -139,18 +139,68 @@ namespace UniVFX.Editor
             var code = new List<string>();
             if (!IsActive())
                 return code;
+
             var intensity = UniVFXGUILayout.VertexDataToFloatCode(_mat, _Intensity, _isCanvas, refactOption);
-            if(intensity == "0")
+            var isTargetNone = _mat.GetInt(_TargetMainTex) == 0 && _mat.GetInt(_TargetBlendTex) == 0 && _mat.GetInt(_TargetDissolveTex) == 0;
+            var isInvalid = intensity == "0" && isTargetNone && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
+            
+
+            if(isInvalid)
             {
-                code.Add("//UV Parallax Skipped, Intensity is 0");
+                code.Add("//Parallax Skipped, Intensity is 0");
                 return code;
             }
-            code.Add("[NoScaleOffset]" + _Tex + "(\"" + _Tex.Replace("_", "") + "\", 2D) = \"white\" {}");
+
+            if (isTextureNone)
+            {
+                code.Add("//Parallax Skipped, Texture is null");
+            }else
+            {
+                code.Add("[NoScaleOffset]" + _Tex + "(\"" + _Tex.Replace("_", "") + "\", 2D) = \"white\" {}");
+            }
+
+            if(isFixedValue)
+            {
+                code.Add("//Parallax Property Skipped, FixedValue");
+            }
+            else
+            {
+                if(_mat.GetInt(_Intensity + "_Data") == 0)
+                    code.Add(_Intensity + "(\"" + _Intensity.Replace("_", "") + "\", float) = 1");
+            }
+
             return code;
         }
         public override List<string> GetCBufferCode(RefactOption refactOption)
         {
             var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            var intensity = UniVFXGUILayout.VertexDataToFloatCode(_mat, _Intensity, _isCanvas, refactOption);
+            var isTargetNone = _mat.GetInt(_TargetMainTex) == 0 && _mat.GetInt(_TargetBlendTex) == 0 && _mat.GetInt(_TargetDissolveTex) == 0;
+            var isInvalid = intensity == "0" && isTargetNone && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
+            
+
+            if(isInvalid)
+            {
+                code.Add("//Parallax Skipped, Intensity is 0");
+                return code;
+            }
+
+            if(isFixedValue)
+            {
+                code.Add("//Parallax Property Skipped, FixedValue");
+            }
+            else
+            {
+                if(_mat.GetInt(_Intensity + "_Data") == 0)
+                    code.Add("half " + _Intensity + ";");
+            }
             return code;
         }
         public override List<string> GetTextureCode(RefactOption refactOption)
@@ -158,13 +208,27 @@ namespace UniVFX.Editor
             var code = new List<string>();
             if (!IsActive())
                 return code;
+
             var intensity = UniVFXGUILayout.VertexDataToFloatCode(_mat, _Intensity, _isCanvas, refactOption);
-            if(intensity == "0")
+            var isTargetNone = _mat.GetInt(_TargetMainTex) == 0 && _mat.GetInt(_TargetBlendTex) == 0 && _mat.GetInt(_TargetDissolveTex) == 0;
+            var isInvalid = intensity == "0" && isTargetNone && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
+
+            if(isInvalid)
             {
-                code.Add("//UV Parallax Skipped, Intensity is 0");
+                code.Add("//Parallax Skipped, Intensity is 0");
                 return code;
             }
-            code.Add("TEXTURE2D(" + _Tex + ");");
+
+            if (isTextureNone)
+            {
+                code.Add("//Parallax Skipped, Texture is null");
+            }
+            else
+            {
+                code.Add("TEXTURE2D(" + _Tex + ");");
+            }
+
             return code;
         }
         public override List<string> GetUseV2fCode(RefactOption refactOption)
@@ -189,20 +253,32 @@ namespace UniVFX.Editor
                 return code;
 
             var intensity = UniVFXGUILayout.VertexDataToFloatCode(_mat, _Intensity, _isCanvas, refactOption);
+            var isTargetNone = _mat.GetInt(_TargetMainTex) == 0 && _mat.GetInt(_TargetBlendTex) == 0 && _mat.GetInt(_TargetDissolveTex) == 0;
+            var isInvalid = intensity == "0" && isTargetNone && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
+
             var uv = "uv_" + _Tex.Replace("_", "");
             var tex = "tex_" + _Tex.Replace("_", "");
 
             code.Add("//UVParallax");
-            if(intensity == "0")
+            if(isInvalid)
             {
                 code.Add("float2 " + _ResultValue + " = 0;");
-                code.Add("//UV Parallax Skipped, Intensity is 0");
+                code.Add("//Parallax Skipped, Intensity is 0");
                 code.Add("");
                 return code;
             }
-
-            code.Add("float2 " + uv + " = i.texCoord0.xy;");
-            code.Add("half4 " + tex + " = SAMPLE_TEXTURE2D(" + _Tex + ", SamplerState_Linear_Clamp, " + uv + ");");
+            
+            if (isTextureNone)
+            {
+                code.Add("float4 " + tex + " = float4(0.5,0.5,0.5,0.5);");
+                code.Add("//Parallax Tex Skipped, Texture is null");
+            }
+            else
+            {
+                code.Add("float2 " + uv + " = i.texCoord0.xy;");
+                code.Add("half4 " + tex + " = SAMPLE_TEXTURE2D(" + _Tex + ", SamplerState_Linear_Clamp, " + uv + ");");
+            }
             code.Add(tex + ".x -= 0.5;");
             code.Add("float2 parallax = tangentSpaceViewDirection.xy * " + tex + ".x * " + intensity + " / tangentSpaceViewDirection.z;");
             if (MaskTexture.IsActive(_mat) && _mat.GetInt(MaskTexture._TargetParallax) == 1)

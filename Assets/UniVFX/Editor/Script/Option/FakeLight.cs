@@ -282,7 +282,8 @@ namespace UniVFX.Editor
             }
             else
             {
-                code.Add("float3 fakeLightDir = i.worldPos.xyz - (i.texCoord3.xyz + " + param + ".xyz);");
+                code.Add("float3 boundsCenter = (unity_RendererBounds_Min.xyz + unity_RendererBounds_Max.xyz) * 0.5;");
+                code.Add("float3 fakeLightDir = i.worldPos.xyz - (boundsCenter + " + param + ".xyz);"); 
                 code.Add("float attan = min(length(fakeLightDir), " + param + ".w);");
                 code.Add("attan = 1 - (attan / " + param + ".w);");
                 code.Add("attan *= attan;");
@@ -293,7 +294,7 @@ namespace UniVFX.Editor
             if (MaskTexture.IsActive(_mat) && _mat.GetInt(MaskTexture._TargetFakeLight) == 1)
                 code.Add("fakeLightIntensity *= " + MaskTexture._ResultValue + ";");
 
-            code.Add("float nDotL = -dot(TransformObjectToWorldDir(i.normal.xyz), normalize(fakeLightDir)) * 0.5 + 0.5;");
+            code.Add("float nDotL = -dot(i.normal.xyz, normalize(fakeLightDir)) * 0.5 + 0.5;");
 
             if (isTextureNone)
             {

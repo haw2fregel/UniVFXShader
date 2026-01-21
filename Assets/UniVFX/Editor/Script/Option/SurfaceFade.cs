@@ -242,6 +242,8 @@ namespace UniVFX.Editor
                     code.Add(_FadeIn + "(\"" + _FadeIn.Replace("_", "") + "\", float) = 0");
                 if(_mat.GetInt(_FadeOut + "_Data") == 0)
                     code.Add(_FadeOut + "(\"" + _FadeOut.Replace("_", "") + "\", float) = 0");
+                if(_mat.GetInt(_Pow + "_Data") == 0 && _mat.GetInt(_Frenel) == 1)
+                    code.Add(_Pow + "(\"" + _Pow.Replace("_", "") + "\", float) = 0");
             }
             return code;
         }
@@ -270,6 +272,8 @@ namespace UniVFX.Editor
                     code.Add("half " + _FadeIn + ";");
                 if(_mat.GetInt(_FadeOut + "_Data") == 0)
                     code.Add("half " + _FadeOut + ";");
+                if(_mat.GetInt(_Pow + "_Data") == 0 && _mat.GetInt(_Frenel) == 1)
+                    code.Add("half " + _Pow + ";");
             }
 
             return code;

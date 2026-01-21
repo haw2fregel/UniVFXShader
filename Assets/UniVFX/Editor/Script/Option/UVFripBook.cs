@@ -112,6 +112,28 @@ namespace UniVFX.Editor
             if (!IsActive())
                 return code;
 
+            var row = _mat.GetInt(_Row).ToString();
+            var column = _mat.GetInt(_Column).ToString();
+            var isInvalid = row == "1" && column == "1";
+            var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+
+            if(isInvalid)
+            {
+                code.Add("//FripBook Skipped, Row and Column are 1");
+                return code;
+            }
+
+            if(isFixedValue)
+            {
+                code.Add("//FripBook Property Skipped, FixedValue");
+            }
+            else
+            {
+                if(_mat.GetInt(_Index + "_Data") == 0)
+                    code.Add(_Index + "(\"" + _Index.Replace("_", "") + "\", float) = 1");
+            }
+
+
             return code;
         }
         public override List<string> GetCBufferCode(RefactOption refactOption)
@@ -119,6 +141,28 @@ namespace UniVFX.Editor
             var code = new List<string>();
             if (!IsActive())
                 return code;
+
+            var row = _mat.GetInt(_Row).ToString();
+            var column = _mat.GetInt(_Column).ToString();
+            var isInvalid = row == "1" && column == "1";
+            var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+
+            if(isInvalid)
+            {
+                code.Add("//FripBook Skipped, Row and Column are 1");
+                return code;
+            }
+
+            if(isFixedValue)
+            {
+                code.Add("//FripBook Property Skipped, FixedValue");
+            }
+            else
+            {
+                if(_mat.GetInt(_Index + "_Data") == 0)
+                    code.Add("half " + _Index + ";");
+            }
+
             return code;
         }
         public override List<string> GetTextureCode(RefactOption refactOption)
@@ -140,11 +184,12 @@ namespace UniVFX.Editor
             var index = UniVFXGUILayout.VertexDataToFloatCode(_mat, _Index, _isCanvas, refactOption);
             var row = _mat.GetInt(_Row).ToString();
             var column = _mat.GetInt(_Column).ToString();
+            var isInvalid = row == "1" && column == "1";
             
             var uv = "fripBookUV";
 
             code.Add("//FripBookUV");
-            if(row == "1" && column == "1")
+            if(isInvalid)
             {
                 code.Add("float2 " + uv + " = texCoord0.xy;");
                 code.Add("//FripBook Skipped, Row and Column are 1");

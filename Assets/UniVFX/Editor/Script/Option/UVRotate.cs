@@ -106,6 +106,27 @@ namespace UniVFX.Editor
             var code = new List<string>();
             if (!IsActive())
                 return code;
+
+            var rotate = UniVFXGUILayout.VertexDataToFloatCode(_mat, _Rotate, _isCanvas, refactOption);
+            var isInvalid = rotate == "0" && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+
+            if(isInvalid)
+            {
+                code.Add("//Rotate Skipped, Rotate is 0");
+                return code;
+            }
+
+            if(isFixedValue)
+            {
+                code.Add("//Rotate Property Skipped, FixedValue");
+            }
+            else
+            {
+                if(_mat.GetInt(_Rotate + "_Data") == 0)
+                    code.Add(_Rotate + "(\"" + _Rotate.Replace("_", "") + "\", float) = 1");
+            }
+
             return code;
         }
         public override List<string> GetCBufferCode(RefactOption refactOption)
@@ -113,6 +134,27 @@ namespace UniVFX.Editor
             var code = new List<string>();
             if (!IsActive())
                 return code;
+
+            var rotate = UniVFXGUILayout.VertexDataToFloatCode(_mat, _Rotate, _isCanvas, refactOption);
+            var isInvalid = rotate == "0" && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+            var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
+
+            if(isInvalid)
+            {
+                code.Add("//Rotate Skipped, Rotate is 0");
+                return code;
+            }
+
+            if(isFixedValue)
+            {
+                code.Add("//Rotate Property Skipped, FixedValue");
+            }
+            else
+            {
+                if(_mat.GetInt(_Rotate + "_Data") == 0)
+                    code.Add("half " + _Rotate + ";");
+            }
+
             return code;
         }
         public override List<string> GetTextureCode(RefactOption refactOption)
@@ -132,17 +174,19 @@ namespace UniVFX.Editor
                 return code;
 
             var rotate = UniVFXGUILayout.VertexDataToFloatCode(_mat, _Rotate, _isCanvas, refactOption);
+            var isInvalid = rotate == "0" && refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
             
             var uv = "rotateUV";
 
             code.Add("//RotateUV");
-            if(rotate == "0")
+            if(isInvalid)
             {
                 code.Add("float2 " + uv + " = texCoord0.xy;");
                 code.Add("//RotateUV Skipped, Rotate is 0");
                 code.Add("");
                 return code;
             }
+            
             code.Add("float2 " + uv + " = 0;");
             code.Add("float rotateAngle = " + rotate + " * 3.14 / 180 ;");
             code.Add("float rotateCos = cos(rotateAngle);");
