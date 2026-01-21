@@ -281,6 +281,14 @@ namespace UniVFX.Editor
         public override List<string> GetTextureCode(RefactOption refactOption)
         {
             var code = new List<string>();
+            if (!IsActive())
+                return code;
+
+            if (_TypeOption[_mat.GetInt(_Type)] == "SoftParticle")
+            {
+                if(_isBRP)
+                    code.Add("sampler2D _CameraDepthTexture;");
+            }
             return code;
         }
         public override List<string> GetUseV2fCode(RefactOption refactOption)
@@ -325,7 +333,7 @@ namespace UniVFX.Editor
                 var pow = UniVFXGUILayout.VertexDataToFloatCode(_mat, _Pow, _isCanvas, refactOption);
                 if(_isBRP)
                 {
-                    code.Add("float rimFade = saturate(dot(mul(unity_ObjectToWorld, i.normal), UnityWorldSpaceViewDir(i.worldPos)));");
+                    code.Add("float rimFade = saturate(dot(normalize(mul(unity_ObjectToWorld, i.normal)), normalize(UnityWorldSpaceViewDir(i.worldPos))));");
                 }
                 else
                 {
