@@ -340,9 +340,7 @@
 </details>
 
 
-## Refact
-<details>
-<summary>--- 最適化</summary>
+## 最適化
 
 <br>
 
@@ -353,7 +351,6 @@
 
 
 
-</details>
 
 <br>
 
