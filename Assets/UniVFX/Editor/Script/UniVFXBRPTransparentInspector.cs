@@ -416,7 +416,7 @@ namespace UniVFX.Editor
             shaderCode += "            SamplerState SamplerState_Linear_Mirror;\n";
             shaderCode += "            SamplerState SamplerState_Linear_MirrorOnce;\n";
             if (useVertexDataList[21].Count >= 1 || useVertexDataList[22].Count >= 1 || useVertexDataList[23].Count >= 1 || useVertexDataList[24].Count >= 1)
-                shaderCode += "            Texture2D " + Time._Tex + ");\n";
+                shaderCode += "            Texture2D " + Time._Tex + ";\n";
 
             // Texture定義をここに追加
             foreach (var option in _options)
