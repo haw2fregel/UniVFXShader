@@ -346,9 +346,11 @@
 
 <br>
 
-|![image](https://github.com/user-attachments/assets/8478c6c7-2bd7-4340-863d-4d9c0033193a)| 専用シェーダーに変換ボタンを押すと<br>マテリアル設定に応じて最適化された専用シェーダーに変換され<br>処理負荷を大きく抑えることができます。 |
+|![image](https://github.com/user-attachments/assets/8478c6c7-2bd7-4340-863d-4d9c0033193a)| 専用シェーダーに変換ボタンを押すと<br>マテリアル設定に応じて最適化された専用シェーダーに変換し<br>処理負荷を大きく抑えることができます。 |
 | ------------- | ------------- | 
 |![image](https://github.com/user-attachments/assets/cdc42789-2afd-4e6f-b8f0-d1ec5eca0f5b)| 最適化設定<br> Everythingが一番軽くなります。<br><br>PropertyToFixedValue:<br>テクスチャ以外のプロパティを削除しハードコードします。<br>コンパイラの最適化が効きやすくなり軽くなります。<br><br>NoneTextureFixedValue : <br>TextureNoneの場合、Propertyを削除し固定値に差し替えます<br>UV計算やTextureSampleを省略するので軽くなります。|
+|![image](https://github.com/user-attachments/assets/27df53d9-97e8-425f-ba7c-490de4f122b7)|変換後にマテリアル調整をしたい場合<br>汎用シェーダーに戻すボタンから元のシェーダーに戻れます|
+
 
 
 </details>
