@@ -544,6 +544,15 @@ namespace UniVFX.Editor
             }
             shaderCode += "\n";
 
+            if (useVertexDataList[13].Count >= 1 || useVertexDataList[14].Count >= 1 || useVertexDataList[15].Count >= 1 || useVertexDataList[16].Count >= 1 ||
+                useVertexDataList[17].Count >= 1 || useVertexDataList[18].Count >= 1 || useVertexDataList[19].Count >= 1 || useVertexDataList[20].Count >= 1 ||
+                useVertexDataList[21].Count >= 1 || useVertexDataList[22].Count >= 1 || useVertexDataList[23].Count >= 1 || useVertexDataList[24].Count >= 1)
+            {
+                shaderCode += "                float4 time = _Time * " + Time._Speed + ";\n";
+                if (useVertexDataList[21].Count >= 1 || useVertexDataList[22].Count >= 1 || useVertexDataList[23].Count >= 1 || useVertexDataList[24].Count >= 1)
+                    shaderCode += "                float4 timeMap = SAMPLE_TEXTURE2D(" + Time._Tex + ", SamplerState_Linear_Clamp, frac(time.yy));\n";
+            }
+
             // フラグメントシェーダーの早期実行処理をここに追加
             shaderCode += "//早期計算\n";
             foreach (var option in _options)
@@ -574,6 +583,246 @@ namespace UniVFX.Editor
             shaderCode += "                return col;\n";
             shaderCode += "            }\n";
             shaderCode += "\n";
+            shaderCode += "            ENDHLSL\n";
+            shaderCode += "        }\n";
+
+
+            shaderCode += "        Pass\n";
+            shaderCode += "        {\n";
+            shaderCode += "            Name \"DepthOnly\"\n";
+            shaderCode += "            Tags { \"LightMode\" = \"DepthOnly\" }\n";
+            shaderCode += "            Cull Off\n";
+            shaderCode += "            ZTest LEqual\n";
+            shaderCode += "            ZWrite On\n";
+            shaderCode += "            ColorMask R\n";
+            shaderCode += "\n";
+
+            shaderCode += "            HLSLPROGRAM\n";
+            shaderCode += "            #pragma vertex vert\n";
+            shaderCode += "            #pragma fragment frag\n";
+            shaderCode += "            #include \"Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl\"\n";
+            shaderCode += "            #include \"Packages/com.unity.render-pipelines.core/ShaderLibrary/SpaceTransforms.hlsl\"\n";
+            shaderCode += "            #include \"Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl\"\n";
+            shaderCode += "\n";
+
+            shaderCode += "            CBUFFER_START(UnityPerMaterial)\n";
+            shaderCode += "                " + "half _AlphaClipThreshold;\n";
+            // CBUFFER定義をここに追加
+            foreach (var option in _options)
+            {
+                foreach (var code in option.GetCBufferCode(_refactOption))
+                {
+                    shaderCode += "                " + code + "\n";
+                }
+            }
+
+            if (useVertexDataList[13].Count >= 1 || useVertexDataList[14].Count >= 1 || useVertexDataList[15].Count >= 1 || useVertexDataList[16].Count >= 1 ||
+                useVertexDataList[17].Count >= 1 || useVertexDataList[18].Count >= 1 || useVertexDataList[19].Count >= 1 || useVertexDataList[20].Count >= 1 ||
+                useVertexDataList[21].Count >= 1 || useVertexDataList[22].Count >= 1 || useVertexDataList[23].Count >= 1 || useVertexDataList[24].Count >= 1)
+                shaderCode += "                " + "float " + Time._Speed + ";\n";
+
+            shaderCode += "            CBUFFER_END\n";
+            shaderCode += "\n";
+            shaderCode += "            SAMPLER(SamplerState_Linear_Clamp);\n";
+            shaderCode += "            SAMPLER(SamplerState_Linear_Repeat);\n";
+            shaderCode += "            SAMPLER(SamplerState_Linear_Mirror);\n";
+            shaderCode += "            SAMPLER(SamplerState_Linear_MirrorOnce);\n";
+            if (useVertexDataList[21].Count >= 1 || useVertexDataList[22].Count >= 1 || useVertexDataList[23].Count >= 1 || useVertexDataList[24].Count >= 1)
+                shaderCode += "            TEXTURE2D(" + Time._Tex + ");\n";
+
+            // Texture定義をここに追加
+            foreach (var option in _options)
+            {
+                foreach (var code in option.GetTextureCode(_refactOption))
+                {
+                    shaderCode += "            " + code + "\n";
+                }
+            }
+            shaderCode += "\n";
+
+            shaderCode += "            struct appdata\n";
+            shaderCode += "            {\n";
+            shaderCode += "                float4 vertex : POSITION;\n";
+            if(useUVChannelList[5].Count >= 1 || VertexAnimation.IsActive(material) || SurfaceFade.IsActive(material) || FakeLight.IsActive(material) || UVParallax.IsActive(material))
+                shaderCode += "                float3 normal : NORMAL;\n";
+            if(VertexAnimation.IsActive(material) || UVParallax.IsActive(material))            
+                shaderCode += "                float4 tangent : TANGENT;\n";
+            shaderCode += "                float4 texCoord0 : TEXCOORD0;\n";
+            shaderCode += "                float4 texCoord1 : TEXCOORD1;\n";
+            shaderCode += "                float4 texCoord2 : TEXCOORD2;\n";
+            shaderCode += "                half4 vertexColor : COLOR;\n";
+            shaderCode += "            };\n";
+            shaderCode += "\n";
+
+
+            shaderCode += "            struct v2f\n";
+            shaderCode += "            {\n";
+            shaderCode += "                float4 positionCS : SV_POSITION;\n";
+            shaderCode += "                float4 texCoord0 : TEXCOORD0;\n";
+            shaderCode += "                float4 texCoord1 : TEXCOORD1;\n";
+            shaderCode += "                float4 texCoord2 : TEXCOORD2;\n";
+            shaderCode += "                half4 vertexColor : COLOR;\n";
+            v2fCount = 2;
+            foreach (var option in _options)
+            {
+                foreach (var code in option.GetUseV2fCode(_refactOption))
+                {
+                    v2fCount++;
+                    shaderCode += "                " + code + " : TEXCOORD" + v2fCount + ";\n";
+                }
+            }
+            if (SurfaceFade.IsActive(material) || FakeLight.IsActive(material) || UVParallax.IsActive(material))
+            {
+                v2fCount++;
+                shaderCode += "                float3 worldPos : TEXCOORD" + v2fCount + ";\n";
+            }
+            if (SurfaceFade.IsActive(material) || FakeLight.IsActive(material) || UVParallax.IsActive(material))
+            {
+                v2fCount++;
+                shaderCode += "                float3 normal : TEXCOORD" + v2fCount + ";\n";
+            }
+            if(UVParallax.IsActive(material))
+            {
+                v2fCount++;
+                shaderCode += "                float4 tangent : TEXCOORD" + v2fCount + ";\n";
+            }
+            shaderCode += "            };\n";
+            shaderCode += "\n";
+
+
+            shaderCode += "            v2f vert (appdata v)\n";
+            shaderCode += "            {\n";
+            shaderCode += "                v2f o;\n";
+            shaderCode += "\n";
+
+            shaderCode += "                o.texCoord0 = v.texCoord0;\n";
+            shaderCode += "                o.texCoord1 = v.texCoord1;\n";
+            shaderCode += "                o.texCoord2 = v.texCoord2;\n";
+            shaderCode += "                o.vertexColor = v.vertexColor;\n";
+            shaderCode += "                float4 texCoord0 = v.texCoord0;\n";
+            shaderCode += "                float4 texCoord1 = v.texCoord1;\n";
+            shaderCode += "                float4 texCoord2 = v.texCoord2;\n";
+            shaderCode += "                half4 vertexColor = v.vertexColor;\n";
+            shaderCode += "\n";
+
+            if (useUVChannelList[1].Count >= 1 || useUVChannelList[2].Count >= 1 || useUVChannelList[3].Count >= 1 || SurfaceFade.IsActive(material) || UVParallax.IsActive(material))
+                shaderCode += "                float3 worldPos = TransformObjectToWorld(v.vertex.xyz);\n";
+            if (useUVChannelList[4].Count >= 1)
+            {
+                shaderCode += "                float4 screenPos = ComputeScreenPos(TransformObjectToHClip(v.vertex.xyz));\n";
+                shaderCode += "                screenPos.xy = screenPos.xy / screenPos.w;\n";
+            }
+            if (useUVChannelList[5].Count >= 1)
+                shaderCode += "                float3 viewNormal = TransformWorldToViewDir(TransformObjectToWorldDir(v.normal.xyz));\n";
+            if (SurfaceFade.IsActive(material) || FakeLight.IsActive(material) || UVParallax.IsActive(material))
+                shaderCode += "                o.worldPos = worldPos;\n";
+            if (SurfaceFade.IsActive(material) || FakeLight.IsActive(material) || UVParallax.IsActive(material))
+                shaderCode += "                o.normal = v.normal;\n";
+            if (UVParallax.IsActive(material))
+                shaderCode += "                o.tangent = v.tangent;\n";
+            shaderCode += "\n";
+
+            if (useVertexDataList[13].Count >= 1 || useVertexDataList[14].Count >= 1 || useVertexDataList[15].Count >= 1 || useVertexDataList[16].Count >= 1 ||
+                useVertexDataList[17].Count >= 1 || useVertexDataList[18].Count >= 1 || useVertexDataList[19].Count >= 1 || useVertexDataList[20].Count >= 1 ||
+                useVertexDataList[21].Count >= 1 || useVertexDataList[22].Count >= 1 || useVertexDataList[23].Count >= 1 || useVertexDataList[24].Count >= 1)
+            {
+                shaderCode += "                float4 time = _Time * " + Time._Speed + ";\n";
+                if (useVertexDataList[21].Count >= 1 || useVertexDataList[22].Count >= 1 || useVertexDataList[23].Count >= 1 || useVertexDataList[24].Count >= 1)
+                    shaderCode += "                float4 timeMap = SAMPLE_TEXTURE2D(" + Time._Tex + ", SamplerState_Linear_Clamp, frac(time.yy));\n";
+            }
+
+            // 頂点シェーダー早期実行する処理をここに追加
+            shaderCode += "//早期計算\n";
+            foreach (var option in _options)
+            {
+                foreach (var code in option.GetVertexHeadCode(_refactOption))
+                {
+                    shaderCode += "                " + code + "\n";
+                }
+            }
+
+            // 頂点シェーダー処理をここに追加
+            shaderCode += "//メイン計算\n";
+            foreach (var option in _options)
+            {
+                foreach (var code in option.GetVertexCode(_refactOption))
+                {
+                    shaderCode += "                " + code + "\n";
+                }
+            }
+
+            shaderCode += "                o.positionCS = TransformObjectToHClip(v.vertex.xyz);\n";
+            shaderCode += "                return o;\n";
+            shaderCode += "            }\n";
+            shaderCode += "\n";
+
+            shaderCode += "            half4 frag (v2f i" + (FaceColor.IsActive(material) ? ", half face : VFACE" : "") + ") : SV_Target\n";
+            shaderCode += "            {\n";
+            shaderCode += "                half4 col = half4(1,1,1,1);\n";
+            shaderCode += "                float4 texCoord1 = i.texCoord1;\n";
+            shaderCode += "                float4 texCoord2 = i.texCoord2;\n";
+            shaderCode += "                half4 vertexColor = i.vertexColor;\n";
+            if (UVParallax.IsActive(material))
+            {
+                shaderCode += "                float4 tangentWS = float4(TransformObjectToWorldDir(i.tangent.xyz), i.tangent.w);\n";
+                shaderCode += "                float3 worldNormal = (TransformObjectToWorldDir(i.normal));\n";
+                shaderCode += "                float3 unnormalizedNormalWS = worldNormal;\n";
+                shaderCode += "                float renormFactor = 1.0 / length(unnormalizedNormalWS);\n";
+                shaderCode += "                worldNormal = normalize(unnormalizedNormalWS);\n";
+                shaderCode += "                float crossSign = (tangentWS.w > 0.0 ? 1.0 : -1.0)* GetOddNegativeScale();\n";
+                shaderCode += "                float3 bitang = crossSign * cross(worldNormal, tangentWS.xyz);\n";
+                shaderCode += "                float3 worldSpaceNormal = renormFactor * worldNormal;\n";
+                shaderCode += "                float3 worldSpaceTangent = renormFactor * tangentWS.xyz;\n";
+                shaderCode += "                float3 worldSpaceBiTangent = renormFactor * bitang;\n";
+                shaderCode += "                float3 worldSpaceViewDirection = GetWorldSpaceNormalizeViewDir(i.worldPos);\n";
+                shaderCode += "                float3x3 tangentSpaceTransform = float3x3(worldSpaceTangent, worldSpaceBiTangent, worldSpaceNormal);\n";
+                shaderCode += "                float3 tangentSpaceViewDirection = mul(tangentSpaceTransform, worldSpaceViewDirection);\n";
+            }
+            shaderCode += "\n";
+
+            if (useVertexDataList[13].Count >= 1 || useVertexDataList[14].Count >= 1 || useVertexDataList[15].Count >= 1 || useVertexDataList[16].Count >= 1 ||
+                useVertexDataList[17].Count >= 1 || useVertexDataList[18].Count >= 1 || useVertexDataList[19].Count >= 1 || useVertexDataList[20].Count >= 1 ||
+                useVertexDataList[21].Count >= 1 || useVertexDataList[22].Count >= 1 || useVertexDataList[23].Count >= 1 || useVertexDataList[24].Count >= 1)
+            {
+                shaderCode += "                float4 time = _Time * " + Time._Speed + ";\n";
+                if (useVertexDataList[21].Count >= 1 || useVertexDataList[22].Count >= 1 || useVertexDataList[23].Count >= 1 || useVertexDataList[24].Count >= 1)
+                    shaderCode += "                float4 timeMap = SAMPLE_TEXTURE2D(" + Time._Tex + ", SamplerState_Linear_Clamp, frac(time.yy));\n";
+            }
+
+            // フラグメントシェーダーの早期実行処理をここに追加
+            shaderCode += "//早期計算\n";
+            foreach (var option in _options)
+            {
+                foreach (var code in option.GetFragmentHeadCode(_refactOption))
+                {
+                    shaderCode += "                " + code + "\n";
+                }
+            }
+
+            // フラグメントシェーダー処理をここに追加
+            shaderCode += "//メイン計算\n";
+            foreach (var option in _options)
+            {
+                foreach (var code in option.GetFragmentCode(_refactOption))
+                {
+                    shaderCode += "                " + code + "\n";
+                }
+            }
+
+            if (material.GetInt(SurfaceOptionTransparent._ColorMultiplAlpha) == 1)
+            {
+                shaderCode += "                col.rgb *= col.a;\n";
+            }
+
+            shaderCode += "                clip(col.a - _AlphaClipThreshold);\n";
+
+            shaderCode += "                return i.positionCS.z;\n";
+            shaderCode += "            }\n";
+            shaderCode += "\n";
+
+
+
+
 
             shaderCode += "            ENDHLSL\n";
             shaderCode += "        }\n";
