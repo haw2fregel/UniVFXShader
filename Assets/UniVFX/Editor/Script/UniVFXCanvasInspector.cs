@@ -507,6 +507,7 @@ namespace UniVFX.Editor
             shaderCode += "            ENDHLSL\n";
             shaderCode += "        }\n";
             shaderCode += "    }\n";
+            shaderCode += "    CustomEditor \"UniVFX.Editor.UniVFXUniqueCanvasInspector\"\n";
             shaderCode += "}\n";
 
             if (!Directory.Exists(dir))

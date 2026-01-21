@@ -616,6 +616,7 @@ namespace UniVFX.Editor
             shaderCode += "            ENDHLSL\n";
             shaderCode += "        }\n";
             shaderCode += "    }\n";
+            shaderCode += "    CustomEditor \"UniVFX.Editor.UniVFXUniqueTransparentInspector\"\n";
             shaderCode += "}\n";
 
             if (!Directory.Exists(dir))

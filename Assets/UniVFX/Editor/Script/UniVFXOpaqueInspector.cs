@@ -793,6 +793,7 @@ namespace UniVFX.Editor
 
 
             shaderCode += "    }\n";
+            shaderCode += "    CustomEditor \"UniVFX.Editor.UniVFXUniqueOpaqueInspector\"\n";
             shaderCode += "}\n";
 
             if (!Directory.Exists(dir))
