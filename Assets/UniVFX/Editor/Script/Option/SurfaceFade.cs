@@ -333,7 +333,15 @@ namespace UniVFX.Editor
             switch (_TypeOption[_mat.GetInt(_Type)])
             {
                 case "Screen Z":
-                    code.Add(_ResultValue + " *= smoothstep(" + fadeOut + ", " + fadeIn + ", -TransformWorldToView(i.worldPos).z);");
+                    if(_isBRP)
+                    {
+                        code.Add(_ResultValue + " *= smoothstep(" + fadeOut + ", " + fadeIn + ", -mul(UNITY_MATRIX_V, i.worldPos).z);");
+                    }
+                    else
+                    {
+                        code.Add(_ResultValue + " *= smoothstep(" + fadeOut + ", " + fadeIn + ", -TransformWorldToView(i.worldPos).z);");
+                    }
+                    
                     break;
                 case "Height":
                     code.Add(_ResultValue + " *= smoothstep(" + fadeOut + ", " + fadeIn + ", i.worldPos.y);");
