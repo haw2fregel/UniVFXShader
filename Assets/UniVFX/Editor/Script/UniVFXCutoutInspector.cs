@@ -302,6 +302,7 @@ namespace UniVFX.Editor
         public void ConvertUniqueShader(MaterialEditor materialEditor)
         {
             Material material = materialEditor.target as Material;
+            material.parent = null;
             var dir = AssetDatabase.GetAssetPath(material.shader);
             dir = System.IO.Path.GetDirectoryName(dir) + "/Cutout";
             var path = dir + "/" + material.name + ".shader";
