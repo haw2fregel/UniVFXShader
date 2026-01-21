@@ -346,7 +346,15 @@ namespace UniVFX.Editor
             if (useVertexDataList[13].Count >= 1 || useVertexDataList[14].Count >= 1 || useVertexDataList[15].Count >= 1 || useVertexDataList[16].Count >= 1 ||
                 useVertexDataList[17].Count >= 1 || useVertexDataList[18].Count >= 1 || useVertexDataList[19].Count >= 1 || useVertexDataList[20].Count >= 1 ||
                 useVertexDataList[21].Count >= 1 || useVertexDataList[22].Count >= 1 || useVertexDataList[23].Count >= 1 || useVertexDataList[24].Count >= 1)
-                shaderCode += "        " + Time._Speed + "(\"" + Time._Speed.Replace("_", "") + "\", float) = 0\n";
+            {
+                if (_refactOption.HasFlag(RefactOption.PropertiesToFixedValue))
+                {
+                    shaderCode += "                //Skipped TimeSpeed Property\n";
+                }else
+                {
+                    shaderCode += "        " + Time._Speed + "(\"" + Time._Speed.Replace("_", "") + "\", float) = 0\n";
+                }
+            }
             if (useVertexDataList[21].Count >= 1 || useVertexDataList[22].Count >= 1 || useVertexDataList[23].Count >= 1 || useVertexDataList[24].Count >= 1)
                 shaderCode += "        [NoScaleOffset]" + Time._Tex + "(\"" + Time._Tex.Replace("_", "") + "\", 2D) = \"white\" {}\n";
             shaderCode += "        _AlphaClipThreshold(\"AlphaClipThreshold\", float) = 0\n";
@@ -384,7 +392,15 @@ namespace UniVFX.Editor
             if (useVertexDataList[13].Count >= 1 || useVertexDataList[14].Count >= 1 || useVertexDataList[15].Count >= 1 || useVertexDataList[16].Count >= 1 ||
                 useVertexDataList[17].Count >= 1 || useVertexDataList[18].Count >= 1 || useVertexDataList[19].Count >= 1 || useVertexDataList[20].Count >= 1 ||
                 useVertexDataList[21].Count >= 1 || useVertexDataList[22].Count >= 1 || useVertexDataList[23].Count >= 1 || useVertexDataList[24].Count >= 1)
-                shaderCode += "                " + "float " + Time._Speed + ";\n";
+            {
+                if (_refactOption.HasFlag(RefactOption.PropertiesToFixedValue))
+                {
+                    shaderCode += "                //Skipped TimeSpeed Property\n";
+                }else
+                {
+                    shaderCode += "                " + "float " + Time._Speed + ";\n";
+                }
+            }
 
             shaderCode += "            CBUFFER_END\n";
             shaderCode += "\n";
@@ -491,7 +507,7 @@ namespace UniVFX.Editor
                 useVertexDataList[17].Count >= 1 || useVertexDataList[18].Count >= 1 || useVertexDataList[19].Count >= 1 || useVertexDataList[20].Count >= 1 ||
                 useVertexDataList[21].Count >= 1 || useVertexDataList[22].Count >= 1 || useVertexDataList[23].Count >= 1 || useVertexDataList[24].Count >= 1)
             {
-                shaderCode += "                float4 time = _Time * " + Time._Speed + ";\n";
+                shaderCode += "                float4 time = _Time * " + (_refactOption.HasFlag(RefactOption.PropertiesToFixedValue) ? material.GetFloat(Time._Speed) : Time._Speed) + ";\n";
                 if (useVertexDataList[21].Count >= 1 || useVertexDataList[22].Count >= 1 || useVertexDataList[23].Count >= 1 || useVertexDataList[24].Count >= 1)
                     shaderCode += "                float4 timeMap = SAMPLE_TEXTURE2D(" + Time._Tex + ", SamplerState_Linear_Clamp, frac(time.yy));\n";
             }
@@ -549,7 +565,7 @@ namespace UniVFX.Editor
                 useVertexDataList[17].Count >= 1 || useVertexDataList[18].Count >= 1 || useVertexDataList[19].Count >= 1 || useVertexDataList[20].Count >= 1 ||
                 useVertexDataList[21].Count >= 1 || useVertexDataList[22].Count >= 1 || useVertexDataList[23].Count >= 1 || useVertexDataList[24].Count >= 1)
             {
-                shaderCode += "                float4 time = _Time * " + Time._Speed + ";\n";
+                shaderCode += "                float4 time = _Time * " + (_refactOption.HasFlag(RefactOption.PropertiesToFixedValue) ? material.GetFloat(Time._Speed) : Time._Speed) + ";\n";
                 if (useVertexDataList[21].Count >= 1 || useVertexDataList[22].Count >= 1 || useVertexDataList[23].Count >= 1 || useVertexDataList[24].Count >= 1)
                     shaderCode += "                float4 timeMap = SAMPLE_TEXTURE2D(" + Time._Tex + ", SamplerState_Linear_Clamp, frac(time.yy));\n";
             }
