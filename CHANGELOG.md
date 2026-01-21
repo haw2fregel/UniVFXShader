@@ -1,5 +1,8 @@
 # ChangeLog
 
+## v1.1.0
+- 専用シェーダー変換機能の実装
+
 ## v1.0.3
 - TransparentShaderでBlendAlphaを変更できるようにする
 
