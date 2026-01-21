@@ -323,7 +323,15 @@ namespace UniVFX.Editor
             if (_mat.GetInt(_Frenel) == 1)
             {
                 var pow = UniVFXGUILayout.VertexDataToFloatCode(_mat, _Pow, _isCanvas, refactOption);
-                code.Add("float rimFade = saturate(dot(TransformObjectToWorldDir(i.normal), GetWorldSpaceNormalizeViewDir(i.worldPos)));");
+                if(_isBRP)
+                {
+                    code.Add("float rimFade = saturate(dot(mul(unity_ObjectToWorld, i.normal), UnityWorldSpaceViewDir(i.worldPos)));");
+                }
+                else
+                {
+                    code.Add("float rimFade = saturate(dot(TransformObjectToWorldDir(i.normal), GetWorldSpaceNormalizeViewDir(i.worldPos)));");
+                }
+                
                 code.Add("rimFade = pow(rimFade, " + pow + ");");
                 if (_mat.GetInt(_Reverce) == 1)
                     code.Add("rimFade = 1 - rimFade;");
@@ -347,16 +355,24 @@ namespace UniVFX.Editor
                     code.Add(_ResultValue + " *= smoothstep(" + fadeOut + ", " + fadeIn + ", i.worldPos.y);");
                     break;
                 case "SoftParticle":
-                    code.Add("float2 pixelPosition = 0;");
-                    code.Add("#if UNITY_UV_STARTS_AT_TOP");
-                    code.Add("    pixelPosition = float2(i.positionCS.x, (_ProjectionParams.x < 0) ? (_ScaledScreenParams.y - i.positionCS.y) : i.positionCS.y);");
-                    code.Add("#else");
-                    code.Add("    pixelPosition = float2(i.positionCS.x, (_ProjectionParams.x > 0) ? (_ScaledScreenParams.y - i.positionCS.y) : i.positionCS.y);");
-                    code.Add("#endif");
-                    code.Add("float2 ndcPosition = pixelPosition.xy / _ScaledScreenParams.xy;");
-                    code.Add("ndcPosition.y = 1.0f - ndcPosition.y;");
-                    code.Add("float sceneDepth = Linear01Depth(SampleSceneDepth(ndcPosition), _ZBufferParams) * (_ProjectionParams.z - _ProjectionParams.y);");
-                    code.Add("float depthDiff = sceneDepth + TransformWorldToView(i.worldPos).z;");
+                    if(_isBRP)
+                    {
+                        code.Add("half sceneDepth = LinearEyeDepth(tex2Dproj(_CameraDepthTexture, ComputeScreenPos(mul(unity_WorldToObject, i.worldPos))).r);");
+                        code.Add("float depthDiff = sceneDepth + mul(UNITY_MATRIX_V, i.worldPos).z;");
+                    }
+                    else
+                    {
+                        code.Add("float2 pixelPosition = 0;");
+                        code.Add("#if UNITY_UV_STARTS_AT_TOP");
+                        code.Add("    pixelPosition = float2(i.positionCS.x, (_ProjectionParams.x < 0) ? (_ScaledScreenParams.y - i.positionCS.y) : i.positionCS.y);");
+                        code.Add("#else");
+                        code.Add("    pixelPosition = float2(i.positionCS.x, (_ProjectionParams.x > 0) ? (_ScaledScreenParams.y - i.positionCS.y) : i.positionCS.y);");
+                        code.Add("#endif");
+                        code.Add("float2 ndcPosition = pixelPosition.xy / _ScaledScreenParams.xy;");
+                        code.Add("ndcPosition.y = 1.0f - ndcPosition.y;");
+                        code.Add("float sceneDepth = Linear01Depth(SampleSceneDepth(ndcPosition), _ZBufferParams) * (_ProjectionParams.z - _ProjectionParams.y);");
+                        code.Add("float depthDiff = sceneDepth + TransformWorldToView(i.worldPos).z;");
+                    }
                     code.Add(_ResultValue + " *= smoothstep(" + fadeOut + ", " + fadeIn + ", depthDiff);");
                     break;
                 case "Off":
