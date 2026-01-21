@@ -520,13 +520,13 @@ namespace UniVFX.Editor
                 code.Add(tex + " += " + offset + ";");
             if (_mat.GetInt(_Repeat) == 1)
             {
-                code.Add("half maskMinus = " + tex + " < 0 ? -1 : 0;");
-                code.Add("half maskRepeat = abs((" + tex + " + maskMinus)) % 2 >= 1 ? 1 - frac(" + tex + ") : frac(" + tex + ");");
+                code.Add("half maskMinus = " + tex + ".x < 0 ? -1 : 0;");
+                code.Add("half maskRepeat = abs((" + tex + ".x + maskMinus)) % 2 >= 1 ? 1 - frac(" + tex + ".x) : frac(" + tex + ".x);");
                 code.Add("half " + _ResultValue + " = maskRepeat;");
             }
             else
             {
-                code.Add("half " + _ResultValue + " = saturate(" + tex + ");");
+                code.Add("half " + _ResultValue + " = saturate(" + tex + ".x);");
             }
             code.Add("");
             

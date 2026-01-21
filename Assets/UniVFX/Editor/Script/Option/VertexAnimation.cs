@@ -322,7 +322,7 @@ namespace UniVFX.Editor
                 }
                 else
                 {
-                    code.Add("half4 " + tex + " = SAMPLE_TEXTURE2D(" + _Tex + ", SamplerState_Linear_Clamp, " + uv + ");");
+                    code.Add("half4 " + tex + " = SAMPLE_TEXTURE2D_LOD(" + _Tex + ", SamplerState_Linear_Clamp, " + uv + ", 0);");
                 }
             }
             code.Add("float3 biNormal = cross(normalize(v.normal), normalize(v.tangent.xyz));");
