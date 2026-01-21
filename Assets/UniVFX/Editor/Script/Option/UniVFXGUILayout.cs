@@ -10,7 +10,18 @@ namespace UniVFX.Editor
         public readonly static string[] _CanvasUVChannelOptionVert = { "TEXCOORD", "TEXCOORD1", "ScreenPosition", "RotateUV", "FripBookUV" };
         public readonly static string[] _UVChannelOption = { "TEXCOORD", "PositionZFace", "PositionYFace", "PositionXFace", "ScreenPosition", "ViewNormal", "RotateUV", "FripBookUV", "BendUV" };
         public readonly static string[] _UVChannelOptionVert = { "TEXCOORD", "PositionZFace", "PositionYFace", "PositionXFace", "ScreenPosition", "ViewNormal", "RotateUV", "FripBookUV" };
-        public static string GetVertUVName(int index, Material mat)
+        public static string GetVertUVName(int index, Material mat, bool isCanvas)
+        {
+            if(isCanvas)
+            {
+                return GetVertUVNameCanvas(index, mat);
+            }
+            else
+            {
+                return GetVertUVName(index, mat);
+            }
+        }
+        static string GetVertUVName(int index, Material mat)
         {
             switch (index)
             {
@@ -46,6 +57,40 @@ namespace UniVFX.Editor
                     }
                 case 8:
                         return "texCoord0.xy";
+                default:
+                    return "uv";
+                }
+        }
+        static string GetVertUVNameCanvas(int index, Material mat)
+        {
+            switch (index)
+            {
+                case 0:
+                    return "texCoord0.xy";
+                case 1:
+                    return "texCoord1.xy";
+                case 2:
+                    return "screenPos.xy";
+                case 3:
+                    if (mat.GetInt("_ROTATEUVENABLE") == 1)
+                    {
+                        return "rotateUV.xy";
+                    }
+                    else
+                    {
+                        return "texCoord0.xy";
+                    }
+                case 4:
+                    if (mat.GetInt("_FRIPBOOK") == 1)
+                    {
+                        return "fripBookUV.xy";
+                    }
+                    else
+                    {
+                        return "texCoord0.xy";
+                    }
+                case 5:
+                    return "texCoord0.xy";
                 default:
                     return "uv";
                 }
@@ -463,6 +508,19 @@ namespace UniVFX.Editor
             }
         }
 
+
+        public static void OptionFloatField(ref Material mat, string property, string label, int index, bool isCanvas)
+        {
+            if (isCanvas)
+            {
+                CanvasOptionFloatField(ref mat, property, label, index);
+            }
+            else
+            {
+                OptionFloatField(ref mat, property, label, index);
+            }
+        }
+
         /// MARK: OptionFloatField
         /// <summary>
         /// Vector４プロパティ
@@ -472,7 +530,7 @@ namespace UniVFX.Editor
         /// <param name="property">vector4 name, "+_Data"</param>
         /// <param name="label">display name</param>
         /// <param name="index">0~3 vector index</param>
-        public static void OptionFloatField(ref Material mat, string property, string label, int index)
+        static void OptionFloatField(ref Material mat, string property, string label, int index)
         {
             using (new EditorGUILayout.HorizontalScope())
             {
@@ -529,7 +587,7 @@ namespace UniVFX.Editor
         /// <param name="property">vector4 name, "+_Data"</param>
         /// <param name="label">display name</param>
         /// <param name="index">0~3 vector index</param>
-        public static void CanvasOptionFloatField(ref Material mat, string property, string label, int index)
+        static void CanvasOptionFloatField(ref Material mat, string property, string label, int index)
         {
             using (new EditorGUILayout.HorizontalScope())
             {
@@ -632,6 +690,18 @@ namespace UniVFX.Editor
         }
 
 
+        public static int OptionIntSlider(ref Material mat, string property, string label, int min, int max, bool isCanvas)
+        {
+            if (isCanvas)
+            {
+                return CanvasOptionIntSlider(ref mat, property, label, min, max);
+            }
+            else
+            {
+                return OptionIntSlider(ref mat, property, label, min, max);
+            }
+        }
+
         /// MARK: OptionIntSlider
         /// <summary>
         /// Intプロパティの編集
@@ -642,7 +712,7 @@ namespace UniVFX.Editor
         /// <param name="min">slider min</param>
         /// <param name="max">slider max</param>
         /// <returns></returns>
-        public static int OptionIntSlider(ref Material mat, string property, string label, int min, int max)
+        static int OptionIntSlider(ref Material mat, string property, string label, int min, int max)
         {
             using (new EditorGUILayout.HorizontalScope())
             {
@@ -676,7 +746,7 @@ namespace UniVFX.Editor
         /// <param name="min">slider min</param>
         /// <param name="max">slider max</param>
         /// <returns></returns>
-        public static int CanvasOptionIntSlider(ref Material mat, string property, string label, int min, int max)
+        static int CanvasOptionIntSlider(ref Material mat, string property, string label, int min, int max)
         {
             using (new EditorGUILayout.HorizontalScope())
             {
@@ -711,7 +781,20 @@ namespace UniVFX.Editor
         /// <param name="min">slider min</param>
         /// <param name="max">slider max</param>
         /// <returns></returns>
-        public static int OptionIntSlider(ref Material mat, string property, string label, int index, int min, int max)
+        
+        public static int OptionIntSlider(ref Material mat, string property, string label, int index, int min, int max, bool isCanvas)
+        {
+            if (isCanvas)
+            {
+                return CanvasOptionIntSlider(ref mat, property, label, index, min, max);
+            }
+            else
+            {
+                return OptionIntSlider(ref mat, property, label, index, min, max);
+            }
+        }
+
+        static int OptionIntSlider(ref Material mat, string property, string label, int index, int min, int max)
         {
             using (new EditorGUILayout.HorizontalScope())
             {
@@ -784,7 +867,7 @@ namespace UniVFX.Editor
         /// <param name="min">slider min</param>
         /// <param name="max">slider max</param>
         /// <returns></returns>
-        public static int CanvasOptionIntSlider(ref Material mat, string property, string label, int index, int min, int max)
+        static int CanvasOptionIntSlider(ref Material mat, string property, string label, int index, int min, int max)
         {
             using (new EditorGUILayout.HorizontalScope())
             {
@@ -872,6 +955,18 @@ namespace UniVFX.Editor
             }
         }
 
+        public static void OptionSlider(ref Material mat, string property, string label, float min, float max, bool isCanvas)
+        {
+            if (isCanvas)
+            {
+                CanvasOptionSlider(ref mat, property, label, min, max);
+            }
+            else
+            {
+                OptionSlider(ref mat, property, label, min, max);
+            }
+        }
+
         /// MARK: OptionSlider
         /// <summary>
         /// floatプロパティの編集
@@ -881,7 +976,7 @@ namespace UniVFX.Editor
         /// <param name="label">display name</param>
         /// <param name="min">slider min</param>
         /// <param name="max">slider max</param>
-        public static void OptionSlider(ref Material mat, string property, string label, float min, float max)
+        static void OptionSlider(ref Material mat, string property, string label, float min, float max)
         {
             using (new EditorGUILayout.HorizontalScope())
             {
@@ -911,7 +1006,7 @@ namespace UniVFX.Editor
         /// <param name="label">display name</param>
         /// <param name="min">slider min</param>
         /// <param name="max">slider max</param>
-        public static void CanvasOptionSlider(ref Material mat, string property, string label, float min, float max)
+        static void CanvasOptionSlider(ref Material mat, string property, string label, float min, float max)
         {
             using (new EditorGUILayout.HorizontalScope())
             {
@@ -932,6 +1027,18 @@ namespace UniVFX.Editor
             }
         }
 
+        public static void OptionSlider(ref Material mat, string property, string label, int index, float min, float max, bool isCanvas)
+        {
+            if (isCanvas)
+            {
+                CanvasOptionSlider(ref mat, property, label, index, min, max);
+            }
+            else
+            {
+                OptionSlider(ref mat, property, label, index, min, max);
+            }
+        }
+
         /// MARK: OptionSlider
         /// <summary>
         /// Vector４プロパティ
@@ -943,7 +1050,7 @@ namespace UniVFX.Editor
         /// <param name="index">0~3 vector index</param>
         /// <param name="min">slider min</param>
         /// <param name="max">slider max</param>
-        public static void OptionSlider(ref Material mat, string property, string label, int index, float min, float max)
+        static void OptionSlider(ref Material mat, string property, string label, int index, float min, float max)
         {
             using (new EditorGUILayout.HorizontalScope())
             {
@@ -1002,7 +1109,7 @@ namespace UniVFX.Editor
         /// <param name="index">0~3 vector index</param>
         /// <param name="min">slider min</param>
         /// <param name="max">slider max</param>
-        public static void CanvasOptionSlider(ref Material mat, string property, string label, int index, float min, float max)
+        static void CanvasOptionSlider(ref Material mat, string property, string label, int index, float min, float max)
         {
             using (new EditorGUILayout.HorizontalScope())
             {
@@ -1050,6 +1157,18 @@ namespace UniVFX.Editor
             }
         }
 
+        public static void OptionColorField(ref Material mat, string property, string label, bool isCanvas)
+        {
+            if (isCanvas)
+            {
+                CanvasOptionColorField(ref mat, property, label);
+            }
+            else
+            {
+                OptionColorField(ref mat, property, label);
+            }
+        }
+
         /// MARK: OptionColorField
         /// <summary>
         /// Colorプロパティの編集
@@ -1057,7 +1176,7 @@ namespace UniVFX.Editor
         /// <param name="mat"></param>
         /// <param name="property">color name, "+_Data"</param>
         /// <param name="label">display name</param>
-        public static void OptionColorField(ref Material mat, string property, string label)
+        static void OptionColorField(ref Material mat, string property, string label)
         {
             using (new EditorGUILayout.HorizontalScope())
             {
@@ -1085,7 +1204,7 @@ namespace UniVFX.Editor
         /// <param name="mat"></param>
         /// <param name="property">color name, "+_Data"</param>
         /// <param name="label">display name</param>
-        public static void CanvasOptionColorField(ref Material mat, string property, string label)
+        static void CanvasOptionColorField(ref Material mat, string property, string label)
         {
             using (new EditorGUILayout.HorizontalScope())
             {

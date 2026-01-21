@@ -103,15 +103,15 @@ namespace UniVFX.Editor
                                     var frenel = UniVFXGUILayout.OptionBoolField(ref _mat, _Frenel, "Frenel");
                                     if(frenel)
                                     {
-                                        UniVFXGUILayout.OptionSlider(ref _mat, _Pow, "Power", 0.001f, 50);
+                                        UniVFXGUILayout.OptionSlider(ref _mat, _Pow, "Power", 0.001f, 50, _isCanvas);
                                         UniVFXGUILayout.OptionBoolField(ref _mat, _Reverce, "Reverce");
                                     }
 
                                     var type = UniVFXGUILayout.OptionPopupField(ref _mat, _Type, "Position Fade Type", _TypeOption);
                                     if (type < 3)
                                     {
-                                        UniVFXGUILayout.OptionSlider(ref _mat, _FadeIn, "FadeIn", -10, 10);
-                                        UniVFXGUILayout.OptionSlider(ref _mat, _FadeOut, "FadeOut", -10, 10);
+                                        UniVFXGUILayout.OptionSlider(ref _mat, _FadeIn, "FadeIn", -10, 10, _isCanvas);
+                                        UniVFXGUILayout.OptionSlider(ref _mat, _FadeOut, "FadeOut", -10, 10, _isCanvas);
                                     }
 
                                     

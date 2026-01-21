@@ -90,7 +90,7 @@ namespace UniVFX.Editor
                                 {
                                     GUI.color = new Color(1f, 1f, 1f, 1f);
                                     UniVFXGUILayout.OptionTextureField(ref _mat, _Tex, "Texture");
-                                    UniVFXGUILayout.OptionSlider(ref _mat, _Intensity, "Intensity", -1, 1);
+                                    UniVFXGUILayout.OptionSlider(ref _mat, _Intensity, "Intensity", -1, 1, _isCanvas);
                                     _viewTargetGUI = EditorGUILayout.Foldout(_viewTargetGUI, "Target");
                                     if (_viewTargetGUI)
                                     {

@@ -16,6 +16,13 @@ namespace UniVFX.Editor
         public const string _ZTest = "_ZTest";
         public const string _Cull = "_Cull";
 
+        public const string BRP_SrcBlend = "_BUILTIN_SrcBlend";
+        public const string BRP_DstBlend = "_BUILTIN_DstBlend";
+        public const string BRP_SrcBlendAlpha = "_BUILTIN_SrcBlendAlpha";
+        public const string BRP_DstBlendAlpha = "_BUILTIN_DstBlendAlpha";
+        public const string BRP_ZTest = "_BUILTIN_ZTest";
+        public const string BRP_Cull = "_BUILTIN_CullMode";
+
         public readonly static string[] _BlendMode = { "Zero", "One", "DstColor", "SrcColor", "OneMinusDstColor", "SrcAlpha", "OneMinusSrcColor", "DstAlpha", "OneMinusDstAlpha", "SrcAlphaSaturate", "OneMinusSrcAlpha" };
         public readonly static string[] _ZTestMode = { "Off", "Never", "Less", "Equal", "LEqual", "Greater", "NotEqual", "GEqual", "Always"};
         public readonly static string[] _CullMode = { "Off", "Front", "Back"};
@@ -63,15 +70,15 @@ namespace UniVFX.Editor
                             {
                                 GUI.color = new Color(1f, 1f, 1f, 1f);
                                 UniVFXGUILayout.OptionBoolField(ref _mat, _ColorMultiplAlpha, "Color Multiple Alpha");
-                                UniVFXGUILayout.OptionPopupField(ref _mat, _SrcBlend, "Src Blend", _BlendMode);
-                                UniVFXGUILayout.OptionPopupField(ref _mat, _DstBlend, "Dst Blend", _BlendMode);
+                                UniVFXGUILayout.OptionPopupField(ref _mat, _isBRP ? BRP_SrcBlend : _SrcBlend, "Src Blend", _BlendMode);
+                                UniVFXGUILayout.OptionPopupField(ref _mat, _isBRP ? BRP_DstBlend : _DstBlend, "Dst Blend", _BlendMode);
                                 if(_mat.HasProperty(_SrcBlendAlpha) && _mat.HasProperty(_DstBlendAlpha))
                                 {
-                                    UniVFXGUILayout.OptionPopupField(ref _mat, _SrcBlendAlpha, "Src Blend Alpha", _BlendMode);
-                                    UniVFXGUILayout.OptionPopupField(ref _mat, _DstBlendAlpha, "Dst Blend Alpha", _BlendMode);
+                                    UniVFXGUILayout.OptionPopupField(ref _mat, _isBRP ? BRP_SrcBlendAlpha : _SrcBlendAlpha, "Src Blend Alpha", _BlendMode);
+                                    UniVFXGUILayout.OptionPopupField(ref _mat, _isBRP ? BRP_DstBlendAlpha : _DstBlendAlpha, "Dst Blend Alpha", _BlendMode);
                                 }
-                                UniVFXGUILayout.OptionPopupField(ref _mat, _ZTest, "ZTest", _ZTestMode);
-                                UniVFXGUILayout.OptionPopupField(ref _mat, _Cull, "Cull", _CullMode);
+                                UniVFXGUILayout.OptionPopupField(ref _mat, _isBRP ? BRP_ZTest : _ZTest, "ZTest", _ZTestMode);
+                                UniVFXGUILayout.OptionPopupField(ref _mat, _isBRP ? BRP_Cull : _Cull, "Cull", _CullMode);
                             }
                         }
                     }

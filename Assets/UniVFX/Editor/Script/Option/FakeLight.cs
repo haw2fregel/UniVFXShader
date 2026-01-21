@@ -90,24 +90,24 @@ namespace UniVFX.Editor
                                 {
                                     GUI.color = new Color(1f, 1f, 1f, 1f);
                                     UniVFXGUILayout.OptionTextureField(ref _mat, _Tex, "Texture");
-                                    UniVFXGUILayout.OptionSlider(ref _mat, _Intensity, "Intensity", 0, 5);
-                                    UniVFXGUILayout.OptionColorField(ref _mat, _LightColor, "Light Color");
-                                    UniVFXGUILayout.OptionColorField(ref _mat, _ShadowColor, "Shadow Color");
+                                    UniVFXGUILayout.OptionSlider(ref _mat, _Intensity, "Intensity", 0, 5, _isCanvas);
+                                    UniVFXGUILayout.OptionColorField(ref _mat, _LightColor, "Light Color", _isCanvas);
+                                    UniVFXGUILayout.OptionColorField(ref _mat, _ShadowColor, "Shadow Color", _isCanvas);
                                     EditorGUILayout.Space();
 
                                     var type = UniVFXGUILayout.OptionPopupField(ref _mat, _Type, "Light Type", _TypeOption);
                                     if (type == 0)
                                     {
-                                        UniVFXGUILayout.OptionSlider(ref _mat, _Param, "X", 0, -1, 1);
-                                        UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Y", 1, -1, 1);
-                                        UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Z", 2, -1, 1);
+                                        UniVFXGUILayout.OptionSlider(ref _mat, _Param, "X", 0, -1, 1, _isCanvas);
+                                        UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Y", 1, -1, 1, _isCanvas);
+                                        UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Z", 2, -1, 1, _isCanvas);
                                     }
                                     else
                                     {
-                                        UniVFXGUILayout.OptionSlider(ref _mat, _Param, "X", 0, -10, 10);
-                                        UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Y", 1, -10, 10);
-                                        UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Z", 2, -10, 10);
-                                        UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Distance", 3, 0.001f, 10);
+                                        UniVFXGUILayout.OptionSlider(ref _mat, _Param, "X", 0, -10, 10, _isCanvas);
+                                        UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Y", 1, -10, 10, _isCanvas);
+                                        UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Z", 2, -10, 10, _isCanvas);
+                                        UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Distance", 3, 0.001f, 10, _isCanvas);
                                     }
                                 }
                             }

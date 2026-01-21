@@ -74,7 +74,7 @@ namespace UniVFX.Editor
                                     GUI.color = new Color(1f, 1f, 1f, 1f);
                                     var row = UniVFXGUILayout.IntSlider(ref _mat, _Row, "Row", 1, 8);
                                     var column = UniVFXGUILayout.IntSlider(ref _mat, _Column, "Column", 1, 8);
-                                    UniVFXGUILayout.OptionIntSlider(ref _mat, _Index, "Index", 0, row * column - 1);
+                                    UniVFXGUILayout.OptionIntSlider(ref _mat, _Index, "Index", 0, row * column - 1, _isCanvas);
                                 }
                             }
                         }

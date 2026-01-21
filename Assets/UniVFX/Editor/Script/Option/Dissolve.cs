@@ -88,11 +88,11 @@ namespace UniVFX.Editor
                                 {
                                     GUI.color = new Color(1f, 1f, 1f, 1f);
                                     UniVFXGUILayout.OptionTextureField(ref _mat, _Tex, "Texture");
-                                    UniVFXGUILayout.OptionColorField(ref _mat, _Color, "Color");
-                                    UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Alpha", 0, 0, 1);
-                                    UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Smooth", 1, 0, 1);
-                                    UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Emissive Width", 2, 0, 1);
-                                    UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Emissive Smooth", 3, 0, 1);
+                                    UniVFXGUILayout.OptionColorField(ref _mat, _Color, "Color", _isCanvas);
+                                    UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Alpha", 0, 0, 1, _isCanvas);
+                                    UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Smooth", 1, 0, 1, _isCanvas);
+                                    UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Emissive Width", 2, 0, 1, _isCanvas);
+                                    UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Emissive Smooth", 3, 0, 1, _isCanvas);
                                     UniVFXGUILayout.UVGUILayout(ref _mat, ref _viewUVGUI, _UV, _isCanvas);
                                 }
                             }
@@ -277,7 +277,7 @@ namespace UniVFX.Editor
 
             var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
             
-            var uvName = UniVFXGUILayout.GetVertUVName(_mat.GetInt(_UV + "Transform_Index"), _mat);
+            var uvName = UniVFXGUILayout.GetVertUVName(_mat.GetInt(_UV + "Transform_Index"), _mat, _isCanvas);
             var transform = "st_" + _Tex.Replace("_", "");
             var transformX = UniVFXGUILayout.VertexDataToVectorCode(_mat, _UV + "Transform", 0, _isCanvas, refactOption);
             var transformY = UniVFXGUILayout.VertexDataToVectorCode(_mat, _UV + "Transform", 1, _isCanvas, refactOption);

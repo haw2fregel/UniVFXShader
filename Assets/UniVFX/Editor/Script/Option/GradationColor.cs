@@ -90,10 +90,10 @@ namespace UniVFX.Editor
                                 using (new EditorGUI.IndentLevelScope())
                                 {
                                     GUI.color = new Color(1f, 1f, 1f, 1f);
-                                    UniVFXGUILayout.OptionColorField(ref _mat, _Color00, "Color00");
-                                    UniVFXGUILayout.OptionColorField(ref _mat, _Color01, "Color01");
-                                    UniVFXGUILayout.OptionColorField(ref _mat, _Color10, "Color10");
-                                    UniVFXGUILayout.OptionColorField(ref _mat, _Color11, "Color11");
+                                    UniVFXGUILayout.OptionColorField(ref _mat, _Color00, "Color00", _isCanvas);
+                                    UniVFXGUILayout.OptionColorField(ref _mat, _Color01, "Color01", _isCanvas);
+                                    UniVFXGUILayout.OptionColorField(ref _mat, _Color10, "Color10", _isCanvas);
+                                    UniVFXGUILayout.OptionColorField(ref _mat, _Color11, "Color11", _isCanvas);
                                     UniVFXGUILayout.OptionPopupField(ref _mat, _BlendMode, "Blend Mode", _BlendModeOption);
                                     UniVFXGUILayout.UVGUILayoutClamp(ref _mat, ref _viewUVGUI, _UV, _isCanvas);
                                 }
@@ -225,7 +225,7 @@ namespace UniVFX.Editor
             if (!IsActive())
                 return code;
 
-            var uvName = UniVFXGUILayout.GetVertUVName(_mat.GetInt(_UV + "Transform_Index"), _mat);
+            var uvName = UniVFXGUILayout.GetVertUVName(_mat.GetInt(_UV + "Transform_Index"), _mat, _isCanvas);
             var transform = "st_Gradation";
             var transformX = UniVFXGUILayout.VertexDataToVectorCode(_mat, _UV + "Transform", 0, _isCanvas, refactOption);
             var transformY = UniVFXGUILayout.VertexDataToVectorCode(_mat, _UV + "Transform", 1, _isCanvas, refactOption);

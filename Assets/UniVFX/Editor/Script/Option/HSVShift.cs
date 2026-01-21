@@ -83,9 +83,9 @@ namespace UniVFX.Editor
                                 {
                                     GUI.color = new Color(1f, 1f, 1f, 1f);
 
-                                    UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Hue", 0, -1, 1);
-                                    UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Sat", 1, -1, 1);
-                                    UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Val", 2, -1, 1);
+                                    UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Hue", 0, -1, 1, _isCanvas);
+                                    UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Sat", 1, -1, 1, _isCanvas);
+                                    UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Val", 2, -1, 1, _isCanvas);
                                 }
                             }
                         }

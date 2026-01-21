@@ -407,7 +407,7 @@ namespace UniVFX.Editor
             shaderCode += "                #endif\n";
             shaderCode += "\n";
 
-            if (useUVChannelList[1].Count >= 1)
+            if (useUVChannelList[2].Count >= 1)
             {
                 shaderCode += "                float4 screenPos = ComputeScreenPos(TransformObjectToHClip(v.vertex.xyz));\n";
                 shaderCode += "                screenPos.xy = screenPos.xy / screenPos.w;\n";

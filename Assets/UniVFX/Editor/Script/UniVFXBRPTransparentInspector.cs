@@ -365,20 +365,20 @@ namespace UniVFX.Editor
             shaderCode += "        Tags { \"RenderType\" = \"Transparent\" \"UniversalMaterialType\" = \"Unlit\" \"Queue\" = \"Transparent\" }\n";
             shaderCode += "        Pass\n";
             shaderCode += "        {\n";
-            shaderCode += "            Cull " + SurfaceOptionBRPTransparent._CullMode[material.GetInt(SurfaceOptionBRPTransparent._Cull)] + "\n";
-            if(material.HasProperty(SurfaceOptionBRPTransparent._SrcBlendAlpha) && material.HasProperty(SurfaceOptionBRPTransparent._DstBlendAlpha))
+            shaderCode += "            Cull " + SurfaceOptionTransparent._CullMode[material.GetInt(SurfaceOptionTransparent.BRP_Cull)] + "\n";
+            if(material.HasProperty(SurfaceOptionTransparent.BRP_SrcBlendAlpha) && material.HasProperty(SurfaceOptionTransparent.BRP_DstBlendAlpha))
             {
-                shaderCode += "            Blend " + SurfaceOptionBRPTransparent._BlendMode[material.GetInt(SurfaceOptionBRPTransparent._SrcBlend)] + " " 
-                                                + SurfaceOptionBRPTransparent._BlendMode[material.GetInt(SurfaceOptionBRPTransparent._DstBlend)] + ", "
-                                                + SurfaceOptionBRPTransparent._BlendMode[material.GetInt(SurfaceOptionBRPTransparent._SrcBlendAlpha)] + " "
-                                                + SurfaceOptionBRPTransparent._BlendMode[material.GetInt(SurfaceOptionBRPTransparent._DstBlendAlpha)] + "\n";
+                shaderCode += "            Blend " + SurfaceOptionTransparent._BlendMode[material.GetInt(SurfaceOptionTransparent.BRP_SrcBlend)] + " " 
+                                                + SurfaceOptionTransparent._BlendMode[material.GetInt(SurfaceOptionTransparent.BRP_DstBlend)] + ", "
+                                                + SurfaceOptionTransparent._BlendMode[material.GetInt(SurfaceOptionTransparent.BRP_SrcBlendAlpha)] + " "
+                                                + SurfaceOptionTransparent._BlendMode[material.GetInt(SurfaceOptionTransparent.BRP_DstBlendAlpha)] + "\n";
             }
             else
             {
-                shaderCode += "            Blend " + SurfaceOptionBRPTransparent._BlendMode[material.GetInt(SurfaceOptionBRPTransparent._SrcBlend)] + " " 
-                                                + SurfaceOptionBRPTransparent._BlendMode[material.GetInt(SurfaceOptionBRPTransparent._DstBlend)] + "\n";
+                shaderCode += "            Blend " + SurfaceOptionTransparent._BlendMode[material.GetInt(SurfaceOptionTransparent.BRP_SrcBlend)] + " " 
+                                                + SurfaceOptionTransparent._BlendMode[material.GetInt(SurfaceOptionTransparent.BRP_DstBlend)] + "\n";
             }
-            shaderCode += "            ZTest " + SurfaceOptionBRPTransparent._ZTestMode[material.GetInt(SurfaceOptionBRPTransparent._ZTest)] + "\n";
+            shaderCode += "            ZTest " + SurfaceOptionTransparent._ZTestMode[material.GetInt(SurfaceOptionTransparent.BRP_ZTest)] + "\n";
             shaderCode += "            ZWrite Off\n";
             shaderCode += "\n";
 
@@ -516,7 +516,7 @@ namespace UniVFX.Editor
             {
                 shaderCode += "                float4 time = _Time * " + (_refactOption.HasFlag(RefactOption.PropertiesToFixedValue) ? material.GetFloat(Time._Speed) : Time._Speed) + ";\n";
                 if (useVertexDataList[21].Count >= 1 || useVertexDataList[22].Count >= 1 || useVertexDataList[23].Count >= 1 || useVertexDataList[24].Count >= 1)
-                    shaderCode += "                float4 timeMap = " + Time._Tex + ".Sample(SamplerState_Linear_Clamp, frac(time.yy));\n";
+                    shaderCode += "                float4 timeMap = " + Time._Tex + ".SampleLevel(SamplerState_Linear_Clamp, frac(time.yy), 0);\n";
             }
 
             // 頂点シェーダー早期実行する処理をここに追加

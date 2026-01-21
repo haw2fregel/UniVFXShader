@@ -70,8 +70,8 @@ namespace UniVFX.Editor
                                 using (new EditorGUI.IndentLevelScope())
                                 {
                                     GUI.color = new Color(1f, 1f, 1f, 1f);
-                                    UniVFXGUILayout.OptionColorField(ref _mat, _FrontColor, "FrontFace Color");
-                                    UniVFXGUILayout.OptionColorField(ref _mat, _BackColor, "BackFace Color");
+                                    UniVFXGUILayout.OptionColorField(ref _mat, _FrontColor, "FrontFace Color", _isCanvas);
+                                    UniVFXGUILayout.OptionColorField(ref _mat, _BackColor, "BackFace Color", _isCanvas);
                                 }
                             }
                         }

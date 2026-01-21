@@ -69,7 +69,7 @@ namespace UniVFX.Editor
                                 using (new EditorGUI.IndentLevelScope())
                                 {
                                     GUI.color = new Color(1f, 1f, 1f, 1f);
-                                    UniVFXGUILayout.OptionSlider(ref _mat, _Rotate, "Rotate", 0, 360);
+                                    UniVFXGUILayout.OptionSlider(ref _mat, _Rotate, "Rotate", 0, 360, _isCanvas);
                                 }
                             }
                         }

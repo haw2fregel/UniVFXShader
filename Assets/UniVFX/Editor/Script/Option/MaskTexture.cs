@@ -86,7 +86,7 @@ namespace UniVFX.Editor
                                     GUI.color = new Color(1f, 1f, 1f, 1f);
 
                                     UniVFXGUILayout.OptionTextureField(ref _mat, _Tex, "Texture");
-                                    UniVFXGUILayout.OptionSlider(ref _mat, _Offset, "Value Offset", -2, 2);
+                                    UniVFXGUILayout.OptionSlider(ref _mat, _Offset, "Value Offset", -2, 2, _isCanvas);
                                     UniVFXGUILayout.OptionBoolField(ref _mat, _Repeat, "Repeat");
                                     UniVFXGUILayout.UVGUILayout(ref _mat, ref _viewUVGUI, _UV, _isCanvas);
 
@@ -411,7 +411,7 @@ namespace UniVFX.Editor
                 && _mat.GetFloat(_TargetSurfaceFade) == 0 && _mat.GetFloat(_TargetHSVShift) == 0 && _mat.GetFloat(_TargetFakeLight) == 0 && _mat.GetFloat(_TargetParallax) == 0 && _mat.GetFloat(_TargetMainTex) == 0;
             var isTextureNone = _mat.GetTexture(_Tex) == null && refactOption.HasFlag(RefactOption.NoneTextureToFixedValue);
 
-            var uvName = UniVFXGUILayout.GetVertUVName(_mat.GetInt(_UV + "Transform_Index"), _mat);
+            var uvName = UniVFXGUILayout.GetVertUVName(_mat.GetInt(_UV + "Transform_Index"), _mat, _isCanvas);
             var transform = "st_" + _Tex.Replace("_", "");
             var transformX = UniVFXGUILayout.VertexDataToVectorCode(_mat, _UV + "Transform", 0, _isCanvas, refactOption);
             var transformY = UniVFXGUILayout.VertexDataToVectorCode(_mat, _UV + "Transform", 1, _isCanvas, refactOption);

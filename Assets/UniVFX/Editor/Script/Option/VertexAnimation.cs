@@ -73,10 +73,10 @@ namespace UniVFX.Editor
                                 {
                                     GUI.color = new Color(1f, 1f, 1f, 1f);
                                     UniVFXGUILayout.OptionTextureField(ref _mat, _Tex, "Texture");
-                                    UniVFXGUILayout.OptionSlider(ref _mat, _Param, "X", 0, -1, 1);
-                                    UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Y", 1, -1, 1);
-                                    UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Z", 2, -1, 1);
-                                    UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Intensity", 3, -1, 1);
+                                    UniVFXGUILayout.OptionSlider(ref _mat, _Param, "X", 0, -1, 1, _isCanvas);
+                                    UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Y", 1, -1, 1, _isCanvas);
+                                    UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Z", 2, -1, 1, _isCanvas);
+                                    UniVFXGUILayout.OptionSlider(ref _mat, _Param, "Intensity", 3, -1, 1, _isCanvas);
                                     UniVFXGUILayout.UVGUILayoutVert(ref _mat, ref _viewUVGUI, _UV, _isCanvas);
                                 }
                             }
@@ -284,7 +284,7 @@ namespace UniVFX.Editor
             
             var sampler = UniVFXGUILayout.GetSamplerName(_mat.GetInt(_UV + "Transform_Sampler"));
 
-            var uvName = UniVFXGUILayout.GetVertUVName(_mat.GetInt(_UV + "Transform_Index"), _mat);
+            var uvName = UniVFXGUILayout.GetVertUVName(_mat.GetInt(_UV + "Transform_Index"), _mat, _isCanvas);
             var transform = "st_" + _Tex.Replace("_", "");
             var transformX = UniVFXGUILayout.VertexDataToVectorCode(_mat, _UV + "Transform", 0, _isCanvas, refactOption);
             var transformY = UniVFXGUILayout.VertexDataToVectorCode(_mat, _UV + "Transform", 1, _isCanvas, refactOption);
@@ -318,7 +318,7 @@ namespace UniVFX.Editor
 
                 if(_isBRP)
                 {
-                    code.Add("half4 " + tex + " = " + _Tex + ".Sample(SamplerState_Linear_Clamp, " + uv + ");");
+                    code.Add("half4 " + tex + " = " + _Tex + ".SampleLevel(SamplerState_Linear_Clamp, " + uv + ", 0);");
                 }
                 else
                 {
