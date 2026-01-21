@@ -200,8 +200,8 @@ namespace UniVFX.Editor
             code.Add("float2 " + uv + " = 0;");
             code.Add("float invRow = 1.0 / (float)" + row + ";");
             code.Add("float invColumn = 1.0 / (float)" + column + ";");
-            code.Add("int indexColumn = " + index + " / _FripBookRow;");
-            code.Add("int indexRow = " + index + " % _FripBookRow;");
+            code.Add("int indexColumn = " + index + " / " + row + ";");
+            code.Add("int indexRow = " + index + " % " + row + ";");
             code.Add("float2 fripbook_tiling = float2(invRow, invColumn);");
             code.Add("float2 fripbook_offset = float2(indexRow * invRow, indexColumn * invColumn);");
             code.Add(uv + " = (texCoord0.xy * fripbook_tiling) + fripbook_offset;");

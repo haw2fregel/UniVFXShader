@@ -486,7 +486,7 @@ namespace UniVFX.Editor
             shaderCode += "                half4 vertexColor = v.vertexColor;\n";
             shaderCode += "\n";
 
-            if (useUVChannelList[1].Count >= 1 || useUVChannelList[2].Count >= 1 || useUVChannelList[3].Count >= 1 || SurfaceFade.IsActive(material) || UVParallax.IsActive(material))
+            if (useUVChannelList[1].Count >= 1 || useUVChannelList[2].Count >= 1 || useUVChannelList[3].Count >= 1 || SurfaceFade.IsActive(material) || FakeLight.IsActive(material)  || UVParallax.IsActive(material))
                 shaderCode += "                float3 worldPos = TransformObjectToWorld(v.vertex.xyz);\n";
             if (useUVChannelList[4].Count >= 1)
             {
@@ -509,7 +509,7 @@ namespace UniVFX.Editor
             {
                 shaderCode += "                float4 time = _Time * " + (_refactOption.HasFlag(RefactOption.PropertiesToFixedValue) ? material.GetFloat(Time._Speed) : Time._Speed) + ";\n";
                 if (useVertexDataList[21].Count >= 1 || useVertexDataList[22].Count >= 1 || useVertexDataList[23].Count >= 1 || useVertexDataList[24].Count >= 1)
-                    shaderCode += "                float4 timeMap = SAMPLE_TEXTURE2D(" + Time._Tex + ", SamplerState_Linear_Clamp, frac(time.yy));\n";
+                    shaderCode += "                float4 timeMap = SAMPLE_TEXTURE2D_LOD(" + Time._Tex + ", SamplerState_Linear_Clamp, frac(time.yy), 0);\n";
             }
 
             // 頂点シェーダー早期実行する処理をここに追加
@@ -731,7 +731,7 @@ namespace UniVFX.Editor
             shaderCode += "                half4 vertexColor = v.vertexColor;\n";
             shaderCode += "\n";
 
-            if (useUVChannelList[1].Count >= 1 || useUVChannelList[2].Count >= 1 || useUVChannelList[3].Count >= 1 || SurfaceFade.IsActive(material) || UVParallax.IsActive(material))
+            if (useUVChannelList[1].Count >= 1 || useUVChannelList[2].Count >= 1 || useUVChannelList[3].Count >= 1 || SurfaceFade.IsActive(material) || FakeLight.IsActive(material)  || UVParallax.IsActive(material))
                 shaderCode += "                float3 worldPos = TransformObjectToWorld(v.vertex.xyz);\n";
             if (useUVChannelList[4].Count >= 1)
             {
@@ -754,7 +754,7 @@ namespace UniVFX.Editor
             {
                 shaderCode += "                float4 time = _Time * " + (_refactOption.HasFlag(RefactOption.PropertiesToFixedValue) ? material.GetFloat(Time._Speed) : Time._Speed) + ";\n";
                 if (useVertexDataList[21].Count >= 1 || useVertexDataList[22].Count >= 1 || useVertexDataList[23].Count >= 1 || useVertexDataList[24].Count >= 1)
-                    shaderCode += "                float4 timeMap = SAMPLE_TEXTURE2D(" + Time._Tex + ", SamplerState_Linear_Clamp, frac(time.yy));\n";
+                    shaderCode += "                float4 timeMap = SAMPLE_TEXTURE2D_LOD(" + Time._Tex + ", SamplerState_Linear_Clamp, frac(time.yy), 0);\n";
             }
 
             // 頂点シェーダー早期実行する処理をここに追加
