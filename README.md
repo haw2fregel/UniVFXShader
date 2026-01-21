@@ -14,9 +14,14 @@ UnityのPackageManagerを開き「Add package from git URL...」で以下のURL�
 
 - .unitypackageでインストールする場合\
 こちらからダウンロードします。\
-https://github.com/haw2fregel/UniVFXShader/releases/download/v1.0.2_release/UniVFXShader_v1.0.2_URP.unitypackage \
-https://github.com/haw2fregel/UniVFXShader/releases/download/v1.0.2_release/UniVFXShader_v1.0.2_BRP.unitypackage \
+[URP]<br>https://github.com/haw2fregel/UniVFXShader/releases/download/untagged-5459747e3c0e4a00ffd8/UniVFXURP.unitypackage \
+[BuildInPipeline]<br>https://github.com/haw2fregel/UniVFXShader/releases/download/untagged-5459747e3c0e4a00ffd8/UniVFXBRP.unitypackage \
 ※別途ShaderGraphのインストールが必要です。
+
+## アップデート
+<img width="424" height="272" alt="image" src="https://github.com/user-attachments/assets/9c0b6584-77df-499b-92e3-9486f59e021e" />
+
+
 
 ## シェーダー
 URP用
