@@ -369,7 +369,7 @@ https://github.com/user-attachments/assets/2e154bc4-968c-4121-96cd-8a3b8e414963
 | ------------- | ------------- | 
 | uv1 | spriteに依存しない0~1のUVを設定します。 | 
 | uv2 | texcoord2に値を設定します。 | 
-| uv3 | texcoord2に値を設定します。 | 
+| uv3 | texcoord3に値を設定します。 | 
 |  | 利用するUVはCanvasのAdditional Shader Cannelに登録が必要です。<br><br> ![image](https://github.com/user-attachments/assets/713983ed-d713-48ba-a46c-bf803e58e89c)| 
 
 </details>

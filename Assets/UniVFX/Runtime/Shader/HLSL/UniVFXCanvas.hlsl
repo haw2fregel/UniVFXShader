@@ -35,9 +35,9 @@ void UniVFXVert_float(float3 vertex, float3 normal, float3 tangent, float4 texco
     RotateUV(uv, uv4.xy);
     FripBookUV(uv, uv4.zw);
     
-    CanvasUVArrayInitVert(uv, texcoord1.xy, screenPosition)
-
     #ifndef _UVBEND
+        CanvasUVArrayInitVert(uv, texcoord1.xy, screenPosition)
+
         UVTransform(uv1.xy, _MainUV, mainUV)
         if (_BLENDTEXTURE)
         {
@@ -74,9 +74,6 @@ void UniVFXFrag_half(float4 uv1, float4 uv2, float4 uv3, float4 uv4, float4 texc
     CanvasVertexDataArrayInitFrag(texcoord2, texcoord3, color);
     CanvasVertexColorDataArrayInit(texcoord2, texcoord3, color);
 
-    RotateUV(uv2.xy, uv4.xy);
-    FripBookUV(uv2.xy, uv4.zw);
-    
     #ifdef _UVBEND
         BendUV(texcoord0.xy)
         

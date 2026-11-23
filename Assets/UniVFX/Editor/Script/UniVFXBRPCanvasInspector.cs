@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEditor;
 using System;
+using System.Globalization;
 using System.IO;
 
 
@@ -293,7 +294,6 @@ namespace UniVFX.Editor
             shaderCode += "            HLSLPROGRAM\n";
             shaderCode += "            #pragma vertex vert\n";
             shaderCode += "            #pragma fragment frag\n";
-            shaderCode += "            #pragma multi_compile_local _ UNITY_UI_ALPHACLIP\n";
             shaderCode += "            #pragma multi_compile_local _ UNITY_UI_CLIP_RECT\n";
             shaderCode += "            #pragma multi_compile_local _ _ALPHATEST_ON\n";
             shaderCode += "            #include \"UnityCG.cginc\"\n";
@@ -349,6 +349,7 @@ namespace UniVFX.Editor
             shaderCode += "                float4 texCoord0 : TEXCOORD0;\n";
             shaderCode += "                float4 texCoord1 : TEXCOORD1;\n";
             shaderCode += "                float4 texCoord2 : TEXCOORD2;\n";
+            shaderCode += "                float4 texCoord3 : TEXCOORD3;\n";
             shaderCode += "                half4 vertexColor : COLOR;\n";
             shaderCode += "            };\n";
             shaderCode += "\n";
@@ -360,8 +361,9 @@ namespace UniVFX.Editor
             shaderCode += "                float4 texCoord0 : TEXCOORD0;\n";
             shaderCode += "                float4 texCoord1 : TEXCOORD1;\n";
             shaderCode += "                float4 texCoord2 : TEXCOORD2;\n";
+            shaderCode += "                float4 texCoord3 : TEXCOORD3;\n";
             shaderCode += "                half4 vertexColor : COLOR;\n";
-            var v2fCount = 2;
+            var v2fCount = 3;
             foreach (var option in _options)
             {
                 foreach (var code in option.GetUseV2fCode(_refactOption))
@@ -386,19 +388,13 @@ namespace UniVFX.Editor
             shaderCode += "                o.texCoord0 = v.texCoord0;\n";
             shaderCode += "                o.texCoord1 = v.texCoord1;\n";
             shaderCode += "                o.texCoord2 = v.texCoord2;\n";
+            shaderCode += "                o.texCoord3 = v.texCoord3;\n";
             shaderCode += "                o.vertexColor = v.vertexColor;\n";
             shaderCode += "                float4 texCoord0 = v.texCoord0;\n";
             shaderCode += "                float4 texCoord1 = v.texCoord1;\n";
             shaderCode += "                float4 texCoord2 = v.texCoord2;\n";
+            shaderCode += "                float4 texCoord3 = v.texCoord3;\n";
             shaderCode += "                half4 vertexColor = v.vertexColor;\n";
-
-            shaderCode += "                #ifdef UNITY_UI_CLIP_RECT\n";
-            shaderCode += "                    float2 pixelSize = v.vertex.w;\n";
-            shaderCode += "                    pixelSize /= float2(1, 1) * abs(mul((float2x2)UNITY_MATRIX_P, _ScreenParams.xy));\n";
-            shaderCode += "                    float4 clampedRect = clamp(_ClipRect, -2e10, 2e10);\n";
-            shaderCode += "                    float2 maskUV = (v.vertex.xy - clampedRect.xy) / (clampedRect.zw - clampedRect.xy);\n";
-            shaderCode += "                    o.mask = float4(v.vertex.xy * 2 - clampedRect.xy - clampedRect.zw, 0.25 / (0.25 * half2(_UIMaskSoftnessX, _UIMaskSoftnessY) + abs(pixelSize.xy)));\n";
-            shaderCode += "                #endif\n";
             shaderCode += "\n";
 
             if (useUVChannelList[2].Count >= 1)
@@ -412,7 +408,7 @@ namespace UniVFX.Editor
                 useVertexDataList[13].Count >= 1 || useVertexDataList[14].Count >= 1 || useVertexDataList[15].Count >= 1 || useVertexDataList[16].Count >= 1 ||
                 useVertexDataList[17].Count >= 1 || useVertexDataList[18].Count >= 1 || useVertexDataList[19].Count >= 1 || useVertexDataList[20].Count >= 1)
             {
-                shaderCode += "                float4 time = _Time * " + (_refactOption.HasFlag(RefactOption.PropertiesToFixedValue) ? material.GetFloat(Time._Speed) : Time._Speed) + ";\n";
+                shaderCode += "                float4 time = _Time * " + (_refactOption.HasFlag(RefactOption.PropertiesToFixedValue) ? material.GetFloat(Time._Speed).ToString(CultureInfo.InvariantCulture) : Time._Speed) + ";\n";
                 if (useVertexDataList[17].Count >= 1 || useVertexDataList[18].Count >= 1 || useVertexDataList[19].Count >= 1 || useVertexDataList[20].Count >= 1)
                     shaderCode += "                float4 timeMap = " + Time._Tex + ".SampleLevel(SamplerState_Linear_Clamp, frac(time.yy), 0);\n";
             }
@@ -438,6 +434,13 @@ namespace UniVFX.Editor
             }
 
             shaderCode += "                o.positionCS = UnityObjectToClipPos(v.vertex.xyz);\n";
+            shaderCode += "                #ifdef UNITY_UI_CLIP_RECT\n";
+            shaderCode += "                    float2 pixelSize = o.positionCS.w;\n";
+            shaderCode += "                    pixelSize /= float2(1, 1) * abs(mul((float2x2)UNITY_MATRIX_P, _ScreenParams.xy));\n";
+            shaderCode += "                    float4 clampedRect = clamp(_ClipRect, -2e10, 2e10);\n";
+            shaderCode += "                    float2 maskUV = (v.vertex.xy - clampedRect.xy) / (clampedRect.zw - clampedRect.xy);\n";
+            shaderCode += "                    o.mask = float4(v.vertex.xy * 2 - clampedRect.xy - clampedRect.zw, 0.25 / (0.25 * half2(_UIMaskSoftnessX, _UIMaskSoftnessY) + abs(pixelSize.xy)));\n";
+            shaderCode += "                #endif\n";
             shaderCode += "                return o;\n";
             shaderCode += "            }\n";
             shaderCode += "\n";
@@ -447,6 +450,7 @@ namespace UniVFX.Editor
             shaderCode += "                half4 col = half4(1,1,1,1);\n";
             shaderCode += "                float4 texCoord1 = i.texCoord1;\n";
             shaderCode += "                float4 texCoord2 = i.texCoord2;\n";
+            shaderCode += "                float4 texCoord3 = i.texCoord3;\n";
             shaderCode += "                half4 vertexColor = i.vertexColor;\n";
             shaderCode += "\n";
 
@@ -454,7 +458,7 @@ namespace UniVFX.Editor
                 useVertexDataList[13].Count >= 1 || useVertexDataList[14].Count >= 1 || useVertexDataList[15].Count >= 1 || useVertexDataList[16].Count >= 1 ||
                 useVertexDataList[17].Count >= 1 || useVertexDataList[18].Count >= 1 || useVertexDataList[19].Count >= 1 || useVertexDataList[20].Count >= 1)
             {
-                shaderCode += "                float4 time = _Time * " + (_refactOption.HasFlag(RefactOption.PropertiesToFixedValue) ? material.GetFloat(Time._Speed) : Time._Speed) + ";\n";
+                shaderCode += "                float4 time = _Time * " + (_refactOption.HasFlag(RefactOption.PropertiesToFixedValue) ? material.GetFloat(Time._Speed).ToString(CultureInfo.InvariantCulture) : Time._Speed) + ";\n";
                 if (useVertexDataList[17].Count >= 1 || useVertexDataList[18].Count >= 1 || useVertexDataList[19].Count >= 1 || useVertexDataList[20].Count >= 1)
                     shaderCode += "                float4 timeMap = " + Time._Tex + ".Sample(SamplerState_Linear_Clamp, frac(time.yy));\n";
             }
@@ -488,7 +492,7 @@ namespace UniVFX.Editor
 
             if(material.IsKeywordEnabled(SurfaceOptionCanvas._AlphaClipActive))
             {
-                shaderCode += "                    clip (col.a - " + material.GetFloat(SurfaceOptionCanvas._AlphaClip) + ");\n";
+                shaderCode += "                    clip (col.a - " + material.GetFloat(SurfaceOptionCanvas._AlphaClip).ToString(CultureInfo.InvariantCulture) + ");\n";
             }
 
             shaderCode += "                col.rgb *= col.a;\n";

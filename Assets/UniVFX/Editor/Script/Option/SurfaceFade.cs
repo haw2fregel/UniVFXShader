@@ -362,14 +362,14 @@ namespace UniVFX.Editor
                 var pow = UniVFXGUILayout.VertexDataToFloatCode(_mat, _Pow, _isCanvas, refactOption);
                 if(_isBRP)
                 {
-                    code.Add("float rimFade = i.surfaceFadeParam.x;");
+                    code.Add("float rimFade = saturate(i.surfaceFadeParam.x);");
                 }
                 else
                 {
                     code.Add("float rimFade = saturate(dot(TransformObjectToWorldDir(i.normal), GetWorldSpaceNormalizeViewDir(i.worldPos)));");
                 }
                 
-                code.Add("rimFade = pow(rimFade, " + pow + ");");
+                AddFresnelPowCode(code, pow, refactOption);
                 if (_mat.GetInt(_Reverce) == 1)
                     code.Add("rimFade = 1 - rimFade;");
                 code.Add(_ResultValue + " = rimFade;");
@@ -437,6 +437,38 @@ namespace UniVFX.Editor
                 code.Add("col.a *= " + _ResultValue + ";");
             
             return code;
+        }
+
+        private void AddFresnelPowCode(List<string> code, string powExpr, RefactOption refactOption)
+        {
+            // rimFade は saturate 済みで非負のため、使用頻度の高い整数冪 1〜4 のみ pow() を乗算へ展開する
+            var canUnrollPow = refactOption.HasFlag(RefactOption.PropertiesToFixedValue) && _mat.GetInt(_Pow + "_Data") == 0;
+            if (canUnrollPow)
+            {
+                var powValue = _mat.GetFloat(_Pow);
+                if (powValue == 1f)
+                {
+                    return;
+                }
+                if (powValue == 2f)
+                {
+                    code.Add("rimFade = rimFade * rimFade;");
+                    return;
+                }
+                if (powValue == 3f)
+                {
+                    code.Add("rimFade = rimFade * rimFade * rimFade;");
+                    return;
+                }
+                if (powValue == 4f)
+                {
+                    code.Add("rimFade = rimFade * rimFade;");
+                    code.Add("rimFade = rimFade * rimFade;");
+                    return;
+                }
+            }
+
+            code.Add("rimFade = pow(rimFade, " + powExpr + ");");
         }
        
     }

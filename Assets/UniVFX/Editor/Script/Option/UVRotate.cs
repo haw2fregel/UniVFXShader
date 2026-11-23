@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEditor;
 
 
@@ -187,11 +188,23 @@ namespace UniVFX.Editor
                 return code;
             }
             
-            code.Add("float2 " + uv + " = 0;");
+            if (refactOption.HasFlag(RefactOption.PropertiesToFixedValue) && _mat.GetInt(_Rotate + "_Data") == 0)
+            {
+                var rotateAngle = _mat.GetFloat(_Rotate) * 3.14f / 180f;
+                var cosText = Mathf.Cos(rotateAngle).ToString(CultureInfo.InvariantCulture);
+                var rotateSin = Mathf.Sin(rotateAngle);
+                var sinText = rotateSin.ToString(CultureInfo.InvariantCulture);
+                var negSinText = (-rotateSin).ToString(CultureInfo.InvariantCulture);
+
+                code.Add("float2 " + uv + " = (mul(texCoord0.xy - float2(0.5, 0.5), float2x2(" + cosText + ", " + negSinText + ", " + sinText + ", " + cosText + ")) + float2(0.5, 0.5));");
+                code.Add("");
+                return code;
+            }
+
             code.Add("float rotateAngle = " + rotate + " * 3.14 / 180 ;");
             code.Add("float rotateCos = cos(rotateAngle);");
             code.Add("float rotateSin = sin(rotateAngle);");
-            code.Add(uv + " = (mul(texCoord0.xy - float2(0.5, 0.5), float2x2(rotateCos, -rotateSin, rotateSin, rotateCos)) + float2(0.5, 0.5));");
+            code.Add("float2 " + uv + " = (mul(texCoord0.xy - float2(0.5, 0.5), float2x2(rotateCos, -rotateSin, rotateSin, rotateCos)) + float2(0.5, 0.5));");
             code.Add("");
             return code;
         }

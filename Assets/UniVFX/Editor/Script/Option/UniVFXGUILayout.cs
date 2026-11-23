@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System;
+using System.Globalization;
 
 namespace UniVFX.Editor
 {
@@ -1539,7 +1540,7 @@ namespace UniVFX.Editor
         {
             var vertexData = mat.GetInt(prop + "_Data");
             var property = prop;
-            var fixedValue = mat.GetFloat(prop).ToString();
+            var fixedValue = mat.GetFloat(prop).ToString(CultureInfo.InvariantCulture);
 
             if (isCanvas)
             {
@@ -1575,22 +1576,22 @@ namespace UniVFX.Editor
                 case 0:
                     vertexData = (int)mat.GetVector(prop + "_Data").x;
                     property = prop + ".x";
-                    fixedValue = mat.GetVector(prop).x.ToString();
+                    fixedValue = mat.GetVector(prop).x.ToString(CultureInfo.InvariantCulture);
                     break;
                 case 1:
                     vertexData = (int)mat.GetVector(prop + "_Data").y;
                     property = prop + ".y";
-                    fixedValue = mat.GetVector(prop).y.ToString();
+                    fixedValue = mat.GetVector(prop).y.ToString(CultureInfo.InvariantCulture);
                     break;
                 case 2:
                     vertexData = (int)mat.GetVector(prop + "_Data").z;
                     property = prop + ".z";
-                    fixedValue = mat.GetVector(prop).z.ToString();
+                    fixedValue = mat.GetVector(prop).z.ToString(CultureInfo.InvariantCulture);
                     break;
                 case 3:
                     vertexData = (int)mat.GetVector(prop + "_Data").w;
                     property = prop + ".w";
-                    fixedValue = mat.GetVector(prop).w.ToString();
+                    fixedValue = mat.GetVector(prop).w.ToString(CultureInfo.InvariantCulture);
                     break;
             }
             if (isCanvas)
@@ -1621,7 +1622,8 @@ namespace UniVFX.Editor
         {
             var vertexData = mat.GetInt(prop + "_Data");
             var property = prop;
-            var fixedValue = isLinear ? mat.GetColor(prop).linear.ToString().Replace("RGBA", "half4") : mat.GetColor(prop).ToString().Replace("RGBA", "half4");
+            var color = isLinear ? mat.GetColor(prop).linear : mat.GetColor(prop);
+            var fixedValue = string.Format(CultureInfo.InvariantCulture, "half4({0:F3}, {1:F3}, {2:F3}, {3:F3})", color.r, color.g, color.b, color.a);
 
             if (isCanvas)
             {
@@ -1713,9 +1715,9 @@ namespace UniVFX.Editor
                 case (int)CanvasVertexData.Input:
                     return prop;
                 case (int)CanvasVertexData.TEXCOORD2X:
-                    return "texCoord1.x";
+                    return "texCoord2.x";
                 case (int)CanvasVertexData.TEXCOORD2Y:
-                    return "texCoord1.y";
+                    return "texCoord2.y";
                 case (int)CanvasVertexData.TEXCOORD3X:
                     return "texCoord3.x";
                 case (int)CanvasVertexData.TEXCOORD3Y:

@@ -192,7 +192,6 @@ Shader "Shader Graphs/UniVFXBRPCanvas"
             #pragma fragment fragCustom
             
             // Keywords
-            #pragma multi_compile_local _ UNITY_UI_ALPHACLIP
             #pragma multi_compile_local _ UNITY_UI_CLIP_RECT
             #pragma multi_compile_local _ _ALPHATEST_ON
             #pragma shader_feature_local_fragment _ _HSVSHIFT

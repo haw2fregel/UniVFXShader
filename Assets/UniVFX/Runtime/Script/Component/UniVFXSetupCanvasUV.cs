@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,41 +6,58 @@ namespace UniVFX
     [RequireComponent(typeof(Image))]
     public class UniVFXSetupCanvasUV : BaseMeshEffect
     {
+        private const float MinAxisSize = 1e-6f;
+
         [SerializeField] Vector2 _uv2;
         [SerializeField] Vector2 _uv3;
+
         public override void ModifyMesh(VertexHelper vertexHelper)
         {
-            var baseVertices = new List<UIVertex>();
-            vertexHelper.GetUIVertexStream(baseVertices);
-
-            var minPosX = baseVertices.Min(x => x.position.x);
-            var maxPosX = baseVertices.Max(x => x.position.x);
-            var minPosY = baseVertices.Min(x => x.position.y);
-            var maxPosY = baseVertices.Max(x => x.position.y);
-
-            var scaleX = 1 / (maxPosX - minPosX);
-            var scaleY = 1 / (maxPosY - minPosY);
-
-            for (var i = 0; i < baseVertices.Count; i++)
+            if (!IsActive())
             {
-                var posToUVX = (baseVertices[i].position.x - minPosX) * scaleX;
-                var posToUVY = (baseVertices[i].position.y - minPosY) * scaleY;
-
-                var vertex = new UIVertex();
-                vertex.position = baseVertices[i].position;
-                vertex.uv0 = baseVertices[i].uv0;
-                vertex.uv1 = new Vector2(posToUVX, posToUVY);
-                vertex.uv2 = _uv2;
-                vertex.uv3 = _uv3;
-                vertex.color = baseVertices[i].color;
-
-                baseVertices[i] = vertex;
+                return;
             }
 
-            vertexHelper.Clear();
-            vertexHelper.AddUIVertexTriangleStream(baseVertices);
+            var vertexCount = vertexHelper.currentVertCount;
+            if (vertexCount == 0)
+            {
+                return;
+            }
 
+            UIVertex vertex = default;
+            vertexHelper.PopulateUIVertex(ref vertex, 0);
+            var minPosX = vertex.position.x;
+            var maxPosX = vertex.position.x;
+            var minPosY = vertex.position.y;
+            var maxPosY = vertex.position.y;
+
+            for (var i = 1; i < vertexCount; i++)
+            {
+                vertexHelper.PopulateUIVertex(ref vertex, i);
+                var position = vertex.position;
+                minPosX = Mathf.Min(minPosX, position.x);
+                maxPosX = Mathf.Max(maxPosX, position.x);
+                minPosY = Mathf.Min(minPosY, position.y);
+                maxPosY = Mathf.Max(maxPosY, position.y);
+            }
+
+            var sizeX = maxPosX - minPosX;
+            var sizeY = maxPosY - minPosY;
+            var scaleX = sizeX > MinAxisSize ? 1f / sizeX : 0f;
+            var scaleY = sizeY > MinAxisSize ? 1f / sizeY : 0f;
+
+            for (var i = 0; i < vertexCount; i++)
+            {
+                vertexHelper.PopulateUIVertex(ref vertex, i);
+                var uvX = (vertex.position.x - minPosX) * scaleX;
+                var uvY = (vertex.position.y - minPosY) * scaleY;
+
+                vertex.uv1 = new Vector2(uvX, uvY);
+                vertex.uv2 = _uv2;
+                vertex.uv3 = _uv3;
+
+                vertexHelper.SetUIVertex(vertex, i);
+            }
         }
-
     }
 }

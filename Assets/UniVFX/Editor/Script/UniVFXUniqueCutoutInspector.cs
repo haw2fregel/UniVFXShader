@@ -1,28 +1,32 @@
-﻿using UnityEngine;
-using UnityEditor;
+﻿using UnityEditor;
+using UnityEngine;
 
 namespace UniVFX.Editor
 {
     public class UniVFXUniqueCutoutInspector : ShaderGUI
     {
+        private const string BaseShaderName = "Shader Graphs/UniVFXCutout";
 
         // MARK: OnGUI
         public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] properties)
         {
-            Material material = materialEditor.target as Material;
-            Undo.RecordObject(material, "UniVFX Change");
+            var material = materialEditor.target as Material;
+            if (material == null)
+            {
+                return;
+            }
 
+            EditorGUI.BeginChangeCheck();
             base.OnGUI(materialEditor, properties);
+            if (EditorGUI.EndChangeCheck())
+            {
+                EditorUtility.SetDirty(material);
+            }
 
             if (GUILayout.Button("汎用シェーダーに戻す"))
             {
-                var currentShader = material.shader;
-                material.shader = Shader.Find("Shader Graphs/UniVFXCutout");
-                AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(currentShader));
-
+                UniVFXUniqueShaderRevertUtility.TryRevertToBaseShader(material, BaseShaderName);
             }
-            
-            EditorUtility.SetDirty(material);
         }
     }
 }
