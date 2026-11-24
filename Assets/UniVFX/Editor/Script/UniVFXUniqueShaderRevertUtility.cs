@@ -7,6 +7,8 @@ namespace UniVFX.Editor
 {
     internal static class UniVFXUniqueShaderRevertUtility
     {
+        private const string RevertConfirmSuppressConfigKey = "UniVFX.SuppressRevertUniqueShaderConfirm";
+
         internal static bool TryRevertToBaseShader(Material material, string baseShaderName)
         {
             if (material == null)
@@ -31,12 +33,7 @@ namespace UniVFX.Editor
                 return false;
             }
 
-            var isConfirmed = EditorUtility.DisplayDialog(
-                title: "汎用シェーダーに戻す",
-                message: "このマテリアルを汎用シェーダーに戻します。\n他のマテリアルから参照されていない場合、現在の専用シェーダーアセットは削除されます。\n削除された専用シェーダーは Undo（元に戻す）で復元できません。\n続行しますか？",
-                ok: "戻す",
-                cancel: "キャンセル");
-            if (!isConfirmed)
+            if (!ConfirmRevert())
             {
                 return false;
             }
@@ -167,6 +164,33 @@ namespace UniVFX.Editor
             }
 
             return AssetDatabase.IsMainAsset(currentShader);
+        }
+
+        private static bool ConfirmRevert()
+        {
+            if (string.Equals(
+                    EditorUserSettings.GetConfigValue(RevertConfirmSuppressConfigKey),
+                    "true",
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            // Windows では左から ok / alt / cancel の順で配置される
+            var choice = EditorUtility.DisplayDialogComplex(
+                title: "汎用シェーダーに戻す",
+                message: "汎用シェーダーに戻します。\n\n未使用の専用シェーダーは削除されます。\n（削除後は Undo で復元できません）",
+                ok: "今後表示しない",
+                cancel: "キャンセル",
+                alt: "続行");
+
+            if (choice == 0)
+            {
+                EditorUserSettings.SetConfigValue(RevertConfirmSuppressConfigKey, "true");
+                return true;
+            }
+
+            return choice == 2;
         }
     }
 }

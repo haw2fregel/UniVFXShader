@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 using UnityEditor;
 using System;
@@ -55,6 +55,8 @@ namespace UniVFX.Editor
         public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] properties)
         {
             Material material = materialEditor.target as Material;
+            if (material == null)
+                return;
             Undo.RecordObject(material, "UniVFX Change");
 
             // MARK: Setup
@@ -101,7 +103,12 @@ namespace UniVFX.Editor
                 //Shader変更時の不正データを修正
                 option.VaridateCustomData();
                 //Inspector表示
+                EditorGUI.BeginChangeCheck();
                 option.OptionGUI();
+                if (EditorGUI.EndChangeCheck())
+                {
+                    EditorUtility.SetDirty(material);
+                }
                 //CustomDataの使用状況を収集
                 option.CollectCustomData(ref useVertexDataList);
                 option.CollectCustomColorData(ref useVertexColorDataList);
@@ -194,13 +201,13 @@ namespace UniVFX.Editor
                 GUILayout.Space(5);
                 EditorGUILayout.LabelField("最適化", EditorStyles.boldLabel);
                 _refactOption = (RefactOption)EditorGUILayout.EnumFlagsField("最適化設定", _refactOption);
+                UniVFXUniqueShaderPathUtility.DrawOutputDirectoryField(material);
                 if (GUILayout.Button("専用シェーダーに変換"))
                 {
                     ConvertUniqueShader(materialEditor);
                 }
 
             }
-            EditorUtility.SetDirty(material);
         }
 
         /// <summary>
@@ -306,9 +313,8 @@ namespace UniVFX.Editor
         {
             Material material = materialEditor.target as Material;
             material.parent = null;
-            var dir = AssetDatabase.GetAssetPath(material.shader);
-            dir = System.IO.Path.GetDirectoryName(dir) + "/Transparent";
-            var path = dir + "/" + material.name + ".shader";
+            var path = UniVFXUniqueShaderPathUtility.ResolveOutputPath(material, "Transparent");
+            var dir = System.IO.Path.GetDirectoryName(path);
 
             var useVertexDataList = new List<List<string>>();
             for (int i = 0; i < Enum.GetValues(typeof(VertexData)).Length; i++)
@@ -630,6 +636,7 @@ namespace UniVFX.Editor
 
             var asset = AssetDatabase.LoadAssetAtPath<Shader>(path);
             material.shader = asset;
+            EditorUtility.SetDirty(material);
         }
     }
 }
