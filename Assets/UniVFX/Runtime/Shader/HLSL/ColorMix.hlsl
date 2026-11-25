@@ -7,7 +7,7 @@
 
 #define ColorMixAlpha(baseColor, mixColor, mixAlpha) lerp(baseColor, mixColor, mixAlpha);
 
-#define ColorMixOverlay(baseColor, mixColor, mixAlpha) lerp(baseColor, baseColor < 0.5 ? 2.0 * mixColor * baseColor : 1.0 - (1.0 - mixColor) * (1.0 - baseColor), mixAlpha);
+#define ColorMixOverlay(baseColor, mixColor, mixAlpha) lerp(baseColor, baseColor < 0.5 ? 2.0 * mixColor * baseColor : 1.0 - 2.0 * (1.0 - mixColor) * (1.0 - baseColor), mixAlpha);
 
 #define ColorMix(resultColor , baseColor, mixColor, mixAlpha, blendMode)\
 {\

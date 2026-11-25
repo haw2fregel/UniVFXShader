@@ -158,8 +158,7 @@ namespace UniVFX.Editor
                                 {
                                     if (useVertexDataList[i].Count > 1)
                                     {
-                                        useVertexDataList[i].RemoveAt(0);
-                                        EditorGUILayout.LabelField(((VertexData)Enum.ToObject(typeof(VertexData), i)).ToString() + ":", String.Join(" / ", useVertexDataList[i]), EditorStyles.wordWrappedLabel);
+                                        EditorGUILayout.LabelField(((VertexData)Enum.ToObject(typeof(VertexData), i)).ToString() + ":", String.Join(" / ", useVertexDataList[i].GetRange(1, useVertexDataList[i].Count - 1)), EditorStyles.wordWrappedLabel);
                                     }
                                 }
                             }
@@ -179,8 +178,7 @@ namespace UniVFX.Editor
                                 {
                                     if (useVertexColorDataList[i].Count > 1)
                                     {
-                                        useVertexColorDataList[i].RemoveAt(0);
-                                        EditorGUILayout.LabelField(((VertexColorData)Enum.ToObject(typeof(VertexColorData), i)).ToString() + ":", String.Join(" / ", useVertexColorDataList[i]), EditorStyles.wordWrappedLabel);
+                                        EditorGUILayout.LabelField(((VertexColorData)Enum.ToObject(typeof(VertexColorData), i)).ToString() + ":", String.Join(" / ", useVertexColorDataList[i].GetRange(1, useVertexColorDataList[i].Count - 1)), EditorStyles.wordWrappedLabel);
                                     }
                                 }
                             }
@@ -293,22 +291,20 @@ namespace UniVFX.Editor
 
         override public void OnMaterialPreviewGUI(MaterialEditor materialEditor, Rect r, GUIStyle background)
         {
-            if (Selection.activeGameObject != null)
-                _ps = Selection.activeGameObject.GetComponent<ParticleSystem>();
+            _ps = Selection.activeGameObject != null ? Selection.activeGameObject.GetComponent<ParticleSystem>() : null;
              materialEditor.DefaultPreviewGUI(r, background);
         }
 
         override public void OnMaterialInteractivePreviewGUI(MaterialEditor materialEditor, Rect r, GUIStyle background)
         {
-            if (Selection.activeGameObject != null)
-                _ps = Selection.activeGameObject.GetComponent<ParticleSystem>();
+            _ps = Selection.activeGameObject != null ? Selection.activeGameObject.GetComponent<ParticleSystem>() : null;
             materialEditor.DefaultPreviewGUI(r, background);
         }
 
         public void ConvertUniqueShader(MaterialEditor materialEditor)
         {
             Material material = materialEditor.target as Material;
-            material.parent = null;
+            if (material == null) return;
             var path = UniVFXUniqueShaderPathUtility.ResolveOutputPath(material, "Opaque");
             var dir = System.IO.Path.GetDirectoryName(path);
 
@@ -335,7 +331,7 @@ namespace UniVFX.Editor
             
 
             var shaderCode = "";
-            shaderCode += "Shader \"UniVFX/" + material.name + " \" \n";
+            shaderCode += "Shader \"UniVFX/" + UniVFXUniqueShaderPathUtility.SanitizeShaderName(System.IO.Path.GetFileNameWithoutExtension(path)) + "\"\n";
             shaderCode += "{\n";
             shaderCode += "    Properties\n";
             shaderCode += "    {\n";
@@ -497,7 +493,7 @@ namespace UniVFX.Editor
                 shaderCode += "                screenPos.xy = screenPos.xy / screenPos.w;\n";
             }
             if (useUVChannelList[5].Count >= 1)
-                shaderCode += "                float3 viewNormal = TransformWorldToViewDir(TransformObjectToWorldDir(v.normal.xyz));\n";
+                shaderCode += "                float3 viewNormal = TransformWorldToViewDir(TransformObjectToWorldDir(v.normal.xyz)) + 0.5;\n";
             if (SurfaceFade.IsActive(material) || FakeLight.IsActive(material) || UVParallax.IsActive(material))
                 shaderCode += "                o.worldPos = worldPos;\n";
             if (SurfaceFade.IsActive(material) || FakeLight.IsActive(material) || UVParallax.IsActive(material))
@@ -573,20 +569,41 @@ namespace UniVFX.Editor
                     shaderCode += "                float4 timeMap = SAMPLE_TEXTURE2D(" + Time._Tex + ", SamplerState_Linear_Clamp, frac(time.yy));\n";
             }
 
-            // フラグメントシェーダーの早期実行処理をここに追加
+            // フラグメントシェーダーの早期実行処理をここに追加（Mask -> SurfaceFade -> その他の順で依存を満たす）
             shaderCode += "//早期計算\n";
             foreach (var option in _options)
             {
+                if (option is not MaskTexture && option is not SurfaceFade) continue;
+                foreach (var code in option.GetFragmentHeadCode(_refactOption))
+                {
+                    shaderCode += "                " + code + "\n";
+                }
+            }
+            foreach (var option in _options)
+            {
+                if (option is MaskTexture || option is SurfaceFade) continue;
                 foreach (var code in option.GetFragmentHeadCode(_refactOption))
                 {
                     shaderCode += "                " + code + "\n";
                 }
             }
 
-            // フラグメントシェーダー処理をここに追加
+            // フラグメントシェーダー処理をここに追加（汎用版と同じく FakeLight を Dissolve より前に実行）
             shaderCode += "//メイン計算\n";
             foreach (var option in _options)
             {
+                if (option is FakeLight) continue;
+                if (option is Dissolve)
+                {
+                    foreach (var flOption in _options)
+                    {
+                        if (flOption is not FakeLight) continue;
+                        foreach (var code in flOption.GetFragmentCode(_refactOption))
+                        {
+                            shaderCode += "                " + code + "\n";
+                        }
+                    }
+                }
                 foreach (var code in option.GetFragmentCode(_refactOption))
                 {
                     shaderCode += "                " + code + "\n";
@@ -610,7 +627,7 @@ namespace UniVFX.Editor
             shaderCode += "        {\n";
             shaderCode += "            Name \"DepthOnly\"\n";
             shaderCode += "            Tags { \"LightMode\" = \"DepthOnly\" }\n";
-            shaderCode += "            Cull Off\n";
+            shaderCode += "            Cull Back\n";
             shaderCode += "            ZTest LEqual\n";
             shaderCode += "            ZWrite On\n";
             shaderCode += "            ColorMask R\n";
@@ -628,7 +645,7 @@ namespace UniVFX.Editor
             // CBUFFER定義をここに追加
             foreach (var option in _options)
             {
-                if (option is not VertexAnimation)
+                if (option is not VertexAnimation && option is not UVRotate && option is not UVFripBook)
                     continue;
                 foreach (var code in option.GetCBufferCode(_refactOption))
                 {
@@ -639,7 +656,16 @@ namespace UniVFX.Editor
             if (useVertexDataList[13].Count >= 1 || useVertexDataList[14].Count >= 1 || useVertexDataList[15].Count >= 1 || useVertexDataList[16].Count >= 1 ||
                 useVertexDataList[17].Count >= 1 || useVertexDataList[18].Count >= 1 || useVertexDataList[19].Count >= 1 || useVertexDataList[20].Count >= 1 ||
                 useVertexDataList[21].Count >= 1 || useVertexDataList[22].Count >= 1 || useVertexDataList[23].Count >= 1 || useVertexDataList[24].Count >= 1)
-                shaderCode += "                " + "float " + Time._Speed + ";\n";
+            {
+                if (_refactOption.HasFlag(RefactOption.PropertiesToFixedValue))
+                {
+                    shaderCode += "                //Skipped TimeSpeed Property\n";
+                }
+                else
+                {
+                    shaderCode += "                " + "float " + Time._Speed + ";\n";
+                }
+            }
 
             shaderCode += "            CBUFFER_END\n";
             shaderCode += "\n";
@@ -737,7 +763,7 @@ namespace UniVFX.Editor
                 shaderCode += "                screenPos.xy = screenPos.xy / screenPos.w;\n";
             }
             if (useUVChannelList[5].Count >= 1)
-                shaderCode += "                float3 viewNormal = TransformWorldToViewDir(TransformObjectToWorldDir(v.normal.xyz));\n";
+                shaderCode += "                float3 viewNormal = TransformWorldToViewDir(TransformObjectToWorldDir(v.normal.xyz)) + 0.5;\n";
             if (SurfaceFade.IsActive(material) || FakeLight.IsActive(material) || UVParallax.IsActive(material))
                 shaderCode += "                o.worldPos = worldPos;\n";
             if (SurfaceFade.IsActive(material) || FakeLight.IsActive(material) || UVParallax.IsActive(material))
@@ -750,16 +776,16 @@ namespace UniVFX.Editor
                 useVertexDataList[17].Count >= 1 || useVertexDataList[18].Count >= 1 || useVertexDataList[19].Count >= 1 || useVertexDataList[20].Count >= 1 ||
                 useVertexDataList[21].Count >= 1 || useVertexDataList[22].Count >= 1 || useVertexDataList[23].Count >= 1 || useVertexDataList[24].Count >= 1)
             {
-                shaderCode += "                float4 time = _Time * " + Time._Speed + ";\n";
+                shaderCode += "                float4 time = _Time * " + (_refactOption.HasFlag(RefactOption.PropertiesToFixedValue) ? material.GetFloat(Time._Speed).ToString(CultureInfo.InvariantCulture) : Time._Speed) + ";\n";
                 if (useVertexDataList[21].Count >= 1 || useVertexDataList[22].Count >= 1 || useVertexDataList[23].Count >= 1 || useVertexDataList[24].Count >= 1)
-                    shaderCode += "                float4 timeMap = SAMPLE_TEXTURE2D(" + Time._Tex + ", SamplerState_Linear_Clamp, frac(time.yy));\n";
+                    shaderCode += "                float4 timeMap = SAMPLE_TEXTURE2D_LOD(" + Time._Tex + ", SamplerState_Linear_Clamp, frac(time.yy), 0);\n";
             }
 
             // 頂点シェーダー早期実行する処理をここに追加
             shaderCode += "//早期計算\n";
             foreach (var option in _options)
             {
-                if (option is not VertexAnimation)
+                if (option is not VertexAnimation && option is not UVRotate && option is not UVFripBook)
                     continue;
                 foreach (var code in option.GetVertexHeadCode(_refactOption))
                 {
@@ -803,17 +829,7 @@ namespace UniVFX.Editor
             shaderCode += "    CustomEditor \"UniVFX.Editor.UniVFXUniqueOpaqueInspector\"\n";
             shaderCode += "}\n";
 
-            if (!Directory.Exists(dir))
-            {
-                Directory.CreateDirectory(dir);
-            }
-
-            File.WriteAllText(path, shaderCode);
-            AssetDatabase.ImportAsset(path);
-
-            var asset = AssetDatabase.LoadAssetAtPath<Shader>(path);
-            material.shader = asset;
-            EditorUtility.SetDirty(material);
+            UniVFXUniqueShaderPathUtility.TryWriteAndAssignGeneratedShader(material, path, shaderCode);
         }
     }
 }

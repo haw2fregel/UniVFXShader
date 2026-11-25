@@ -217,13 +217,25 @@ namespace UniVFX.Editor
             UniVFXGUILayout.VaridateCustomDataInt(ref _mat, _FadeOut, _isCanvas);
         }
 
+        private bool IsTargetNone()
+        {
+            return _mat.GetFloat(_TargetBlendColor) == 0 &&
+                   _mat.GetFloat(_TargetBlendTex) == 0 &&
+                   _mat.GetFloat(_TargetMainTex) == 0 &&
+                   _mat.GetFloat(_TargetFinalAlpha) == 0 &&
+                   _mat.GetFloat(_TargetFinalColor) == 0 &&
+                   _mat.GetFloat(_TargetDistortion) == 0 &&
+                   _mat.GetFloat(_TargetDissolve) == 0 &&
+                   _mat.GetFloat(_TargetHSVShift) == 0;
+        }
+
         public override List<string> GetPropertyCode(RefactOption refactOption)
         {
             var code = new List<string>();
             if (!IsActive())
                 return code;
 
-            var isInvalid = _mat.GetFloat(_TargetBlendColor) == 0 && _mat.GetFloat(_TargetMainTex) == 0 && _mat.GetFloat(_TargetFinalAlpha) == 0 && _mat.GetFloat(_TargetFinalColor) == 0 && _mat.GetFloat(_TargetDistortion) == 0 && _mat.GetFloat(_TargetDissolve) == 0 && _mat.GetFloat(_TargetHSVShift) == 0;
+            var isInvalid = IsTargetNone();
             var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
 
             if(isInvalid)
@@ -253,7 +265,7 @@ namespace UniVFX.Editor
             if (!IsActive())
                 return code;
 
-            var isInvalid = _mat.GetFloat(_TargetBlendColor) == 0 && _mat.GetFloat(_TargetMainTex) == 0 && _mat.GetFloat(_TargetFinalAlpha) == 0 && _mat.GetFloat(_TargetFinalColor) == 0 && _mat.GetFloat(_TargetDistortion) == 0 && _mat.GetFloat(_TargetDissolve) == 0 && _mat.GetFloat(_TargetHSVShift) == 0;
+            var isInvalid = IsTargetNone();
             var isFixedValue = refactOption.HasFlag(RefactOption.PropertiesToFixedValue);
 
             if(isInvalid)
@@ -342,7 +354,7 @@ namespace UniVFX.Editor
             if (!IsActive())
                 return code;
 
-            var isInvalid = _mat.GetFloat(_TargetBlendColor) == 0 && _mat.GetFloat(_TargetMainTex) == 0 && _mat.GetFloat(_TargetFinalAlpha) == 0 && _mat.GetFloat(_TargetFinalColor) == 0 && _mat.GetFloat(_TargetDistortion) == 0 && _mat.GetFloat(_TargetDissolve) == 0 && _mat.GetFloat(_TargetHSVShift) == 0;
+            var isInvalid = IsTargetNone();
 
             var fadeIn = UniVFXGUILayout.VertexDataToFloatCode(_mat, _FadeIn, _isCanvas, refactOption);
             var fadeOut = UniVFXGUILayout.VertexDataToFloatCode(_mat, _FadeOut, _isCanvas, refactOption);
@@ -380,7 +392,7 @@ namespace UniVFX.Editor
                 case "Screen Z":
                     if(_isBRP)
                     {
-                        code.Add(_ResultValue + " *= smoothstep(" + fadeOut + ", " + fadeIn + ", -mul(UNITY_MATRIX_V, i.worldPos).z);");
+                        code.Add(_ResultValue + " *= smoothstep(" + fadeOut + ", " + fadeIn + ", -mul(UNITY_MATRIX_V, float4(i.worldPos, 1)).z);");
                     }
                     else
                     {
@@ -395,7 +407,7 @@ namespace UniVFX.Editor
                     if(_isBRP)
                     {
                         code.Add("half sceneDepth = LinearEyeDepth(tex2Dproj(_CameraDepthTexture, i.projPos).r);");
-                        code.Add("float depthDiff = sceneDepth - i.positionCS.z;");
+                        code.Add("float depthDiff = sceneDepth - i.surfaceFadeParam.y;");
                     }
                     else
                     {

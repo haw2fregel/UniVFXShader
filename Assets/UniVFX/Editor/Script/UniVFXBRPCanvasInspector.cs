@@ -202,7 +202,7 @@ namespace UniVFX.Editor
         public void ConvertUniqueShader(MaterialEditor materialEditor)
         {
             Material material = materialEditor.target as Material;
-            material.parent = null;
+            if (material == null) return;
             var path = UniVFXUniqueShaderPathUtility.ResolveOutputPath(material, "Canvas");
             var dir = System.IO.Path.GetDirectoryName(path);
 
@@ -229,7 +229,7 @@ namespace UniVFX.Editor
             
 
             var shaderCode = "";
-            shaderCode += "Shader \"UniVFX/Canvas/" + material.name + " \" \n";
+            shaderCode += "Shader \"UniVFX/Canvas/" + UniVFXUniqueShaderPathUtility.SanitizeShaderName(System.IO.Path.GetFileNameWithoutExtension(path)) + "\"\n";
             shaderCode += "{\n";
             shaderCode += "    Properties\n";
             shaderCode += "    {\n";
@@ -501,7 +501,6 @@ namespace UniVFX.Editor
                 shaderCode += "                    clip (col.a - " + material.GetFloat(SurfaceOptionCanvas._AlphaClip).ToString(CultureInfo.InvariantCulture) + ");\n";
             }
 
-            shaderCode += "                col.rgb *= col.a;\n";
 
 
             shaderCode += "                return col;\n";
@@ -514,17 +513,7 @@ namespace UniVFX.Editor
             shaderCode += "    CustomEditor \"UniVFX.Editor.UniVFXUniqueBRPCanvasInspector\"\n";
             shaderCode += "}\n";
 
-            if (!Directory.Exists(dir))
-            {
-                Directory.CreateDirectory(dir);
-            }
-
-            File.WriteAllText(path, shaderCode);
-            AssetDatabase.ImportAsset(path);
-
-            var asset = AssetDatabase.LoadAssetAtPath<Shader>(path);
-            material.shader = asset;
-            EditorUtility.SetDirty(material);
+            UniVFXUniqueShaderPathUtility.TryWriteAndAssignGeneratedShader(material, path, shaderCode);
         }
     }
 }

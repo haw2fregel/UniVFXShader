@@ -295,6 +295,8 @@ namespace UniVFX.Editor
                 }
 
             }
+            if (UVDistortion.IsActive(_mat) && _mat.GetInt(UVDistortion._TargetGradation) == 1)
+                code.Add(uv + " += " + UVDistortion._ResultValue + ";");
             code.Add("half4 gradationColor0 = lerp(" + color00 + ", " + color10 + ", " + uv + ".x);");
             code.Add("half4 gradationColor1 = lerp(" + color01 + ", " + color11 + ", " + uv + ".x);");
             code.Add("half4 gradationColor = lerp(gradationColor0, gradationColor1, " + uv + ".y);");
@@ -316,7 +318,7 @@ namespace UniVFX.Editor
                     code.Add("col.rgb = col.rgb - " + color + ".rgb * " + color + ".a;");
                     break;
                 case "Overlay":
-                    code.Add("col.rgb = lerp(col.rgb, col.rgb < 0.5 ? 2.0 * " + color + ".rgb * col.rgb : 1.0 - (1.0 - " + color + ".rgb) * (1.0 - col.rgb), " + color + ".a);");
+                    code.Add("col.rgb = lerp(col.rgb, col.rgb < 0.5 ? 2.0 * " + color + ".rgb * col.rgb : 1.0 - 2.0 * (1.0 - " + color + ".rgb) * (1.0 - col.rgb), " + color + ".a);");
                     break;
                 default:
                     break;

@@ -290,7 +290,14 @@ namespace UniVFX.Editor
             }
             else
             {
-                code.Add("float3 boundsCenter = (unity_RendererBounds_Min.xyz + unity_RendererBounds_Max.xyz) * 0.5;");
+                if (_isBRP)
+                {
+                    code.Add("float3 boundsCenter = mul(unity_ObjectToWorld, float4(0, 0, 0, 1)).xyz;");
+                }
+                else
+                {
+                    code.Add("float3 boundsCenter = (unity_RendererBounds_Min.xyz + unity_RendererBounds_Max.xyz) * 0.5;");
+                }
                 code.Add("float3 fakeLightDir = i.worldPos.xyz - (boundsCenter + " + param + ".xyz);"); 
                 code.Add("float attan = min(length(fakeLightDir), " + param + ".w);");
                 code.Add("attan = 1 - (attan / " + param + ".w);");
@@ -302,7 +309,14 @@ namespace UniVFX.Editor
             if (MaskTexture.IsActive(_mat) && _mat.GetInt(MaskTexture._TargetFakeLight) == 1)
                 code.Add("fakeLightIntensity *= " + MaskTexture._ResultValue + ";");
 
-            code.Add("float nDotL = -dot(i.normal.xyz, normalize(fakeLightDir)) * 0.5 + 0.5;");
+            if (_isBRP)
+            {
+                code.Add("float nDotL = -dot(normalize(UnityObjectToWorldNormal(i.normal.xyz)), normalize(fakeLightDir)) * 0.5 + 0.5;");
+            }
+            else
+            {
+                code.Add("float nDotL = -dot(normalize(TransformObjectToWorldDir(i.normal.xyz)), normalize(fakeLightDir)) * 0.5 + 0.5;");
+            }
 
             if (isTextureNone)
             {
@@ -311,7 +325,14 @@ namespace UniVFX.Editor
             }
             else
             {
-                code.Add("half4 " + tex + " = SAMPLE_TEXTURE2D(" + _Tex + ", SamplerState_Linear_Clamp, nDotL.xx);");
+                if (_isBRP)
+                {
+                    code.Add("half4 " + tex + " = " + _Tex + ".Sample(SamplerState_Linear_Clamp, nDotL.xx);");
+                }
+                else
+                {
+                    code.Add("half4 " + tex + " = SAMPLE_TEXTURE2D(" + _Tex + ", SamplerState_Linear_Clamp, nDotL.xx);");
+                }
             }
 
             code.Add("col.rgb = lerp(col.rgb, col.rgb * " + shadowColor + ".rgb, (1 - saturate(" + tex + ".x * 2)) * fakeLightIntensity);");

@@ -31,7 +31,7 @@ namespace UniVFX.Editor
                 case 1:
                     return "worldPos.xy";
                 case 2:
-                    return "worldPos.zx";
+                    return "worldPos.xz";
                 case 3:
                     return "worldPos.yz";
                 case 4:
@@ -1783,9 +1783,9 @@ namespace UniVFX.Editor
                 case (int)CanvasVertexColorData.Input:
                     return prop;
                 case (int)CanvasVertexColorData.TEXCOORD2:
-                    return "texCoord2";
+                    return "texCoord2.xyxy";
                 case (int)CanvasVertexColorData.TEXCOORD3:
-                    return "texCoord3";
+                    return "texCoord3.xyxy";
                 case (int)CanvasVertexColorData.VertexColor:
                     return "vertexColor";
                 default:

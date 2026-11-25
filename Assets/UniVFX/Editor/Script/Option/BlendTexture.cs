@@ -430,7 +430,7 @@ namespace UniVFX.Editor
                     code.Add("col.rgb = col.rgb - " + tex + ".rgb * " + tex + ".a;");
                     break;
                 case "Overlay":
-                    code.Add("col.rgb = lerp(col.rgb, col.rgb < 0.5 ? 2.0 * " + tex + ".rgb * col.rgb : 1.0 - (1.0 - " + tex + ".rgb) * (1.0 - col.rgb), " + tex + ".a);");
+                    code.Add("col.rgb = lerp(col.rgb, col.rgb < 0.5 ? 2.0 * " + tex + ".rgb * col.rgb : 1.0 - 2.0 * (1.0 - " + tex + ".rgb) * (1.0 - col.rgb), " + tex + ".a);");
                     break;
                 default:
                     break;

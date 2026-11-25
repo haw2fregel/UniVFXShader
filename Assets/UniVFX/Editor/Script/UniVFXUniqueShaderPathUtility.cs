@@ -9,6 +9,7 @@ namespace UniVFX.Editor
     {
         private const string DefaultGeneratedRoot = "Assets/UniVFXGenerated";
         private const string OutputDirectoryConfigKey = "UniVFX.UniqueShaderOutputDirectory";
+        private const string GeneratedMarker = "CustomEditor \"UniVFX.Editor.UniVFXUnique";
 
         internal static string GetSavedOutputRoot()
         {
@@ -44,6 +45,10 @@ namespace UniVFX.Editor
                         if (!string.IsNullOrEmpty(normalized))
                         {
                             SetSavedOutputRoot(normalized);
+                        }
+                        else
+                        {
+                            Debug.LogWarning("[UniVFX] 出力先フォルダはプロジェクトの Assets 配下を指定してください。");
                         }
                     }
                 }
@@ -98,14 +103,63 @@ namespace UniVFX.Editor
             var safeName = SanitizeFileName(material != null ? material.name : string.Empty);
             var candidatePath = baseDir + "/" + safeName + ".shader";
 
-            var existingShader = AssetDatabase.LoadAssetAtPath<Shader>(candidatePath);
-            if (existingShader != null &&
-                UniVFXUniqueShaderRevertUtility.HasOtherMaterialReferences(existingShader, material))
+            if (ShouldAvoidOverwrite(candidatePath, material))
             {
                 candidatePath = AssetDatabase.GenerateUniqueAssetPath(candidatePath);
             }
 
             return candidatePath;
+        }
+
+        internal static string SanitizeShaderName(string rawName)
+        {
+            var sanitized = SanitizeFileName(rawName)
+                .Replace("\"", "_")
+                .Replace("\r", string.Empty)
+                .Replace("\n", string.Empty)
+                .Trim();
+            return string.IsNullOrEmpty(sanitized) ? "UniVFXMaterial" : sanitized;
+        }
+
+        internal static bool TryWriteAndAssignGeneratedShader(Material material, string path, string shaderCode)
+        {
+            if (material == null || string.IsNullOrEmpty(path))
+            {
+                return false;
+            }
+
+            var normalizedDir = NormalizeAssetsDirectory(Path.GetDirectoryName(path));
+            if (string.IsNullOrEmpty(normalizedDir))
+            {
+                Debug.LogError($"[UniVFX] 出力先パスが Assets 配下ではないため変換を中止しました: '{path}'", material);
+                return false;
+            }
+
+            var existedBefore = File.Exists(path);
+            if (!Directory.Exists(normalizedDir))
+            {
+                Directory.CreateDirectory(normalizedDir);
+            }
+
+            File.WriteAllText(path, shaderCode);
+            AssetDatabase.ImportAsset(path);
+
+            var asset = AssetDatabase.LoadAssetAtPath<Shader>(path);
+            if (asset == null || ShaderUtil.ShaderHasError(asset))
+            {
+                Debug.LogError($"[UniVFX] 専用シェーダーのコンパイルに失敗したため、マテリアルの切り替えを中止しました: '{path}'", asset != null ? (UnityEngine.Object)asset : material);
+                if (!existedBefore)
+                {
+                    AssetDatabase.DeleteAsset(path);
+                }
+                return false;
+            }
+
+            Undo.RecordObject(material, "UniVFX Convert Unique Shader");
+            material.parent = null;
+            material.shader = asset;
+            EditorUtility.SetDirty(material);
+            return true;
         }
 
         internal static string ResolveBaseDirectory(string shaderAssetPath, string categoryFolder)
@@ -133,6 +187,35 @@ namespace UniVFX.Editor
 
             var sanitized = new string(chars).Trim().TrimEnd('.');
             return string.IsNullOrEmpty(sanitized) ? "UniVFXMaterial" : sanitized;
+        }
+
+        private static bool ShouldAvoidOverwrite(string candidatePath, Material ownerMaterial)
+        {
+            var existingShader = AssetDatabase.LoadAssetAtPath<Shader>(candidatePath);
+            if (existingShader != null &&
+                UniVFXUniqueShaderRevertUtility.HasOtherMaterialReferences(existingShader, ownerMaterial))
+            {
+                return true;
+            }
+
+            if (File.Exists(candidatePath))
+            {
+                // 手書きシェーダーやロード不能ファイルの上書きを防ぐため、UniVFX生成物マーカーが無い場合は別名回避する
+                try
+                {
+                    var existingText = File.ReadAllText(candidatePath);
+                    if (existingText.IndexOf(GeneratedMarker, StringComparison.Ordinal) < 0)
+                    {
+                        return true;
+                    }
+                }
+                catch
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static string ResolveDefaultRoot(Material material)
@@ -177,18 +260,28 @@ namespace UniVFX.Editor
                 return string.Empty;
             }
 
-            var normalized = path.Trim().Replace('\\', '/').TrimEnd('/');
-            if (string.Equals(normalized, "Assets", StringComparison.OrdinalIgnoreCase))
+            var trimmed = path.Trim().Replace('\\', '/').TrimEnd('/');
+            if (!string.Equals(trimmed, "Assets", StringComparison.OrdinalIgnoreCase) &&
+                !trimmed.StartsWith("Assets/", StringComparison.OrdinalIgnoreCase))
             {
-                return "Assets";
+                return string.Empty;
             }
 
-            if (normalized.StartsWith("Assets/", StringComparison.OrdinalIgnoreCase))
+            var projectRoot = Path.GetDirectoryName(Application.dataPath);
+            if (string.IsNullOrEmpty(projectRoot))
             {
-                return "Assets" + normalized.Substring(6);
+                return string.Empty;
             }
 
-            return string.Empty;
+            try
+            {
+                var combinedFull = Path.GetFullPath(Path.Combine(projectRoot, trimmed));
+                return ToAssetsRelativePath(combinedFull);
+            }
+            catch
+            {
+                return string.Empty;
+            }
         }
 
         private static string ToAssetsRelativePath(string fullPath)
